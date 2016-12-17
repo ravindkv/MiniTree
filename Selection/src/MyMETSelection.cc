@@ -20,8 +20,6 @@ std::vector<MyMET> MyEventSelection::getMETs(const edm::Event& iEvent, const edm
 //	  continue;
 //	}
 	if(!imets.isValid()){ 
-//	if(imets->size() == 0)continue;
-	
 	const pat::MET metIt = ((*imets)[0]);
 	MyMET newMET = MyMETConverter(metIt, rawtag);
 	newMET.metName = tag;
