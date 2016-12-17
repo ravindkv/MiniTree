@@ -9,18 +9,7 @@ std::vector<MyMET> MyEventSelection::getMETs(const edm::Event& iEvent, const edm
 
   try{
     //config parameters
-//    std::vector<edm::InputTag> sources = configParamsMETs_.getParameter<std::vector<edm::InputTag> >("sources");
-    
-    //collect METs
-//    for(std::vector<edm::InputTag>::iterator sit = sources.begin();
-//        sit != sources.end();
-//	sit++)
-//      {
-	
 	TString rawtag="METs";
-//	rawtag.ReplaceAll("pat","");
-//	rawtag.ReplaceAll("cleanPat","");
-//	rawtag.ReplaceAll("selectedPat","");
 	std::string tag(rawtag);
 	
 	edm::Handle<pat::METCollection>imets;
