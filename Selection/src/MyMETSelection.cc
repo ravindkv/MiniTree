@@ -53,11 +53,5 @@ MyMET MyEventSelection::MyMETConverter(const pat::MET& iMET, TString& dirtag)
     newMET.muonEtFraction = iMET.MuonEtFraction();
     newMET.isPFMET = true;
   }
-  else if(iMET.isCaloMET()){
-    newMET.emEtFraction = iMET.emEtFraction();
-    newMET.hadEtFraction = iMET.etFractionHadronic();
-    newMET.metSignificance = iMET.metSignificance();
-    newMET.isCaloMET = true;
-  }
   return newMET;
 }

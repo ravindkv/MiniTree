@@ -19,7 +19,6 @@ class MyMET
   
   double emEtFraction;
   double hadEtFraction;
-  bool isCaloMET;
   bool isPFMET;
   std::string metName;
   double metSignificance;
