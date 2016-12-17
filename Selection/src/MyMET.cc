@@ -4,7 +4,6 @@ MyMET::MyMET():
   
   emEtFraction(-999.),
   hadEtFraction(-999.),
-  isCaloMET(false),
   isPFMET(false),
   metName(""),
   metSignificance(999.),
@@ -20,7 +19,6 @@ void MyMET::Reset()
 {
   emEtFraction = -999.;
   hadEtFraction = -999.;
-  isCaloMET = false;
   isPFMET = false;
   metName = "";
   metSignificance = -999.;
