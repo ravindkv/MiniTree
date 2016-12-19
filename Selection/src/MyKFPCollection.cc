@@ -10,7 +10,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
   try{
     //config parameters
     std::vector<edm::InputTag> sources = configParamsKFPs_.getParameter<std::vector<edm::InputTag> >("sources");
-    edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
+ /*   edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
     edm::InputTag statusOfFit = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFit");
     edm::InputTag probOfFit = configParamsKFPs_.getParameter<edm::InputTag>("probOfFit");
     edm::InputTag njetsOfFit = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsed");
@@ -92,7 +92,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
     }catch(std::exception &e){   
       std::cout<<" KineFitter product for JER Down is not available"<<std::endl;   
     }
-
+*/
     for(std::vector<edm::InputTag>::iterator sit = sources.begin();
 	sit != sources.end();
 	sit++)
@@ -108,7 +108,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	}catch(std::exception &e){
 	  continue;
 	}
-	//cout<<" size "<<moduleLabel<<":"<<tag<<" "<<ikfps->size()<<endl;
+	cout<<" size "<<moduleLabel<<":"<<tag<<" "<<ikfps->size()<<endl;
 	if(!ikfps.isValid()) continue;
 	if(ikfps->size() == 0)continue;
 	for(size_t iKfp = 0; iKfp < ikfps->size(); iKfp++)
@@ -117,7 +117,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	    MyKineFitParticle newKfp = MyKineFitPartConverter(jKfp, rawtag);
 	    newKfp.partName = tag;
 	    newKfp.labelName = moduleLabel;
-	    if(moduleLabel.find("JESUp")!=std::string::npos){
+/*	    if(moduleLabel.find("JESUp")!=std::string::npos){
 	      newKfp.chi2OfFit = chi2Up_->size()>0 ? (*chi2Up_)[0] : 999.; 
               newKfp.statusOfFit = statusUp_->size()>0 ? (*statusUp_)[0] : 0; 
               newKfp.probOfFit = probUp_->size() > 0 ? (*probUp_)[0] : 0; 
@@ -151,7 +151,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	      newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
 	      newKfp.njetsOfFit = *njets_;
 	    }
-	    selKFParticles.push_back(newKfp);
+*/	    selKFParticles.push_back(newKfp);
 	  }
 	fs_->cd();
       }

@@ -13,12 +13,7 @@ std::vector<MyMET> MyEventSelection::getMETs(const edm::Event& iEvent, const edm
 	std::string tag(rawtag);
 	
 	edm::Handle<pat::METCollection>imets;
-//	try{
-//	  iEvent.getByLabel( *sit, imets);
 	  iEvent.getByToken( Metsources, imets);
-//	}catch(std::exception &e){
-//	  continue;
-//	}
 	if(!imets.isValid()){ 
 	const pat::MET metIt = ((*imets)[0]);
 	MyMET newMET = MyMETConverter(metIt, rawtag);
@@ -38,20 +33,20 @@ MyMET MyEventSelection::MyMETConverter(const pat::MET& iMET, TString& dirtag)
   MyMET newMET;
   newMET.Reset();
   
-  newMET.p4.SetCoordinates(iMET.px(), iMET.py(), 0, iMET.et());
-  newMET.sumEt = iMET.sumEt();
-  newMET.metSignificance = iMET.significance();
-  
-  myhistos_["pt_"+dirtag]->Fill(iMET.pt());
-  myhistos_["sumet_"+dirtag]->Fill(iMET.sumEt());
-  myhistos_["phi_"+dirtag]->Fill(iMET.phi());
-
   //pfMET
   if(iMET.isPFMET()){
     newMET.emEtFraction = iMET.NeutralEMFraction()+ iMET.ChargedEMEtFraction();
     newMET.hadEtFraction = iMET.NeutralHadEtFraction()+ iMET.ChargedHadEtFraction();
-    newMET.muonEtFraction = iMET.MuonEtFraction();
     newMET.isPFMET = true;
+    newMET.muonEtFraction = iMET.MuonEtFraction();
   }
+  
+  newMET.metSignificance = iMET.significance();
+  newMET.sumEt = iMET.sumEt();
+  newMET.p4.SetCoordinates(iMET.px(), iMET.py(), 0, iMET.et());
+  
+  //myhistos_["pt_"+dirtag]->Fill(iMET.pt());
+  //myhistos_["sumet_"+dirtag]->Fill(iMET.sumEt());
+  //myhistos_["phi_"+dirtag]->Fill(iMET.phi());
   return newMET;
 }
