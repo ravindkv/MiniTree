@@ -57,7 +57,7 @@ addJetMETExtra(process,isData,applyResJEC,isAOD)
 addTriggerMatchExtra(process,egtriglist,mutriglist,jettriglist,False,trigMenu)
 defineGenUtilitiesSequence(process)
 #configureElectronMVAIdIso(process)
-#addSemiLepKinFitElectron(process, isData) #important
+addSemiLepKinFitMuon(process, isData) #important
 
 
 # add the analysis modules ----------------------------------------------------
