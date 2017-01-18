@@ -22,7 +22,7 @@ dilcands = fillFrom('/lustre/lip.pt/data/cmslocal/pedros/DileptonCandidates2010'
 
 #mc
 ttbaraod=fillFrom('/lustre/lip.pt/data/cmslocal/pedros/TT1Jets-alpgen-aod')
-ttbarRelVal384 = fillFrom('/lustre/lip.pt/data/cmslocal/pedros/RelVal_3_8_4/') 
-dyjetstoll = fillFrom('/lustre/lip.pt/data/cmslocal/pedros/Fall10/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/') 
+ttbarRelVal384 = fillFrom('/lustre/lip.pt/data/cmslocal/pedros/RelVal_3_8_4/')
+dyjetstoll = fillFrom('/lustre/lip.pt/data/cmslocal/pedros/Fall10/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/')
 chhiggs = fillFrom('/lustre/lip.pt/data/cmslocal/nalmeida/mc/test/CMSSW_38X/HHtotaunu120/')
 w2munu = fillFrom('/lustre/lip.pt/data/cmslocal/samples/CMSSW_3_8_6/w2MuNu')

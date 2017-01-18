@@ -86,7 +86,7 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     if(scaleType_=="abs"){
       //scaledJet.scaleEnergy( scaleFactor_ );
       scaleJetEnergy( scaledJet, scaleFactor_ );
-      if (abs(scaledJet.partonFlavour()) == 5) {
+      if (abs(scaledJet.partonFlavour()) == 5) { //---: 5 for b quark
         //scaledJet.scaleEnergy( scaleFactorB_ );
 	scaleJetEnergy( scaledJet, scaleFactorB_ );
       }

@@ -249,7 +249,7 @@ ResolutionCreator::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
        for(size_t i = 0; i < genParticles->size(); ++ i) {
 	 const reco::GenParticle & part = (*genParticles)[i];
 	 if( (abs(part.pdgId())==12 || abs(part.pdgId())==14) && ROOT::Math::VectorUtil::DeltaR(part.p4(), (*mets)[0].p4()) < minDR_) {
-	   //	   cout << "met's pt= " << part.pt() << endl;
+	   	   cout << "met's pt= " << part.pt() << endl;
 	   p4gen.push_back(part.p4());
 	   p4rec.push_back((*mets)[0].p4());
 

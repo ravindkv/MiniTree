@@ -1,5 +1,7 @@
 import FWCore.ParameterSet.Config as cms
-
+#-------------------
+from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
+#-------------------
 
 #my base values for trigger bit selection -------------------
 BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
@@ -99,6 +101,16 @@ BaseMCTruthSet = cms.PSet( isData = cms.bool(False),
                            jpMatchSources = cms.VInputTag("selectedPatJetsByRef", "selectedPatJetsAK5JPTByRef", "selectedPatJetsAK5PFByRef", "selectedPatJetsPFlowByRef")
                            )
 #values for kine fit object collection ------------------------------------------------
+
+# TopKinFitter/python/TtSemiLepKinFitProducer_Electrons_cfi.py:3:kinFitTtSemiLepEvent = cms.EDProducer("TtSemiLepKinFitProducerMuon"
+
+# TopKinFitter/plugins/SealModule.cc:8:typedef TtSemiLepKinFitProducer< std::vector<pat::Muon>     > TtSemiLepKinFitProducerMuon;
+
+# TtSemiLepKinFitProducer is defined in : /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/TopQuarkAnalysis/TopKinFitter/plugins/TtSemiLepKinFitProducer.h
+
+# kinFitTtSemiLepEventJESUp is the clone of kinFitTtSemiLepEvent. It is defined in :
+# Selection/python/ttSemiLepKinFitElectron_cff.py:94:    process.kinFitTtSemiLepEventJESUp = process.kinFitTtSemiLepEvent.clone()
+
 BaseKFPSet = cms.PSet(sources = cms.VInputTag("kinFitTtSemiLepEvent:Leptons","kinFitTtSemiLepEvent:Neutrinos","kinFitTtSemiLepEvent:PartonsHadB","kinFitTtSemiLepEvent:PartonsHadP","kinFitTtSemiLepEvent:PartonsHadQ","kinFitTtSemiLepEvent:PartonsLepB","kinFitTtSemiLepEventJESUp:Leptons","kinFitTtSemiLepEventJESUp:Neutrinos","kinFitTtSemiLepEventJESUp:PartonsHadB","kinFitTtSemiLepEventJESUp:PartonsHadP","kinFitTtSemiLepEventJESUp:PartonsHadQ","kinFitTtSemiLepEventJESUp:PartonsLepB","kinFitTtSemiLepEventJESDown:Leptons","kinFitTtSemiLepEventJESDown:Neutrinos","kinFitTtSemiLepEventJESDown:PartonsHadB","kinFitTtSemiLepEventJESDown:PartonsHadP","kinFitTtSemiLepEventJESDown:PartonsHadQ","kinFitTtSemiLepEventJESDown:PartonsLepB","kinFitTtSemiLepEventJERUp:Leptons","kinFitTtSemiLepEventJERUp:Neutrinos","kinFitTtSemiLepEventJERUp:PartonsHadB","kinFitTtSemiLepEventJERUp:PartonsHadP","kinFitTtSemiLepEventJERUp:PartonsHadQ","kinFitTtSemiLepEventJERUp:PartonsLepB","kinFitTtSemiLepEventJERDown:Leptons","kinFitTtSemiLepEventJERDown:Neutrinos","kinFitTtSemiLepEventJERDown:PartonsHadB","kinFitTtSemiLepEventJERDown:PartonsHadP","kinFitTtSemiLepEventJERDown:PartonsHadQ","kinFitTtSemiLepEventJERDown:PartonsLepB"),
                       njetsUsed = cms.InputTag("kinFitTtSemiLepEvent:NumberOfConsideredJets"),
                       chi2OfFit = cms.InputTag("kinFitTtSemiLepEvent:Chi2"),

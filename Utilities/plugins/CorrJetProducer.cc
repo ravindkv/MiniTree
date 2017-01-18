@@ -9,6 +9,9 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 
+/// Added for 13 TeV 
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+
 CorrJetProducer::CorrJetProducer(const edm::ParameterSet& cfg):
   inputJets_           (cfg.getParameter<edm::InputTag>("inputJets"           )),
   JECSrcFile_          (cfg.getParameter<edm::FileInPath>("JECSrcFile") ),
@@ -45,6 +48,14 @@ CorrJetProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   vPar.push_back(*ResJetPar);
 
   FactorizedJetCorrector *JetCorrector = new FactorizedJetCorrector(vPar);
+  ////////(
+
+  // FactorizedJetCorrector is defined in : /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/CondFormats/JetMETObjects/src/FactorizedJetCorrector.cc:34  mCalc(fParameters)
+  //
+  // mCalc is defined in : /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h:53:    FactorizedJetCorrectorCalculator mCalc 
+  //
+  // FactorizedJetCorrectorCalculator is defined in : /cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_20/src/CondFormats/JetMETObjects/src/FactorizedJetCorrectorCalculator.cc 
+  ////////)
   
   // loop and rescale jets
   for(std::vector<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){

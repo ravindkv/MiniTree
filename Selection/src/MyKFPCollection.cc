@@ -1,5 +1,7 @@
 #include "MiniTree/Selection/interface/MyEventSelection.h"
-
+//--------------
+#include "TopQuarkAnalysis/TopKinFitter/plugins/TtSemiLepKinFitProducer.h"
+//--------------
 std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
@@ -10,7 +12,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
   try{
     //config parameters
     std::vector<edm::InputTag> sources = configParamsKFPs_.getParameter<std::vector<edm::InputTag> >("sources");
- /*   edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
+    edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
     edm::InputTag statusOfFit = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFit");
     edm::InputTag probOfFit = configParamsKFPs_.getParameter<edm::InputTag>("probOfFit");
     edm::InputTag njetsOfFit = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsed");
@@ -51,12 +53,14 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
     edm::Handle<vector<int> >statusJerDown_;   
     edm::Handle<vector<double> >probJerDown_;   
     edm::Handle<int> njetsJerDown_;
-    
+ 
     try{
       iEvent.getByLabel( chi2OfFit, chi2_);
       iEvent.getByLabel(statusOfFit, status_);
       iEvent.getByLabel(probOfFit, prob_);
       iEvent.getByLabel(njetsOfFit, njets_);
+      std::cout<<chi2_->size()<<endl;
+      //std::cout<<*njets_<<endl;
     }catch(std::exception &e){
       std::cout<<" KineFitter product is not available"<<std::endl;
     }
@@ -92,7 +96,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
     }catch(std::exception &e){   
       std::cout<<" KineFitter product for JER Down is not available"<<std::endl;   
     }
-*/
+    
     for(std::vector<edm::InputTag>::iterator sit = sources.begin();
 	sit != sources.end();
 	sit++)
@@ -101,14 +105,16 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	std::string tag(rawtag);
 	TString label = sit->label();
 	std::string moduleLabel(label);
+	//cout<<moduleLabel<<":"<<tag<<endl;
 	
 	edm::Handle<pat::ParticleCollection>ikfps;
 	try{
 	  iEvent.getByLabel( *sit, ikfps);
+	cout<<"Number of KinFit Particles = "<< ikfps->size() <<endl;
 	}catch(std::exception &e){
 	  continue;
 	}
-	cout<<" size "<<moduleLabel<<":"<<tag<<" "<<ikfps->size()<<endl;
+
 	if(!ikfps.isValid()) continue;
 	if(ikfps->size() == 0)continue;
 	for(size_t iKfp = 0; iKfp < ikfps->size(); iKfp++)
@@ -117,12 +123,12 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	    MyKineFitParticle newKfp = MyKineFitPartConverter(jKfp, rawtag);
 	    newKfp.partName = tag;
 	    newKfp.labelName = moduleLabel;
-/*	    if(moduleLabel.find("JESUp")!=std::string::npos){
+	    if(moduleLabel.find("JESUp")!=std::string::npos){
 	      newKfp.chi2OfFit = chi2Up_->size()>0 ? (*chi2Up_)[0] : 999.; 
               newKfp.statusOfFit = statusUp_->size()>0 ? (*statusUp_)[0] : 0; 
               newKfp.probOfFit = probUp_->size() > 0 ? (*probUp_)[0] : 0; 
               newKfp.njetsOfFit = *njetsUp_; 
-	      //std::cout<<" JES UP chi2 "<<newKfp.chi2OfFit<<std::endl;
+	      std::cout<<" JES UP chi2 "<<newKfp.chi2OfFit<<std::endl;
 	    }
 	    else if(moduleLabel.find("JESDown")!=std::string::npos){ 
 	      newKfp.chi2OfFit = chi2Down_->size()>0 ? (*chi2Down_)[0] : 999.;  
@@ -151,9 +157,9 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	      newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
 	      newKfp.njetsOfFit = *njets_;
 	    }
-*/	    selKFParticles.push_back(newKfp);
+	    selKFParticles.push_back(newKfp);
 	  }
-	fs_->cd();
+      fs_->cd();
       }
   }catch(std::exception &e){
     std::cout << "[KineFitParticle Collection] : check selection " << e.what() << std::endl;
