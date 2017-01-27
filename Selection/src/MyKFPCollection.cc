@@ -110,6 +110,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	edm::Handle<pat::ParticleCollection>ikfps;
 	try{
 	  iEvent.getByLabel( *sit, ikfps);
+	  //iEvent.getByToken( *sit, ikfps);
 	cout<<"Number of KinFit Particles = "<< ikfps->size() <<endl;
 	}catch(std::exception &e){
 	  continue;
@@ -161,6 +162,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	  }
       fs_->cd();
       }
+      
   }catch(std::exception &e){
     std::cout << "[KineFitParticle Collection] : check selection " << e.what() << std::endl;
   }

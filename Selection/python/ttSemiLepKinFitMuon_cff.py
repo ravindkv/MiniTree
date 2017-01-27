@@ -6,9 +6,22 @@ from MiniTree.Utilities.JetEnergyScale_cfi import *
 def addSemiLepKinFitMuon(process, isData=False) :
 
     ## std sequence to produce the kinematic fit for semi-leptonic events
-
+    ## configure process options
+    '''
+    process.options = cms.untracked.PSet(
+        allowUnscheduled = cms.untracked.bool(True),
+        wantSummary      = cms.untracked.bool(True),
+        #SkipEvent        = cms.untracked.vstring('ProductNotFound')
+    )
+    '''
     process.load("TopQuarkAnalysis.TopKinFitter.TtSemiLepKinFitProducer_Muons_cfi")
-    process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
+    process.kinFitTtSemiLepEvent.constraints = [1,2]
+    process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
+    process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
+    process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
+
+    '''
+    #process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
     process.scaledJetEnergyNominal = scaledJetEnergy.clone()
     process.scaledJetEnergyNominal.inputJets = "slimmedJets"
@@ -40,15 +53,14 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJetsResCor = process.cleanPatJets.clone()
     process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
     process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
-
-    #---------------------------------------
+    '''
     #change constraints on kineFit
     # The following variables are defined in :
     # TopQuarkAnalysis/TopKinFitter/python/TtSemiLepKinFitProducer_Muons_cfi.py
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
-    process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
-    process.kinFitTtSemiLepEvent.jets = cms.InputTag("slimmedJets")
+    #process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
+    #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+    '''
     if isData:
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
     process.kinFitTtSemiLepEvent.leps = cms.InputTag("slimmedMuons")
@@ -61,6 +73,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
     process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
+    '''
     '''
     if not isData :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble (
@@ -78,8 +91,9 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("combinedSecondaryVertexBJetTags")
     process.kinFitTtSemiLepEvent.minBDiscBJets     = cms.double(0.679)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
-    process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(True)
+    #process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(True)
 
+    '''
     # Add JES Up and Down and Rerun the KineFitter
     # The following variables are defined in :
     # MiniTree/Utilities/python/JetEnergyScale_cfi.py
@@ -91,12 +105,13 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJetsJESUp.src = cms.InputTag("slimmedJets")
     #process.cleanPatJetsJESUp.src = cms.InputTag("scaledJetEnergyUp:slimmedJets")
     process.cleanPatJetsJESUp.preselection = cms.string("pt>24 && abs(eta)<2.5")
+    '''
     process.kinFitTtSemiLepEventJESUp = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJESUp.jets = cms.InputTag("slimmedJets")
     #process.kinFitTtSemiLepEventJESUp.jets = cms.InputTag("cleanPatJetsJESUp")
     process.kinFitTtSemiLepEventJESUp.mets = cms.InputTag("slimmedMETs")
     #process.kinFitTtSemiLepEventJESUp.mets = cms.InputTag("scaledJetEnergyUp:slimmedMETs")
-
+    '''
     process.scaledJetEnergyDown = process.scaledJetEnergyNominal.clone()
     process.scaledJetEnergyDown.inputJets = "slimmedJets"
     process.scaledJetEnergyDown.inputMETs = "slimmedMETs"
@@ -105,12 +120,13 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJetsJESDown.src = cms.InputTag("slimmedJets")
     #process.cleanPatJetsJESDown.src = cms.InputTag("scaledJetEnergyDown:slimmedJets")
     process.cleanPatJetsJESDown.preselection = cms.string("pt>24 && abs(eta)<2.5")
+    '''
     process.kinFitTtSemiLepEventJESDown = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJESDown.jets = cms.InputTag("slimmedJets")
     #process.kinFitTtSemiLepEventJESDown.jets = cms.InputTag("cleanPatJetsJESDown")
     process.kinFitTtSemiLepEventJESDown.mets = cms.InputTag("slimmedMETs")
     #process.kinFitTtSemiLepEventJESDown.mets = cms.InputTag("scaledJetEnergyDown:slimmedMETs")
-
+    '''
     # Add JER Up and Down and Rerun the KineFitter
     process.scaledJetEnergyResnUp = process.scaledJetEnergyNominal.clone()
     process.scaledJetEnergyResnUp.inputJets = "slimmedJets"
@@ -122,12 +138,13 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJetsResnUp.src = cms.InputTag("slimmedJets")
     #process.cleanPatJetsResnUp.src = cms.InputTag("scaledJetEnergyResnUp:slimmedJets")
     process.cleanPatJetsResnUp.preselection = cms.string("pt>24 && abs(eta)<2.5")
+    '''
     process.kinFitTtSemiLepEventJERUp = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJERUp.jets = cms.InputTag("slimmedJets")
     #process.kinFitTtSemiLepEventJERUp.jets = cms.InputTag("cleanPatJetsResnUp")
     process.kinFitTtSemiLepEventJERUp.mets = cms.InputTag("slimmedMETs")
     #process.kinFitTtSemiLepEventJERUp.mets = cms.InputTag("scaledJetEnergyResnUp:slimmedMETs")
-
+    '''
     process.scaledJetEnergyResnDown = process.scaledJetEnergyNominal.clone()
     process.scaledJetEnergyResnDown.inputJets = "slimmedJets"
     process.scaledJetEnergyResnDown.inputMETs = "slimmedMETs"
@@ -139,16 +156,17 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJetsResnDown.src = cms.InputTag("slimmedJets")
     #process.cleanPatJetsResnDown.src = cms.InputTag("scaledJetEnergyResnDown:slimmedJets")
     process.cleanPatJetsResnDown.preselection = cms.string("pt>24 && abs(eta)<2.5")
+    '''
     process.kinFitTtSemiLepEventJERDown = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("slimmedJets")
     #process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("slimmedMETs")
     #process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
-    process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+    #process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
     ''''
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent, process.scaledJetEnergyNominal * process.cleanPatJetsNominal * process.kinFitTtSemiLepEvent)
     '''
     print "jets used in Kinematic fit : ", process.kinFitTtSemiLepEvent.jets
-    print "jet input to cleanPatJetsResCor : ", process.cleanPatJetsResCor.src
+    #print "jet input to cleanPatJetsResCor : ", process.cleanPatJetsResCor.src

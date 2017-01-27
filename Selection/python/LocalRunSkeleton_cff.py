@@ -11,7 +11,7 @@ isData=True
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 process.setName_(procName)
-process.GlobalTag.globaltag = cms.string( 'GR_R_36X_V11A::All' )
+process.GlobalTag.globaltag = cms.string( '80X_mcRun2_asymptotic_2016_miniAODv2_v1' )
 
 # add simple cut based electron identification to PAT
 #process.load('RecoEgamma.ElectronIdentification.simpleEleIdSequence_cff')
@@ -78,6 +78,7 @@ process.out.fileName = 'data.root'
 process.out.splitLevel = cms.untracked.int32(99)
 process.out.overrideInputFileSplitLevels = cms.untracked.bool(True)
 process.out.outputCommands = cms.untracked.vstring('keep *')
+process.outpath = cms.EndPath(process.out)
 
 # tfileservice ------------------------------------------------------------------
 process.load("PhysicsTools.UtilAlgos.TFileService_cfi")
@@ -85,7 +86,7 @@ process.TFileService.fileName = cms.string('Monitor.root')
 
 # adds/removes the outpath
 def checkProcessSchedule(storeOutPath=True, debug=True) :
-    
+
     if( storeOutPath ) :
         process.schedule.append( process.outpath )
     else :

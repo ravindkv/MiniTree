@@ -168,7 +168,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   }
   //store kinefit information
   //if(runKineFitter_)event_.KineFitParticles = getKineFitParticles(e, es);
-  //event_.KineFitParticles = getKineFitParticles(e, es);
+  event_.KineFitParticles = getKineFitParticles(e, es);
 
   //make event selection
   bool passTrig = false;
