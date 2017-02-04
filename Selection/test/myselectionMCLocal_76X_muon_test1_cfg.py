@@ -5,7 +5,7 @@ import FWCore.ParameterSet.Config as cms
 from MiniTree.Selection.LocalRunSkeleton_cff import *
 from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
-process.maxEvents.input = cms.untracked.int32(1000)
+process.maxEvents.input = cms.untracked.int32(10)
 process.TFileService.fileName = cms.string('bb.root')
 
 # config parameters ------------------------------------------------------------
@@ -81,16 +81,17 @@ process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(False)
 
 # analysis sequence ------------------------------------------------------------
 process.met_extra = cms.Path(process.RecoMetSequence * process.patPfMetT0pcT1Txy)
-#process.kineFit = cms.Path(process.kinFitSequence) #cms.Path(process.kinFitTtSemiLepEvent) #important
+process.kineFit = cms.Path(process.kinFitSequence) #cms.Path(process.kinFitTtSemiLepEvent) #important
 #process.ele_extra = cms.Path(process.mvaID + process.pfIsolationSequence)
 #process.ele_embed = cms.Path(process.EleEmbedSequence)
 
 
-#process.p  = cms.Path(process.allEventsFilter*process.basePreSel*process.myMiniTreeProducer)
 process.p  = cms.Path(process.allEventsFilter*process.basePreSel*process.myMiniTreeProducer)
 
 # checking
-process.schedule = cms.Schedule(process.p)
+#process.schedule = cms.Schedule( process.kineFit, process.p)
+#process.schedule = cms.Schedule(process.p, process.kineFit)
+#process.schedule = cms.Schedule(process.p)
 
 
 #process.p  = cms.Path( process.basePreSel*process.myMiniTreeProducer)
@@ -103,6 +104,7 @@ process.schedule = cms.Schedule(process.p)
 #process.schedule = cms.Schedule(process.ele_extra, process.pat_default, process.met_extra, process.ele_embed, process.kineFit, process.p)
 
 #process.schedule = cms.Schedule(process.met_extra, process.kineFit, process.p)
+process.schedule = cms.Schedule(process.kineFit, process.p)
 
 #process.schedule = cms.Schedule(process.met_extra, process.p) #important
 

@@ -59,8 +59,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFit, status_);
       iEvent.getByLabel(probOfFit, prob_);
       iEvent.getByLabel(njetsOfFit, njets_);
-      std::cout<<chi2_->size()<<endl;
-      //std::cout<<*njets_<<endl;
+      std::cout<<" Number of jets = "<<*njets_<<endl;
     }catch(std::exception &e){
       std::cout<<" KineFitter product is not available"<<std::endl;
     }
@@ -69,6 +68,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFitUp, statusUp_); 
       iEvent.getByLabel(probOfFitUp, probUp_); 
       iEvent.getByLabel(njetsOfFitUp, njetsUp_); 
+      std::cout<<" Number of jetsUP = "<<*njetsUp_<<endl;
     }catch(std::exception &e){ 
       std::cout<<" KineFitter product for JES Up is not available"<<std::endl; 
     } 
@@ -77,6 +77,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFitDown, statusDown_);  
       iEvent.getByLabel(probOfFitDown, probDown_);  
       iEvent.getByLabel(njetsOfFitDown, njetsDown_);  
+      std::cout<<" Number of jetsDown = "<<*njetsDown_<<endl;
     }catch(std::exception &e){  
       std::cout<<" KineFitter product for JES Down is not available"<<std::endl;  
     }  
@@ -85,6 +86,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFitJERUp, statusJerUp_);  
       iEvent.getByLabel(probOfFitJERUp, probJerUp_);  
       iEvent.getByLabel(njetsOfFitJERUp, njetsJerUp_);  
+      std::cout<<" Number of jetsJerUP = "<<*njetsJerUp_<<endl;
     }catch(std::exception &e){  
       std::cout<<" KineFitter product for JER Up is not available"<<std::endl;  
     }  
@@ -105,12 +107,11 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	std::string tag(rawtag);
 	TString label = sit->label();
 	std::string moduleLabel(label);
-	//cout<<moduleLabel<<":"<<tag<<endl;
+	cout<<moduleLabel<<":"<<tag<<endl;
 	
 	edm::Handle<pat::ParticleCollection>ikfps;
 	try{
 	  iEvent.getByLabel( *sit, ikfps);
-	  //iEvent.getByToken( *sit, ikfps);
 	cout<<"Number of KinFit Particles = "<< ikfps->size() <<endl;
 	}catch(std::exception &e){
 	  continue;
@@ -138,7 +139,8 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
               newKfp.njetsOfFit = *njetsDown_;  
 	      //std::cout<<" JES Down chi2 "<<newKfp.chi2OfFit<<std::endl;
             }
-	    else if(moduleLabel.find("JERUp")!=std::string::npos){ 
+
+        else if(moduleLabel.find("JERUp")!=std::string::npos){ 
               newKfp.chi2OfFit = chi2JerUp_->size()>0 ? (*chi2JerUp_)[0] : 999.;  
               newKfp.statusOfFit = statusJerUp_->size()>0 ? (*statusJerUp_)[0] : 0;  
               newKfp.probOfFit = probJerUp_->size() > 0 ? (*probJerUp_)[0] : 0;  
@@ -152,16 +154,21 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
               newKfp.njetsOfFit = *njetsJerDown_;   
 	      //std::cout<<" JER Down chi2 "<<newKfp.chi2OfFit<<std::endl; 
             }
-	    else{
+
+        else{
 	      newKfp.chi2OfFit = chi2_->size()>0 ? (*chi2_)[0] : 999.;
-	      newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
-	      newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
-	      newKfp.njetsOfFit = *njets_;
-	    }
-	    selKFParticles.push_back(newKfp);
+          std::cout<<"chi2_ ======== "<<chi2_->size()<<endl;
+          // //newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
+	     //// newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
+	     ////newKfp.njetsOfFit = *njets_;
+	     newKfp.njetsOfFit = 5;
+	        }
+
+        selKFParticles.push_back(newKfp);
 	  }
-      fs_->cd();
-      }
+    fs_->cd();
+  
+    }
       
   }catch(std::exception &e){
     std::cout << "[KineFitParticle Collection] : check selection " << e.what() << std::endl;
@@ -179,8 +186,8 @@ MyKineFitParticle MyEventSelection::MyKineFitPartConverter(const pat::Particle& 
   newKFP.p4.SetCoordinates(ikfp.px(), ikfp.py(), ikfp.pz(), ikfp.energy());
   newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
   
-  //newKFP.part_id = ikfp.pid();
-  //newKFP.part_mother_id = ikfp.motherID();
+//  newKFP.part_id = ikfp.pid();
+//  newKFP.part_mother_id = ikfp.motherID();
   newKFP.charge = ikfp.charge();
 
 

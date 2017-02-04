@@ -163,10 +163,19 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("slimmedMETs")
     #process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
     #process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+    #process.kinFitSequence = cms.Sequence(process.kinFitTtSemiLepEvent*process.kinFitTtSemiLepEventJESUp*process.kinFitTtSemiLepEventJESDown*process.kinFitTtSemiLepEventJERUp*process.kinFitTtSemiLepEventJERDown)
+    process.kinFitSequence = cms.Sequence(process.kinFitTtSemiLepEvent)
     ''''
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent, process.scaledJetEnergyNominal * process.cleanPatJetsNominal * process.kinFitTtSemiLepEvent)
     '''
-    print "jets used in Kinematic fit : ", process.kinFitTtSemiLepEvent.jets
+    print " "
+    print "/////////////////////////////////////////////////////////////////"
+    print "//                    Applying KinFit                          //"
+    print "//                                                             //"
+    print "// jets used in Kinematic fit : ", process.kinFitTtSemiLepEvent.jets
+    print "//                                                             //"
+    print "/////////////////////////////////////////////////////////////////"
+    print " "
     #print "jet input to cleanPatJetsResCor : ", process.cleanPatJetsResCor.src
