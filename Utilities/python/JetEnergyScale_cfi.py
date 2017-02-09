@@ -1,10 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 scaledJetEnergy = cms.EDProducer("JetEnergyScale",
-    inputJets            = cms.InputTag("slimmedJets"),
-    inputMETs            = cms.InputTag("slimmedMETs"),
-    #inputJets            = cms.InputTag("patJets"),
-    #inputMETs            = cms.InputTag("patMETs"),
+    inputJets            = cms.InputTag("patJets"),
+    inputMETs            = cms.InputTag("patMETs"),
     scaleFactor          = cms.double(1.0),
     scaleFactorB         = cms.double(1.0),
     scaleType            = cms.string("abs"), #abs or rel(*eta) or jes:up / jes:down (pt-dependend)

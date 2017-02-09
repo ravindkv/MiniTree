@@ -29,9 +29,9 @@ def addTriggerMatchExtra(process, eleTrigList=['HLT_Ele10_LW_L1R'], muTrigList=[
         eleTrig = eleTrig + 'path("'
         eleTrig = eleTrig + trig
         eleTrig = eleTrig + '")'
-        
+
     trigMatchModules=[]
-    
+
     # muons
     if( len(muTrigList) > 0 ):
         #from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanMuonTriggerMatchHLTMu20
@@ -43,11 +43,11 @@ def addTriggerMatchExtra(process, eleTrigList=['HLT_Ele10_LW_L1R'], muTrigList=[
         #process.MuonsTrigMatch.matchedCuts = cms.string( 'path( "HLT_*" )' )
         trigMatchModules.append('MuonsTrigMatch')
 
-        if(addPF2PAT):        
+        if(addPF2PAT):
             process.MuonsPFlowTrigMatch = process.MuonsTrigMatch.clone()
             process.MuonsPFlowTrigMatch.src = cms.InputTag("selectedPatMuonsPFlow")
             trigMatchModules.append('MuonsPFlowTrigMatch')
-            
+
     # electrons
     if( len(eleTrigList) > 0 ):
         #from PhysicsTools.PatAlgos.triggerLayer1.triggerMatcher_cfi import cleanElectronTriggerMatchHLTEle27CaloIdVTCaloIsoTTrkIdTTrkIsoT
@@ -74,11 +74,11 @@ def addTriggerMatchExtra(process, eleTrigList=['HLT_Ele10_LW_L1R'], muTrigList=[
         process.JetsTrigMatch.matchedCuts = cms.string( jetTrig )
         #process.JetsTrigMatch.matchedCuts = cms.string( 'path( "HLT_*" )' )
         trigMatchModules.append('JetsTrigMatch')
-        
+
         #process.JetsAK5PFTrigMatch = process.JetsTrigMatch.clone()
         #process.JetsAK5PFTrigMatch.src = cms.InputTag("selectedPatJetsAK5PF")
         #trigMatchModules.append('JetsAK5PFTrigMatch')
-        
+
         if(addPF2PAT):
             process.JetsPFlowTrigMatch = process.JetsTrigMatch.clone()
             process.JetsPFlowTrigMatch.src = cms.InputTag("selectedPatJetsPFlow")
@@ -86,9 +86,13 @@ def addTriggerMatchExtra(process, eleTrigList=['HLT_Ele10_LW_L1R'], muTrigList=[
 
     #init trigger match embedding
     if(len(trigMatchModules)>0) :
-        print '**** Creating trigger match sequence ****'
-        print trigMatchModules
+        print ""
+        print "--------------------------------------------------------------------"
+        print "*                    addTriggerMatchExtra                          *"
+        print "*                                                                  *"
+        print "* Creating trigger match sequence                                  *"
+        print "*", trigMatchModules
+        print "*                                                                  *"
         switchOnTriggerMatching( process, trigMatchModules, hltProcess=trigMenu)
         #removeCleaningFromTriggerMatching(process)
-        print '*****************************************'
-        
+

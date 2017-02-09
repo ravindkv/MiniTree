@@ -1,27 +1,25 @@
 import FWCore.ParameterSet.Config as cms
-#from MiniTree.Utilities.JetEnergyScale_cfi import *
+
+from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
+from MiniTree.Utilities.JetEnergyScale_cfi import *
 
 process = cms.Process("TEST")
 ## std sequence to produce the kinematic fit for semi-leptonic events
 #process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
-
 ## define input
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
 )
-
 ## define maximal number of events to loop over
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50)
+    input = cms.untracked.int32(10)
 )
-
 ## configure process options
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True),
     wantSummary      = cms.untracked.bool(True),
-    #SkipEvent        = cms.untracked.vstring('ProductNotFound')
+    SkipEvent        = cms.untracked.vstring('ProductNotFound')
 )
-
 ## configure geometry & conditions
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
@@ -30,9 +28,50 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
 #process.load("Configuration.StandardSequences.MagneticField_cff")
 
-######################### KinFit
+#=========================================================
 
+## std sequence to produce the kinematic fit for semi-leptonic events
 process.load("TopQuarkAnalysis.TopKinFitter.TtSemiLepKinFitProducer_Muons_cfi")
+#from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
+process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
+
+#apply selections on muon
+
+process.selectedPatMuons.src = cms.InputTag("slimmedMuons")
+process.cleanPatMuons.preselection = cms.string("pt>25 && abs(eta)<2.1"+
+" && isGlobalMuon && isPFMuon && isTrackerMuon" +
+" && globalTrack.isNonnull "+
+" && globalTrack.normalizedChi2<10"+
+" && globalTrack.hitPattern.numberOfValidMuonHits>0"+
+" && numberOfMatchedStations>1"+
+" && innerTrack.hitPattern.numberOfValidPixelHits>0"+
+" && track.hitPattern.trackerLayersWithMeasurement > 5"+
+" && dB() < 0.2"+
+" && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.30"
+)
+
+#clean jets from muons
+process.selectedPatJets.src = cms.InputTag("slimmedJets")
+process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
+process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
+
+#only used for data
+process.cleanPatJetsResCor = process.cleanPatJets.clone()
+process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
+process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
+
+#smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
+process.scaledJetEnergyNominal = scaledJetEnergy.clone()
+process.scaledJetEnergyNominal.inputJets = "slimmedJets"
+process.scaledJetEnergyNominal.inputMETs = "slimmedMETs"
+process.scaledJetEnergyNominal.scaleType = "jer"
+process.scaledJetEnergyNominal.resolutionEtaRanges = cms.vdouble(
+0.0, 0.5, 0.5, 1.1, 1.1, 1.7, 1.7, 2.3, 2.3, -1.0 )
+process.scaledJetEnergyNominal.resolutionFactors = cms.vdouble(
+1.052, 1.057, 1.096, 1.134, 1.288 )
+
+############################################ KinFit
+
 process.kinFitTtSemiLepEvent.constraints = [1,2]
 process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
 process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
@@ -42,22 +81,21 @@ process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
 # The following variables are defined in :
 # TopQuarkAnalysis/TopKinFitter/python/TtSemiLepKinFitProducer_Muons_cfi.py
 process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
-#process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-#process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
+process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
 '''
 if isData:
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
 '''
 # The following variables are defined in :
 # TopQuarkAnalysis/TopKinFitter/plugins/TtSemiLepKinFitProducer.h
-'''
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
 process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
 process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
 process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
 process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
-'''
+
 
 '''
 if not isData :
@@ -73,7 +111,7 @@ if not isData :
     process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 '''
 
-######################## set b-tagging in KineFit
+# set b-tagging in KineFit
 
 #process.kinFitTtSemiLepEvent.bTagAlgo  = cms.string("combinedSecondaryVertexBJetTags")
 #process.kinFitTtSemiLepEvent.bTagAlgo  = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
@@ -82,40 +120,6 @@ process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.679)
 process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
 #process.kinFitTtSemiLepEvent.useBTagging   = cms.bool(True)
 
-'''
-#smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
-process.scaledJetEnergyNominal = scaledJetEnergy.clone()
-process.scaledJetEnergyNominal.inputJets = "slimmedJets"
-process.scaledJetEnergyNominal.inputMETs = "slimmedMETs"
-process.scaledJetEnergyNominal.scaleType = "jer"
-process.scaledJetEnergyNominal.resolutionEtaRanges = cms.vdouble(
-0.0, 0.5, 0.5, 1.1, 1.1, 1.7, 1.7, 2.3, 2.3, -1.0 )
-process.scaledJetEnergyNominal.resolutionFactors = cms.vdouble(
-1.052, 1.057, 1.096, 1.134, 1.288 )
-
-#apply selections on muon
-process.selectedPatMuons.src = cms.InputTag("slimmedMuons")
-process.cleanPatMuons.preselection = cms.string("pt>25 && abs(eta)<2.1"+
-" && isGlobalMuon && isPFMuon && isTrackerMuon" +
-" && globalTrack.isNonnull "+
-" && globalTrack.normalizedChi2<10"+
-" && globalTrack.hitPattern.numberOfValidMuonHits>0"+
-" && numberOfMatchedStations>1"+
-" && innerTrack.hitPattern.numberOfValidPixelHits>0"+
-" && track.hitPattern.trackerLayersWithMeasurement > 5"+
-" && dB() < 0.2"+
-" && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.30"
-)
-#clean jets from muons
-process.selectedPatJets.src = cms.InputTag("slimmedJets")
-process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
-process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
-
-#only used for data
-process.cleanPatJetsResCor = process.cleanPatJets.clone()
-process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
-process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
-'''
 ##########################  Add JES Up and Down and Rerun the KineFitter
 
 # The following variables are defined in :

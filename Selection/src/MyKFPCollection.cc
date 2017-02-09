@@ -59,7 +59,11 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFit, status_);
       iEvent.getByLabel(probOfFit, prob_);
       iEvent.getByLabel(njetsOfFit, njets_);
+      std::cout<<" Size of chi2 = "<<chi2_->size()<<endl;
       std::cout<<" Number of jets = "<<*njets_<<endl;
+      std::cout<<" Size of status = "<<status_->size()<<endl;
+      std::cout<<" Size of prob = "<<prob_->size()<<endl;
+      std::cout<<endl;
     }catch(std::exception &e){
       std::cout<<" KineFitter product is not available"<<std::endl;
     }
@@ -107,12 +111,12 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	std::string tag(rawtag);
 	TString label = sit->label();
 	std::string moduleLabel(label);
-	cout<<moduleLabel<<":"<<tag<<endl;
+	///cout<<moduleLabel<<":"<<tag<<endl;
 	
 	edm::Handle<pat::ParticleCollection>ikfps;
 	try{
 	  iEvent.getByLabel( *sit, ikfps);
-	cout<<"Number of KinFit Particles = "<< ikfps->size() <<endl;
+	///cout<<"Number of KinFit Particles = "<< ikfps->size() <<endl;
 	}catch(std::exception &e){
 	  continue;
 	}
@@ -157,11 +161,11 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 
         else{
 	      newKfp.chi2OfFit = chi2_->size()>0 ? (*chi2_)[0] : 999.;
-          std::cout<<"chi2_ ======== "<<chi2_->size()<<endl;
-          // //newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
-	     //// newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
-	     ////newKfp.njetsOfFit = *njets_;
-	     newKfp.njetsOfFit = 5;
+        ///  std::cout<<"chi2_ ======== "<<chi2_->size()<<endl;
+          ///newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
+	      ///newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
+	      ///newKfp.njetsOfFit = *njets_;
+	      newKfp.njetsOfFit = 5;
 	        }
 
         selKFParticles.push_back(newKfp);

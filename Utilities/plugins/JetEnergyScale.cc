@@ -166,6 +166,7 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     
     // consider jet scale shift only if the raw jet pt and emf 
     // is above the thresholds given in the module definition
+    /*
     if(jet->correctedJet("Uncorrected").pt() > jetPTThresholdForMET_
        && ((!jet->isPFJet() && jet->emEnergyFraction() < jetEMLimitForMET_) ||
            ( jet->isPFJet() && jet->neutralEmEnergyFraction() + jet->chargedEmEnergyFraction() < jetEMLimitForMET_))) {
@@ -173,6 +174,10 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       dPy    += scaledJet.py() - jet->py();
       dSumEt += scaledJet.et() - jet->et();
     }
+    */
+      dPx    += scaledJet.px() - jet->px();
+      dPy    += scaledJet.py() - jet->py();
+      dSumEt += scaledJet.et() - jet->et();
   }
   
   // scale MET accordingly
@@ -227,8 +232,9 @@ JetEnergyScale::resolutionFactor(const pat::Jet& jet)
 void
 JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
 {
-  jet.scaleEnergy( factor );
-
+    std::cout<<"Jet energy has been scaled"<<std::endl;
+    jet.scaleEnergy( factor );
+/*
   if(jet.isPFJet()){
     pat::PFSpecific specificPF = jet.pfSpecific();
     specificPF.mChargedHadronEnergy = factor * specificPF.mChargedHadronEnergy;
@@ -271,6 +277,7 @@ JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
       jet.setJPTSpecific(specificJPT);
     }
   }
+ */ 
 }
 
 //define this as a plug-in

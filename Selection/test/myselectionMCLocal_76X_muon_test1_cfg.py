@@ -5,13 +5,14 @@ import FWCore.ParameterSet.Config as cms
 from MiniTree.Selection.LocalRunSkeleton_cff import *
 from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
-process.maxEvents.input = cms.untracked.int32(10)
+process.maxEvents.input = cms.untracked.int32(100)
 process.TFileService.fileName = cms.string('bb.root')
 
 # config parameters ------------------------------------------------------------
 procName='LOCALUSER'
 #process.source.fileNames = ["file:TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_MINIAODSIM.root"]
 #process.source.fileNames = ["/store/mc/RunIISpring16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/90000/FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
+#process.source.fileNames = ["file:/afs/cern.ch/work/r/rverma/private/genProd_13TeV_signal/local_genProd/CMSSW_7_1_20/src/root_files/mini_AODSIM.root"]
 process.source.fileNames = ["/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root"]
 #process.source.fileNames = ["/store/mc/RunIISpring15FSPremix/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/MCRUN2_74_V9-v1/10000/0036D0D2-BC5F-E511-AEEB-00259073E4BE.root"]
 #process.source.fileNames = ["/store/mc/RunIIFall15MiniAODv2/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/00D010B5-1EB9-E511-B950-02163E014965.root"]
