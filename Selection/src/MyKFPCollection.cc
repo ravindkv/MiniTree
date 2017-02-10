@@ -67,6 +67,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
     }catch(std::exception &e){
       std::cout<<" KineFitter product is not available"<<std::endl;
     }
+      //std::cout<<" Size of prob ===== "<<prob_->size()<<endl;
     try{ 
       iEvent.getByLabel( chi2OfFitUp, chi2Up_); 
       iEvent.getByLabel(statusOfFitUp, statusUp_); 

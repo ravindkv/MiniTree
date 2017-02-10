@@ -26,22 +26,20 @@ def addSemiLepKinFitMuon(process, isData=False) :
                                                     " && track.hitPattern.trackerLayersWithMeasurement > 5"+
                                                     " && dB() < 0.2"+
                                                     " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.30")
-
+    #these inputs are required for cleanPatJets
     process.selectedPatElectrons.src = cms.InputTag("slimmedElectrons")
     process.selectedPatPhotons.src = cms.InputTag("slimmedPhotons")
     process.selectedPatTaus.src = cms.InputTag("slimmedTaus")
-    process.selectedPatJets.src = cms.InputTag("slimmedJets")
 
     #clean jets from muons
+    process.selectedPatJets.src = cms.InputTag("slimmedJets")
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
     #only used for data
-
     process.cleanPatJetsResCor = process.cleanPatJets.clone()
     process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
     process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
-
 
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
     process.scaledJetEnergyNominal = scaledJetEnergy.clone()
