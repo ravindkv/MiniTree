@@ -3,6 +3,11 @@ import FWCore.ParameterSet.Config as cms
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 from MiniTree.Utilities.JetEnergyScale_cfi import *
 
+#from PhysicsTools.PatAlgos.selectionLayer1.muonSelector_cfi import *
+#from PhysicsTools.PatAlgos.cleaningLayer1.muonCleaner_cfi import *
+#from PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi import *
+#from PhysicsTools.PatAlgos.cleaningLayer1.jetCleaner_cfi import *
+
 def addSemiLepKinFitMuon(process, isData=False) :
 
     ## std sequence to produce the kinematic fit for semi-leptonic events
@@ -10,7 +15,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
 
     #apply selections on muon
-    process.cleanPatMuons.src = cms.InputTag("slimmedMuons")
+    process.selectedPatMuons.src = cms.InputTag("slimmedMuons")
     process.cleanPatMuons.preselection = cms.string("pt>25 && abs(eta)<2.1"+
                                                     " && isGlobalMuon && isPFMuon && isTrackerMuon" +
                                                     " && globalTrack.isNonnull "+
@@ -20,14 +25,19 @@ def addSemiLepKinFitMuon(process, isData=False) :
                                                     " && innerTrack.hitPattern.numberOfValidPixelHits>0"+
                                                     " && track.hitPattern.trackerLayersWithMeasurement > 5"+
                                                     " && dB() < 0.2"+
-                                                    " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.30"
-                                                    )
+                                                    " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.30")
+
+    process.selectedPatElectrons.src = cms.InputTag("slimmedElectrons")
+    process.selectedPatPhotons.src = cms.InputTag("slimmedPhotons")
+    process.selectedPatTaus.src = cms.InputTag("slimmedTaus")
+    process.selectedPatJets.src = cms.InputTag("slimmedJets")
+
     #clean jets from muons
-    process.cleanPatJets.src = cms.InputTag("slimmedJets")
-    process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
+    process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
     #only used for data
+
     process.cleanPatJetsResCor = process.cleanPatJets.clone()
     process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
     process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
@@ -131,12 +141,15 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
     process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
-    #process.kinFitSequence = cms.Sequence(process.kinFitTtSemiLepEvent)
 
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
-                process.scaledJetEnergyNominal* process.cleanPatMuons*
+                process.scaledJetEnergyNominal* process.selectedPatMuons*
+                process.selectedPatElectrons* process.selectedPatPhotons*
+                process.selectedPatTaus* process.selectedPatJets*
+                process.cleanPatMuons* process.cleanPatElectrons*
+                process.cleanPatPhotons*process.cleanPatTaus*
                 process.cleanPatJets* process.cleanPatJetsNominal*
                 process.kinFitTtSemiLepEvent* process.scaledJetEnergyUp*
                 process.cleanPatJetsJESUp* process.kinFitTtSemiLepEventJESUp*
@@ -151,7 +164,8 @@ def addSemiLepKinFitMuon(process, isData=False) :
     print "//                   addSemiLepKinFitMuon                             //"
     print "//                                                                    //"
     print "// jets used in Kinematic fit: ", process.kinFitTtSemiLepEvent.jets,"  //"
-    print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
+    #print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
     print "//                                                                    //"
     print "////////////////////////////////////////////////////////////////////////"
     print " "
+

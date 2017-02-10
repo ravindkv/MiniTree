@@ -5,7 +5,7 @@ import FWCore.ParameterSet.Config as cms
 from MiniTree.Selection.LocalRunSkeleton_cff import *
 from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
-process.maxEvents.input = cms.untracked.int32(100)
+process.maxEvents.input = cms.untracked.int32(1000)
 process.TFileService.fileName = cms.string('bb.root')
 
 # config parameters ------------------------------------------------------------

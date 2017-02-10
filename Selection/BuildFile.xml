@@ -16,6 +16,7 @@
 <use name="boost"/>
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="PhysicsTools/PatUtils"/>
+<use name="PhysicsTools/PatAlgos"/>
 <use name="PhysicsTools/Utilities"/>
 <use name="FWCore/ServiceRegistry"/>
 <use name="CondFormats/JetMETObjects"/>
