@@ -3,11 +3,6 @@ import FWCore.ParameterSet.Config as cms
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 from MiniTree.Utilities.JetEnergyScale_cfi import *
 
-#from PhysicsTools.PatAlgos.selectionLayer1.muonSelector_cfi import *
-#from PhysicsTools.PatAlgos.cleaningLayer1.muonCleaner_cfi import *
-#from PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi import *
-#from PhysicsTools.PatAlgos.cleaningLayer1.jetCleaner_cfi import *
-
 def addSemiLepKinFitMuon(process, isData=False) :
 
     ## std sequence to produce the kinematic fit for semi-leptonic events

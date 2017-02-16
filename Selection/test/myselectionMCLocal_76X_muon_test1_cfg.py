@@ -6,7 +6,7 @@ from MiniTree.Selection.LocalRunSkeleton_cff import *
 from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
 process.maxEvents.input = cms.untracked.int32(100)
-process.TFileService.fileName = cms.string('ntuple_13TeV.root')
+process.TFileService.fileName = cms.string('ntuple_13TeV_Muons.root')
 
 # config parameters ------------------------------------------------------------
 procName='LOCALUSER'

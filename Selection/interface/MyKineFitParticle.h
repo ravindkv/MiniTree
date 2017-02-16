@@ -25,9 +25,9 @@ class MyKineFitParticle
   double charge;
 
   double chi2OfFit;
-  double statusOfFit;
+  int statusOfFit;
   double probOfFit;
-  double njetsOfFit;
+  int njetsOfFit;
 
  private :
 

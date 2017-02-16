@@ -25,6 +25,15 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
   jetPTThresholdForMET_(cfg.getParameter<double>       ("jetPTThresholdForMET")),
   jetEMLimitForMET_    (cfg.getParameter<double>       ("jetEMLimitForMET"    ))
 {
+
+  //Jets
+  //edm::EDGetTokenT <pat::JetCollection>jetToken;
+  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+
+  //Mets
+  //edm::EDGetTokenT <pat::METCollection>metToken;
+  metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
+
   // define allowed types
   allowedTypes_.push_back(std::string("abs"));
   allowedTypes_.push_back(std::string("rel"));
@@ -64,15 +73,21 @@ void
 JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
 {
   // access jets
-  edm::Handle<std::vector<pat::Jet> > jets;
-  event.getByLabel(inputJets_, jets);
+  //edm::Handle<std::vector<pat::Jet> > jets;
+  //event.getByLabel(inputJets_, jets);
+  edm::Handle<pat::JetCollection>jets;
+  event.getByToken(jetToken, jets);
   // access MET
-  edm::Handle<std::vector<pat::MET> > mets;
-  event.getByLabel(inputMETs_, mets);
+  //edm::Handle<std::vector<pat::MET> > mets;
+  //event.getByLabel(inputMETs_, mets);
+  edm::Handle<pat::METCollection>mets;
+  event.getByToken( metToken, mets);
   
   // create two new collections for jets and MET
-  std::auto_ptr<std::vector<pat::Jet> > pJets(new std::vector<pat::Jet>);
-  std::auto_ptr<std::vector<pat::MET> > pMETs(new std::vector<pat::MET>);
+  //std::auto_ptr<std::vector<pat::Jet> > pJets(new std::vector<pat::Jet>);
+  //std::auto_ptr<std::vector<pat::MET> > pMETs(new std::vector<pat::MET>);
+  std::auto_ptr<pat::JetCollection > pJets(new pat::JetCollection);
+  std::auto_ptr<pat::METCollection> pMETs(new pat::METCollection);
 
   // loop ans rescale jets
   double dPx = 0., dPy = 0., dSumEt = 0.;
@@ -166,7 +181,8 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     
     // consider jet scale shift only if the raw jet pt and emf 
     // is above the thresholds given in the module definition
-    /*
+
+    
     if(jet->correctedJet("Uncorrected").pt() > jetPTThresholdForMET_
        && ((!jet->isPFJet() && jet->emEnergyFraction() < jetEMLimitForMET_) ||
            ( jet->isPFJet() && jet->neutralEmEnergyFraction() + jet->chargedEmEnergyFraction() < jetEMLimitForMET_))) {
@@ -174,10 +190,7 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       dPy    += scaledJet.py() - jet->py();
       dSumEt += scaledJet.et() - jet->et();
     }
-    */
-      dPx    += scaledJet.px() - jet->px();
-      dPy    += scaledJet.py() - jet->py();
-      dSumEt += scaledJet.et() - jet->et();
+    
   }
   
   // scale MET accordingly
@@ -232,9 +245,9 @@ JetEnergyScale::resolutionFactor(const pat::Jet& jet)
 void
 JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
 {
-    std::cout<<"Jet energy has been scaled"<<std::endl;
+    factor = 2.4;
     jet.scaleEnergy( factor );
-/*
+
   if(jet.isPFJet()){
     pat::PFSpecific specificPF = jet.pfSpecific();
     specificPF.mChargedHadronEnergy = factor * specificPF.mChargedHadronEnergy;
@@ -277,7 +290,7 @@ JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
       jet.setJPTSpecific(specificJPT);
     }
   }
- */ 
+  
 }
 
 //define this as a plug-in

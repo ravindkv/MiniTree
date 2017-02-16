@@ -6,6 +6,12 @@
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
+//----------------- 13TeV -----------------------
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/Particle.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
+
 /**
    \class   JetEnergyScale JetEnergyScale.h "TopAnalysis/TopUtils/plugins/JetEnergyScale.h"
 
@@ -93,6 +99,9 @@ class JetEnergyScale : public edm::EDProducer {
   double jetEMLimitForMET_;
   /// allowed scaleTypes
   std::vector<std::string> allowedTypes_;
+
+  edm::EDGetTokenT <pat::JetCollection>jetToken;
+  edm::EDGetTokenT <pat::METCollection>metToken;
 };
 
 #endif
