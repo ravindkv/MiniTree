@@ -1,6 +1,6 @@
 #include "MiniTree/Selection/interface/MyEventSelection.h"
 //--------------
-#include "TopQuarkAnalysis/TopKinFitter/plugins/TtSemiLepKinFitProducer.h"
+//#include "TopQuarkAnalysis/TopKinFitter/plugins/TtSemiLepKinFitProducer.h"
 //--------------
 std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
@@ -61,8 +61,6 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(njetsOfFit, njets_);
       std::cout<<" Size of chi2 = "<<chi2_->size()<<endl;
       std::cout<<" Number of jets = "<<*njets_<<endl;
-      std::cout<<" Size of status = "<<status_->size()<<endl;
-      std::cout<<" Size of prob = "<<prob_->size()<<endl;
       std::cout<<endl;
     }catch(std::exception &e){
       std::cout<<" KineFitter product is not available"<<std::endl;
@@ -73,7 +71,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
       iEvent.getByLabel(statusOfFitUp, statusUp_); 
       iEvent.getByLabel(probOfFitUp, probUp_); 
       iEvent.getByLabel(njetsOfFitUp, njetsUp_); 
-      //std::cout<<" Number of jetsUP = "<<*njetsUp_<<endl;
+      std::cout<<" Number of jetsUP = "<<*njetsUp_<<endl;
     }catch(std::exception &e){ 
       std::cout<<" KineFitter product for JES Up is not available"<<std::endl; 
     } 
@@ -136,6 +134,8 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
              /// newKfp.statusOfFit = statusUp_->size()>0 ? (*statusUp_)[0] : 0; 
              /// newKfp.probOfFit = probUp_->size() > 0 ? (*probUp_)[0] : 0; 
              /// newKfp.njetsOfFit = *njetsUp_; 
+          
+          //std::cout<<" Number of jetsUP = "<<*njetsUp_<<endl;
 	      std::cout<<" JES UP chi2 =  "<<newKfp.chi2OfFit<<std::endl;
 	    }
 	    
@@ -151,7 +151,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
               newKfp.chi2OfFit = chi2JerUp_->size()>0 ? (*chi2JerUp_)[0] : 999.;  
              /// newKfp.statusOfFit = statusJerUp_->size()>0 ? (*statusJerUp_)[0] : 0;  
              /// newKfp.probOfFit = probJerUp_->size() > 0 ? (*probJerUp_)[0] : 0;  
-             /// newKfp.njetsOfFit = *njetsJerUp_;  
+              ///newKfp.njetsOfFit = *njetsJerUp_;  
 	      std::cout<<" JER UP chi2 =  "<<newKfp.chi2OfFit<<std::endl; 
             } 
         
@@ -168,7 +168,8 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
           ///newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
 	      ///newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
 	      ///newKfp.njetsOfFit = *njets_;
-          std::cout<<"chi2 =  "<<chi2_->size()<<endl;
+          //std::cout<<" Number of jets = "<<*njets_<<endl;
+          std::cout<<" chi2 =  "<<chi2_->size()<<endl;
 	        }
       
         selKFParticles.push_back(newKfp);
@@ -193,11 +194,10 @@ MyKineFitParticle MyEventSelection::MyKineFitPartConverter(const pat::Particle& 
   newKFP.p4.SetCoordinates(ikfp.px(), ikfp.py(), ikfp.pz(), ikfp.energy());
   newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
   
-//  newKFP.part_id = ikfp.pid();
-//  newKFP.part_mother_id = ikfp.motherID();
+  //newKFP.part_id = ikfp.pid();
+  //newKFP.part_mother_id = ikfp.motherID();
   newKFP.charge = ikfp.charge();
-
-
+  
   return newKFP;
 }
 

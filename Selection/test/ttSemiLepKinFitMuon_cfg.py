@@ -13,7 +13,7 @@ process.source = cms.Source("PoolSource",
 )
 ## define maximal number of events to loop over
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(100)
 )
 ## configure process options
 process.options = cms.untracked.PSet(
@@ -58,13 +58,14 @@ process.selectedPatJets.src = cms.InputTag("slimmedJets")
 #process.patJetCorrFactors.primaryVertices = "offlineSlimmedPrimaryVertices"
 
 #clean jets from muons
+process.selectedPatJets.src = cms.InputTag("slimmedJets")
 process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
 process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
 #only used for data
-#process.cleanPatJetsResCor = process.cleanPatJets.clone()
-#process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
-#process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
+process.cleanPatJetsResCor = process.cleanPatJets.clone()
+process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
+process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
 
 
 #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
@@ -109,7 +110,7 @@ if not isData :
 process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("combinedSecondaryVertexBJetTags")
 process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
 process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
-process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
+process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(False)
 
 # Add JES Up and Down and Rerun the KineFitter
 # JESUp
@@ -165,15 +166,37 @@ process.kinFitTtSemiLepEventJERDown = process.kinFitTtSemiLepEvent.clone()
 process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
 process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
 
+'''
+process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+if not isData :
+    process.kinFitSequence.remove(process.cleanPatJetsResCor)
+    process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
+            process.scaledJetEnergyNominal* process.selectedPatMuons*
+            process.selectedPatElectrons* process.selectedPatPhotons*
+            process.selectedPatTaus* process.selectedPatJets*
+            process.cleanPatMuons* process.cleanPatElectrons*
+            process.cleanPatPhotons*process.cleanPatTaus*
+            process.cleanPatJets* process.cleanPatJetsNominal*
+            process.kinFitTtSemiLepEvent* process.scaledJetEnergyUp*
+            process.cleanPatJetsJESUp* process.kinFitTtSemiLepEventJESUp*
+            process.scaledJetEnergyDown* process.cleanPatJetsJESDown*
+            process.kinFitTtSemiLepEventJESDown* process.scaledJetEnergyResnUp*
+            process.cleanPatJetsResnUp* process.kinFitTtSemiLepEventJERUp*
+            process.scaledJetEnergyResnDown* process.cleanPatJetsResnDown*process.kinFitTtSemiLepEventJERDown)
+
+process.kineFit = cms.Path(process.kinFitSequence) #cms.Path(process.kinFitTtSemiLepEvent) #important
+process.schedule = cms.Schedule(process.kineFit, process.p)
+'''
 ######################### OUTPUT
 ## configure output module
 process.out = cms.OutputModule("PoolOutputModule",
 fileName = cms.untracked.string('ttSemiLepKinFitMuon.root'),
 outputCommands = cms.untracked.vstring('drop *')
 )
-process.out.outputCommands += ['keep *']
-#process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent_*_*']
+#process.out.outputCommands += ['keep *']
+process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent_*_*']
 #process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent*_*_*']
 ## output path
 process.outpath = cms.EndPath(process.out)
+
 

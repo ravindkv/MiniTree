@@ -97,11 +97,12 @@ def addSemiLepKinFitElectron(process, isData=False) :
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
     #set b-tagging in KineFit
+    '''
     process.kinFitTtSemiLepEvent.bTagAlgo          = cms.string("combinedSecondaryVertexBJetTags")
     process.kinFitTtSemiLepEvent.minBDiscBJets     = cms.double(0.679)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
-    process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(True)
-
+    process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(False)
+    '''
     # Add JES Up and Down and Rerun the KineFitter
     # JESUp
     process.scaledJetEnergyUp = process.scaledJetEnergyNominal.clone()
