@@ -9,16 +9,17 @@ isData = False
 #process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
 ## define input
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
+        fileNames = cms.untracked.vstring('file:FEDED4C8-573B-E611-9ED6-0025904CF102.root')
+    #fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
 )
 ## define maximal number of events to loop over
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(50)
 )
 ## configure process options
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True),
-    wantSummary = cms.untracked.bool(True),
+   # wantSummary = cms.untracked.bool(True),
    # SkipEvent   = cms.untracked.vstring('ProductNotFound')
 )
 ## configure geometry & conditions
@@ -79,21 +80,25 @@ process.scaledJetEnergyNominal.resolutionFactors = cms.vdouble(
    1.052, 1.057, 1.096, 1.134, 1.288 )
 
 #change constraints on kineFit
+
 process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
 process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+# Putting maxNJets = All, will slow the code !!!!!!!
+process.kinFitTtSemiLepEvent.maxNJets = cms.int32(4)
 process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
 
 if isData:
    process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
-
 process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
 process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
+'''
 process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
 process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
 process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
 process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
 process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
+'''
+
 
 if not isData :
    process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble (
@@ -107,7 +112,7 @@ if not isData :
    process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
 #set b-tagging in KineFit
-process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("combinedSecondaryVertexBJetTags")
+process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedSecondaryVertexBJetTags")
 process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
 process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
 process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(False)
@@ -166,27 +171,6 @@ process.kinFitTtSemiLepEventJERDown = process.kinFitTtSemiLepEvent.clone()
 process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
 process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
 
-'''
-process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
-if not isData :
-    process.kinFitSequence.remove(process.cleanPatJetsResCor)
-    process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
-            process.scaledJetEnergyNominal* process.selectedPatMuons*
-            process.selectedPatElectrons* process.selectedPatPhotons*
-            process.selectedPatTaus* process.selectedPatJets*
-            process.cleanPatMuons* process.cleanPatElectrons*
-            process.cleanPatPhotons*process.cleanPatTaus*
-            process.cleanPatJets* process.cleanPatJetsNominal*
-            process.kinFitTtSemiLepEvent* process.scaledJetEnergyUp*
-            process.cleanPatJetsJESUp* process.kinFitTtSemiLepEventJESUp*
-            process.scaledJetEnergyDown* process.cleanPatJetsJESDown*
-            process.kinFitTtSemiLepEventJESDown* process.scaledJetEnergyResnUp*
-            process.cleanPatJetsResnUp* process.kinFitTtSemiLepEventJERUp*
-            process.scaledJetEnergyResnDown* process.cleanPatJetsResnDown*process.kinFitTtSemiLepEventJERDown)
-
-process.kineFit = cms.Path(process.kinFitSequence) #cms.Path(process.kinFitTtSemiLepEvent) #important
-process.schedule = cms.Schedule(process.kineFit, process.p)
-'''
 ######################### OUTPUT
 ## configure output module
 process.out = cms.OutputModule("PoolOutputModule",
@@ -194,8 +178,8 @@ fileName = cms.untracked.string('ttSemiLepKinFitMuon.root'),
 outputCommands = cms.untracked.vstring('drop *')
 )
 #process.out.outputCommands += ['keep *']
-process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent_*_*']
-#process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent*_*_*']
+#process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent_*_*']
+process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent*_*_*']
 ## output path
 process.outpath = cms.EndPath(process.out)
 
