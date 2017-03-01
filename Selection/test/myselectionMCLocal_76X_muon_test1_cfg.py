@@ -5,12 +5,12 @@ import FWCore.ParameterSet.Config as cms
 from MiniTree.Selection.LocalRunSkeleton_cff import *
 from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
-process.maxEvents.input = cms.untracked.int32(1000)
+process.maxEvents.input = cms.untracked.int32(500)
 process.TFileService.fileName = cms.string('ntuple_13TeV_Muons.root')
 
 # config parameters ------------------------------------------------------------
 procName='LOCALUSER'
-#process.source.fileNames = ["file:TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_MINIAODSIM.root"]
+#process.source.fileNames = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 process.source.fileNames = ["/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root"]
 
 trigMenu = 'HLT'

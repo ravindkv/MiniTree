@@ -18,18 +18,17 @@ process.MessageLogger.cerr.KinFitter = cms.untracked.PSet(
 #from TopQuarkAnalysis.TopEventProducers.tqafInputFiles_cff import relValTTbar
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
-    #fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
 )
 
 ## define maximal number of events to loop over
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50)
+    input = cms.untracked.int32(5000)
 
 )
 ## configure process options
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True),
-    wantSummary      = cms.untracked.bool(True)
+    #wantSummary      = cms.untracked.bool(True)
 )
 
 ## configure geometry & conditions
@@ -51,8 +50,6 @@ process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
 process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
 
 #change constraints on kineFit
-# The following variables are defined in :
-# TopQuarkAnalysis/TopKinFitter/python/TtSemiLepKinFitProducer_Muons_cfi.py
 process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
 #process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
 #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
@@ -67,20 +64,21 @@ process.kinFitTtSemiLepEvent.metResolutions  = metResolutionPF .functions
 process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
 '''
 ######################## set b-tagging in KineFit
-
-process.kinFitTtSemiLepEvent.bTagAlgo  = cms.string("combinedSecondaryVertexBJetTags")
-#process.kinFitTtSemiLepEvent.bTagAlgo  = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-#process.kinFitTtSemiLepEvent.bTagAlgo  = cms.string("pfCombinedSecondaryVertexV2BJetTags")
-process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.679)
+process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
+#process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.079)
+process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.0)
 process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
+process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
+
 ## configure output module
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('ttSemiLepKinFitProducer.root'),
     outputCommands = cms.untracked.vstring('drop *')
 )
-#process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent*_*_*']
-process.out.outputCommands += ['keep *']
+process.out.outputCommands += ['keep *_kinFitTtSemiLepEvent*_*_*']
+#process.out.outputCommands += ['keep *']
 
 ## output path
 process.outpath = cms.EndPath(process.out)
+
 
