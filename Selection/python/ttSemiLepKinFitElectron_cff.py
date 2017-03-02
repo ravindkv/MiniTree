@@ -16,11 +16,12 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values/sihih
     #ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values/dPhi
     #ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values/mvaIdTrig
+    #ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values/HoE
 
     #apply selections on electron
     simpleCutsVeto = "(" + \
                      " (isEB && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.010 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.80 && "+ \
-                     "          userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.007 && userFloat('HoE') <0.15)"   + \
+                     "          userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.007 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.15)"   + \
                      " || "  + \
                      " (isEE && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.030 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.70 && "+ \
                      "          userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.010)"   + \
@@ -74,7 +75,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #change constraints on kineFit
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+    #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(4)
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("slimmedJets")
     if isData:
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
@@ -97,12 +99,12 @@ def addSemiLepKinFitElectron(process, isData=False) :
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
     #set b-tagging in KineFit
-    '''
-    process.kinFitTtSemiLepEvent.bTagAlgo          = cms.string("combinedSecondaryVertexBJetTags")
-    process.kinFitTtSemiLepEvent.minBDiscBJets     = cms.double(0.679)
+    process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.0)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
-    process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(False)
-    '''
+    process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
+
     # Add JES Up and Down and Rerun the KineFitter
     # JESUp
     process.scaledJetEnergyUp = process.scaledJetEnergyNominal.clone()

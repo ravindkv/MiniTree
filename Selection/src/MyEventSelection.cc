@@ -12,13 +12,57 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   configParamsMETs_ = iConfig.getParameter<edm::ParameterSet>("Mets");
   configParamsMuons_ = iConfig.getParameter<edm::ParameterSet>("Muons");
   configParamsElectrons_ = iConfig.getParameter<edm::ParameterSet>("Electrons");
-//  configParamsTaus_ = iConfig.getParameter<edm::ParameterSet>("Taus");
+  //configParamsTaus_ = iConfig.getParameter<edm::ParameterSet>("Taus");
   configParamshlt_ = iConfig.getParameter<edm::ParameterSet>("Trigger");
   configParamsMC_ = iConfig.getParameter<edm::ParameterSet>("MCTruth");
   configParamsKFPs_ = iConfig.getParameter<edm::ParameterSet>("KineFit");
   runKineFitter_ = configParamsKFPs_.getParameter<bool>("runKineFitter");
+  
+  //KFP
+  //std::vector<edm::InputTag> sources = configParamsKFPs_.getParameter<std::vector<edm::InputTag> >("sources");
+  edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
+  edm::InputTag statusOfFit = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFit");
+  edm::InputTag probOfFit = configParamsKFPs_.getParameter<edm::InputTag>("probOfFit");
+  edm::InputTag njetsOfFit = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsed");
+  edm::InputTag chi2OfFitUp = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFitUp"); 
+  edm::InputTag statusOfFitUp = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFitUp"); 
+  edm::InputTag probOfFitUp = configParamsKFPs_.getParameter<edm::InputTag>("probOfFitUp"); 
+  edm::InputTag njetsOfFitUp = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsedUp"); 
+  edm::InputTag chi2OfFitDown = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFitDown");  
+  edm::InputTag statusOfFitDown = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFitDown");  
+  edm::InputTag probOfFitDown = configParamsKFPs_.getParameter<edm::InputTag>("probOfFitDown");  
+  edm::InputTag njetsOfFitDown = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsedDown");  
+  edm::InputTag chi2OfFitJERUp = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFitJERUp");  
+  edm::InputTag statusOfFitJERUp = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFitJERUp");  
+  edm::InputTag probOfFitJERUp = configParamsKFPs_.getParameter<edm::InputTag>("probOfFitJERUp");  
+  edm::InputTag njetsOfFitJERUp = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsedJERUp");  
+  edm::InputTag chi2OfFitJERDown = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFitJERDown");   
+  edm::InputTag statusOfFitJERDown = configParamsKFPs_.getParameter<edm::InputTag>("statusOfFitJERDown");   
+  edm::InputTag probOfFitJERDown = configParamsKFPs_.getParameter<edm::InputTag>("probOfFitJERDown");   
+  edm::InputTag njetsOfFitJERDown = configParamsKFPs_.getParameter<edm::InputTag>("njetsUsedJERDown");  
 
-
+  //ikfpSource = cc.consumes<pat::ParticleCollection>(sources); 
+  chi2OfFitSource = cc.consumes<vector<double>>(chi2OfFit); 
+  statusOfFitSource = cc.consumes<vector<int>>(statusOfFit); 
+  probOfFitSource = cc.consumes<vector<double>>(probOfFit); 
+  njetsOfFitSource = cc.consumes<int>(njetsOfFit); 
+  chi2OfFitUpSource = cc.consumes<vector<double>>(chi2OfFitUp); 
+  statusOfFitUpSource = cc.consumes<vector<int>>(statusOfFitUp); 
+  probOfFitUpSource = cc.consumes<vector<double>>(probOfFitUp); 
+  njetsOfFitUpSource = cc.consumes<int>(njetsOfFitUp); 
+  chi2OfFitDownSource = cc.consumes<vector<double>>(chi2OfFitDown); 
+  statusOfFitDownSource = cc.consumes<vector<int>>(statusOfFitDown); 
+  probOfFitDownSource = cc.consumes<vector<double>>(probOfFitDown); 
+  njetsOfFitDownSource = cc.consumes<int>(njetsOfFitDown); 
+  chi2OfFitJERUpSource = cc.consumes<vector<double>>(chi2OfFitJERUp); 
+  statusOfFitJERUpSource = cc.consumes<vector<int>>(statusOfFitJERUp); 
+  probOfFitJERUpSource = cc.consumes<vector<double>>(probOfFitJERUp); 
+  njetsOfFitJERUpSource = cc.consumes<int>(njetsOfFitJERUp); 
+  chi2OfFitJERDownSource = cc.consumes<vector<double>>(chi2OfFitJERDown); 
+  statusOfFitJERDownSource = cc.consumes<vector<int>>(statusOfFitJERDown); 
+  probOfFitJERDownSource = cc.consumes<vector<double>>(probOfFitJERDown); 
+  njetsOfFitJERDownSource = cc.consumes<int>(njetsOfFitJERDown); 
+  
   // vertex
   vtxSource = cc.consumes<reco::VertexCollection>(configParamsVertex_.getParameter<edm::InputTag>("vertexSource"));
   bsSource = cc.consumes<reco::BeamSpot>(configParamsVertex_.getParameter<edm::InputTag>("beamSpotSource"));

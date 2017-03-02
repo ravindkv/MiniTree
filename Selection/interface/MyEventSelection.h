@@ -167,6 +167,30 @@ private:
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
   edm::EDGetTokenT<reco::ConversionCollection> EleConversion_;
   edm::EDGetTokenT<double> eventrhoToken_;
+  
+  //KFP
+  //edm::EDGetTokenT <pat::ParticleCollection>ikfpSource;
+  edm::EDGetTokenT <vector<double>> chi2OfFitSource;
+  edm::EDGetTokenT <vector<int>> statusOfFitSource;
+  edm::EDGetTokenT <vector<double>> probOfFitSource;
+  edm::EDGetTokenT <int> njetsOfFitSource;
+  edm::EDGetTokenT <vector<double>> chi2OfFitUpSource;
+  edm::EDGetTokenT <vector<int>> statusOfFitUpSource;
+  edm::EDGetTokenT <vector<double>> probOfFitUpSource;
+  edm::EDGetTokenT <int> njetsOfFitUpSource;
+  edm::EDGetTokenT <vector<double>> chi2OfFitDownSource;
+  edm::EDGetTokenT <vector<int>> statusOfFitDownSource;
+  edm::EDGetTokenT <vector<double>> probOfFitDownSource;
+  edm::EDGetTokenT <int> njetsOfFitDownSource;
+  edm::EDGetTokenT <vector<double>> chi2OfFitJERUpSource;
+  edm::EDGetTokenT <vector<int>> statusOfFitJERUpSource;
+  edm::EDGetTokenT <vector<double>> probOfFitJERUpSource;
+  edm::EDGetTokenT <int> njetsOfFitJERUpSource;
+  edm::EDGetTokenT <vector<double>> chi2OfFitJERDownSource;
+  edm::EDGetTokenT <vector<int>> statusOfFitJERDownSource;
+  edm::EDGetTokenT <vector<double>> probOfFitJERDownSource;
+  edm::EDGetTokenT <int> njetsOfFitJERDownSource;
+ 
 
   // Jets
   edm::EDGetTokenT<pat::JetCollection> Jetsources;

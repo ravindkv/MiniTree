@@ -49,19 +49,20 @@ def addSemiLepKinFitMuon(process, isData=False) :
     #change constraints on kineFit
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
-    process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
-
-    if isData:
-        process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
-
-    process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
-    process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
+    # Putting maxNJets = All, will slow the code !!!!!!!
+    #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(4)
     process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
     process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
     process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
     process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
+
+    process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
+    if isData:
+        process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
+    process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
+    process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
 
     if not isData :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble (
@@ -75,12 +76,12 @@ def addSemiLepKinFitMuon(process, isData=False) :
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
     #set b-tagging in KineFit
-    '''
-    process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("combinedSecondaryVertexBJetTags")
-    process.kinFitTtSemiLepEvent.minBDiscBJets     = cms.double(0.679)
+    process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
-    process.kinFitTtSemiLepEvent.useBTagging       = cms.bool(True)
-    '''
+    process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
+
     # Add JES Up and Down and Rerun the KineFitter
     # JESUp
     process.scaledJetEnergyUp = process.scaledJetEnergyNominal.clone()
