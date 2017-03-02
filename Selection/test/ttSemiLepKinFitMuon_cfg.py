@@ -9,8 +9,8 @@ isData = False
 #process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
 ## define input
 process.source = cms.Source("PoolSource",
-        #fileNames = cms.untracked.vstring('file:FEDED4C8-573B-E611-9ED6-0025904CF102.root')
-    fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
+        fileNames = cms.untracked.vstring('file:FEDED4C8-573B-E611-9ED6-0025904CF102.root')
+    #fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root')
 )
 ## define maximal number of events to loop over
 process.maxEvents = cms.untracked.PSet(
@@ -22,16 +22,15 @@ process.options = cms.untracked.PSet(
    # wantSummary = cms.untracked.bool(True),
    # SkipEvent   = cms.untracked.vstring('ProductNotFound')
 )
+
 ## configure geometry & conditions
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
-process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
+#process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
+process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6-')
 #process.load("Configuration.StandardSequences.MagneticField_cff")
-
-#=========================================================
-
 
 ## std sequence to produce the kinematic fit for semi-leptonic events
 process.load("TopQuarkAnalysis.TopKinFitter.TtSemiLepKinFitProducer_Muons_cfi")

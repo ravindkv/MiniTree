@@ -35,6 +35,7 @@ process.options = cms.untracked.PSet(
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
+'''
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
@@ -53,6 +54,9 @@ process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
 process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
 #process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
 #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+'''
+
+
 
 ## use object resolutions from a specific config file
 '''
@@ -63,13 +67,15 @@ process.kinFitTtSemiLepEvent.lepResolutions  = muonResolution  .functions
 process.kinFitTtSemiLepEvent.metResolutions  = metResolutionPF .functions
 process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
 '''
+
+'''
 ######################## set b-tagging in KineFit
 process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
 #process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.079)
 process.kinFitTtSemiLepEvent.minBDiscBJets = cms.double(0.0)
 process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
 process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
-
+'''
 ## configure output module
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('ttSemiLepKinFitProducer.root'),
