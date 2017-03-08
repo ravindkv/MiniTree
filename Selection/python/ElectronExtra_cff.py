@@ -97,11 +97,11 @@ def configureElectronMVAIdIso(process) :
     #    maxNumber = cms.uint32(999),
     #    )
     ########Embed elctrons with variable to cut on############
-    process.selectedPatElectronsUserEmbedded = cms.EDProducer( 
+    process.selectedPatElectronsUserEmbedded = cms.EDProducer(
         "ElectronsUserEmbedded",
         electronTag = cms.InputTag("selectedPatElectrons"),
         vertexTag   = cms.InputTag("selectedPrimaryVertices"),
         rho = cms.InputTag("kt6PFJets", "rho")
         )
     process.EleEmbedSequence = cms.Sequence(process.selectedPrimaryVertices * process.selectedPatElectronsUserEmbedded)
-        
+

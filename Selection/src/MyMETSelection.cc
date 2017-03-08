@@ -13,13 +13,13 @@ std::vector<MyMET> MyEventSelection::getMETs(const edm::Event& iEvent, const edm
 	std::string tag(rawtag);
 	
 	edm::Handle<pat::METCollection>imets;
-	  iEvent.getByToken( Metsources, imets);
-	if(!imets.isValid()){ 
-	const pat::MET metIt = ((*imets)[0]);
+	iEvent.getByToken( Metsources, imets);
+    if(imets.isValid()){ 
+    const pat::MET metIt = ((*imets)[0]);
 	MyMET newMET = MyMETConverter(metIt, rawtag);
 	newMET.metName = tag;
 	selMETs.push_back(newMET);
-      }
+    }
   }catch(std::exception &e){
     std::cout << "[MET Selection] : check selection " << e.what() << std::endl;
   }
@@ -40,13 +40,11 @@ MyMET MyEventSelection::MyMETConverter(const pat::MET& iMET, TString& dirtag)
     newMET.isPFMET = true;
     newMET.muonEtFraction = iMET.MuonEtFraction();
   }
-  
   newMET.metSignificance = iMET.significance();
   newMET.sumEt = iMET.sumEt();
   newMET.p4.SetCoordinates(iMET.px(), iMET.py(), 0, iMET.et());
-  
-  //myhistos_["pt_"+dirtag]->Fill(iMET.pt());
-  //myhistos_["sumet_"+dirtag]->Fill(iMET.sumEt());
-  //myhistos_["phi_"+dirtag]->Fill(iMET.phi());
+  myhistos_["pt_"+dirtag]->Fill(iMET.pt());
+  myhistos_["sumet_"+dirtag]->Fill(iMET.sumEt());
+  myhistos_["phi_"+dirtag]->Fill(iMET.phi());
   return newMET;
 }

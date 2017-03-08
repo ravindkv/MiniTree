@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 from MiniTree.Utilities.JetEnergyScale_cfi import *
+from MiniTree.Selection.LocalSources_cff import toPrint
 
 def addSemiLepKinFitMuon(process, isData=False) :
 
@@ -49,9 +50,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     #change constraints on kineFit
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-    # Putting maxNJets = All, will slow the code !!!!!!!
-    #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
-    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(4)
+    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
     process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
     process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
     process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
@@ -76,9 +75,11 @@ def addSemiLepKinFitMuon(process, isData=False) :
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
     #set b-tagging in KineFit
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
     process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 
@@ -154,13 +155,5 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.scaledJetEnergyResnDown* process.cleanPatJetsResnDown*
                 process.kinFitTtSemiLepEventJERDown)
 
-    print " "
-    print "////////////////////////////////////////////////////////////////////////"
-    print "//                   addSemiLepKinFitMuon                             //"
-    print "//                                                                    //"
-    print "// jets used in Kinematic fit: ", process.kinFitTtSemiLepEvent.jets,"  //"
     #print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
-    print "//                                                                    //"
-    print "////////////////////////////////////////////////////////////////////////"
-    print " "
-
+    toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)

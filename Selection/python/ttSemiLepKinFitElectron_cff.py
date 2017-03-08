@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 from MiniTree.Utilities.JetEnergyScale_cfi import *
+from MiniTree.Selection.LocalSources_cff import toPrint
 
 def addSemiLepKinFitElectron(process, isData=False) :
 
@@ -41,7 +42,6 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.selectedPatJets.src = cms.InputTag("slimmedJets")
 
     process.cleanPatElectronsUser = process.cleanPatElectrons.clone()
-
     process.cleanPatElectronsUser.preselection = cms.string("pt>30 && abs(eta)<2.5 && "+
                                                             simpleCutsVeto +
                                                             " && " +
@@ -75,8 +75,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #change constraints on kineFit
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
-    #process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
-    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(4)
+    process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("slimmedJets")
     if isData:
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
@@ -99,9 +98,11 @@ def addSemiLepKinFitElectron(process, isData=False) :
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
     #set b-tagging in KineFit
+    #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.679)
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.0)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 
@@ -177,13 +178,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
                 process.cleanPatJetsResnUp* process.kinFitTtSemiLepEventJERUp*
                 process.scaledJetEnergyResnDown* process.cleanPatJetsResnDown*
                 process.kinFitTtSemiLepEventJERDown)
-    print " "
-    print "////////////////////////////////////////////////////////////////////////"
-    print "//                   addSemiLepKinFitElectron                         //"
-    print "//                                                                    //"
-    print "// jets used in Kinematic fit: ", process.kinFitTtSemiLepEvent.jets,"  //"
+
+    toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
     #print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
-    print "//                                                                    //"
-    print "////////////////////////////////////////////////////////////////////////"
-    print " "
 

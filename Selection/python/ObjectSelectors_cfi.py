@@ -132,5 +132,5 @@ BaseKFPSet = cms.PSet(sources = cms.VInputTag("kinFitTtSemiLepEvent:Leptons","ki
                       chi2OfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Chi2"),
                       probOfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Prob"),
                       statusOfFitJERDown = cms.InputTag("kinFitTtSemiLepEventJERDown:Status"),
-                      runKineFitter = cms.bool(False)
+                      runKineFitter = cms.bool(True)
                       )

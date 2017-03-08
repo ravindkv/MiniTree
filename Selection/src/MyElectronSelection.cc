@@ -93,10 +93,9 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   }
   newElectron.p4.SetCoordinates(iEle.px(), iEle.py(), iEle.pz(), iEle.energy());
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
-  //myhistos_["pt_"+dirtag]->Fill(iEle.pt());
-  //myhistos_["lowpt_"+dirtag]->Fill(iEle.pt());
-  //myhistos_["eta_"+dirtag]->Fill(iEle.eta());
-  //myhistos_["phi_"+dirtag]->Fill(iEle.phi());
+  myhistos_["pt_"+dirtag]->Fill(iEle.pt());
+  myhistos_["eta_"+dirtag]->Fill(iEle.eta());
+  myhistos_["phi_"+dirtag]->Fill(iEle.phi());
   
   ///sel 
   newElectron.sigmaIetaIeta = iEle.full5x5_sigmaIetaIeta();
@@ -140,8 +139,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PileupIso = pfiso[3];
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
-  //myhistos_["relpfiso_"+dirtag]->Fill(pfiso[4]); 
-  //myhistos_["lowrelpfiso_"+dirtag]->Fill(pfiso[4]); 
+  myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
 
   return newElectron;
 }

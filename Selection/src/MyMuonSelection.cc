@@ -81,10 +81,9 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.p4.SetCoordinates(iMuon.px(), iMuon.py(), iMuon.pz(), iMuon.p());
   newMuon.type = iMuon.type();
   newMuon.vertex.SetCoordinates(iMuon.vx(), iMuon.vy(), iMuon.vz()); 
-  //myhistos_["pt_"+dirtag]->Fill(iMuon.pt());
-  //myhistos_["lowpt_"+dirtag]->Fill(iMuon.pt());
-  //myhistos_["eta_"+dirtag]->Fill(iMuon.eta());
-  //myhistos_["phi_"+dirtag]->Fill(iMuon.phi());
+  myhistos_["pt_"+dirtag]->Fill(iMuon.pt());
+  myhistos_["eta_"+dirtag]->Fill(iMuon.eta());
+  myhistos_["phi_"+dirtag]->Fill(iMuon.phi());
   
   ///id
   //Loose
@@ -99,13 +98,17 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
     if(!gmTrack.isNull()){
       newMuon.normChi2 = gmTrack->normalizedChi2();
       newMuon.nMuonHits = gmTrack->hitPattern().numberOfValidMuonHits();
-      //myhistos_["trackChi2_"+dirtag]->Fill(gmTrack->normalizedChi2());
+      myhistos_["normChi2_"+dirtag]->Fill(gmTrack->normalizedChi2());
+      myhistos_["nHits_"+dirtag]->Fill(gmTrack->numberOfValidHits());
+      myhistos_["nMuonHits_"+dirtag]->Fill(newMuon.nMuonHits);
       }
     //best track
     const reco::TrackRef bmTrack = iMuon.muonBestTrack();
     if(!bmTrack.isNull()){
       newMuon.D0 = fabs(bmTrack->dxy(refVertex_.position())); 
       newMuon.Dz = fabs(bmTrack->dz(refVertex_.position()));
+      myhistos_["D0_"+dirtag]->Fill(newMuon.D0);
+      myhistos_["Dz_"+dirtag]->Fill(newMuon.Dz);
       }
     //inner track
     const reco::TrackRef imTrack = iMuon.innerTrack();
@@ -128,8 +131,7 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.NeuHadIso = pfiso[2]; 
   newMuon.PileupIso = pfiso[3];
   newMuon.pfRelIso = pfiso[4]; 
-  //myhistos_["relpfiso_"+dirtag]->Fill(pfiso[3]); 
-  //myhistos_["lowrelpfiso_"+dirtag]->Fill(pfiso[3]); 
+  myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
 
   return newMuon;
 }

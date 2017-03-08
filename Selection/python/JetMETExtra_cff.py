@@ -5,6 +5,7 @@ from PhysicsTools.PatAlgos.tools.metTools import *
 from PhysicsTools.PatAlgos.tools.jetTools import *
 from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
 from MiniTree.Utilities.JECFactorsProducer_cfi import *
+from MiniTree.Selection.LocalSources_cff import toPrint
 
 def addJetMETExtra(process, isData=False, applyResJEC=True, isAOD=False) :
 
@@ -26,17 +27,12 @@ def addJetMETExtra(process, isData=False, applyResJEC=True, isAOD=False) :
         corrections = ['L1FastJet','L2Relative','L3Absolute']
     if( isAOD ) : process.patJets.addTagInfos   = cms.bool(False)
 
-    print " "
-    print "////////////////////////////////////////////////////////////////////////"
-    print "//                    addJetMETExtra                                  //"
-    print "//                                                                    //"
-    print "// Jet corrections used ", corrections,                           "   //"
-
     #from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
     #process.patJetCorrFactors.levels = ['L1Offset', 'L2Relative', 'L3Absolute']
     #process.patJetCorrFactors.useRho = cms.bool(True)
 
-    print "// Switching to PF ak5 jets                                           //"
+    toPrint("Jet corrections used", corrections)
+    toPrint("Switching to PF ak5 jets","")
    # switchJetCollection(process,cms.InputTag('ak5PFJets'),
    #                  doJTA        = True,
    #                  doBTagging   = True,
@@ -48,8 +44,7 @@ def addJetMETExtra(process, isData=False, applyResJEC=True, isAOD=False) :
    #                  )
     #if( isAOD ) : process.patJets.addTagInfos = cms.bool(False)
     #process.patJets.addTagInfos = cms.bool(True)
-
-    print "// Adding PF MET                                                      //"
+    toPrint("Adding PF MET","")
     ##process.load("JetMETCorrections.Type1MET.pfMETCorrectionType0_cfi")
     ##process.pfType1CorrectedMet.applyType0Corrections = cms.bool(False)
     ##process.pfType1CorrectedMet.srcType1Corrections = cms.VInputTag(
@@ -82,10 +77,7 @@ def addJetMETExtra(process, isData=False, applyResJEC=True, isAOD=False) :
         addMuonCorrections = cms.bool(False),
         addGenMET    = cms.bool(False)
         )
-    print "// Adding PileupJetID                                                 //"
-    print "//                                                                    //"
-    print "////////////////////////////////////////////////////////////////////////"
-    print " "
+    toPrint("Adding PileupJetID","")
     #process.load("CMGTools.External.pujetidsequence_cff")
 
     # Add user residual correction for Data from Mikko

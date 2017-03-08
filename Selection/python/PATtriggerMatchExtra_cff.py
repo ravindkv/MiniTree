@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.tools.coreTools import *
 from PhysicsTools.PatAlgos.tools.trigTools import *
-
+from MiniTree.Selection.LocalSources_cff import *
 #
 # wrapper for trigger matches
 #
@@ -86,13 +86,7 @@ def addTriggerMatchExtra(process, eleTrigList=['HLT_Ele10_LW_L1R'], muTrigList=[
 
     #init trigger match embedding
     if(len(trigMatchModules)>0) :
-        print ""
-        print "--------------------------------------------------------------------"
-        print "*                    addTriggerMatchExtra                          *"
-        print "*                                                                  *"
-        print "* Creating trigger match sequence                                  *"
-        print "*", trigMatchModules
-        print "*                                                                  *"
+        toPrint("Creating trigger match sequence", trigMatchModules)
         switchOnTriggerMatching( process, trigMatchModules, hltProcess=trigMenu)
         #removeCleaningFromTriggerMatching(process)
 

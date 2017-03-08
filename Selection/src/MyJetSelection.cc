@@ -82,6 +82,7 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
 	  
 	  if(passKin && passId) selJets.push_back(newJet);
     } // for loop
+      delete jecUnc;
       fs_->cd();
 	}
   }catch(std::exception &e){
@@ -112,8 +113,10 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
       newJet.parton_mother_id = genParton->mother()->pdgId();
     }
   }
-  //myhistos_["lowpt_"+dirtag]->Fill(iJet.pt());
-  //myhistos_["eta_"+dirtag]->Fill(iJet.eta());
+  myhistos_["pt_"+dirtag]->Fill(iJet.pt());
+  myhistos_["eta_"+dirtag]->Fill(iJet.eta());
+  myhistos_["phi_"+dirtag]->Fill(iJet.phi());
+
   newJet.partonFlavour = double(iJet.partonFlavour());
   newJet.vertex.SetCoordinates(iJet.vx(), iJet.vy(), iJet.vz());
   
@@ -128,6 +131,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
       newJet.chargedMultiplicity = iJet.chargedMultiplicity();
       newJet.chargedEmEnergyFraction = iJet.chargedEmEnergyFraction();
       newJet.neutralMultiplicity = iJet.neutralMultiplicity();
+      myhistos_["emf_"+dirtag]->Fill(iJet.chargedEmEnergyFraction() + iJet.neutralEmEnergyFraction());
     }
   
   ///btag, JEC & SV

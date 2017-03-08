@@ -24,7 +24,7 @@ def configurePrePatMuon(process) :
     process.pfNoPileUp.bottomCollection = 'particleFlow'
     process.pfPileUpIso.PFCandidates = 'particleFlow'
     process.pfNoPileUpIso.bottomCollection='particleFlow'
-    
+
     process.load("RecoMuon.MuonIsolation.muonPFIsolation_cff")
     import PhysicsTools.PatAlgos.tools.helpers as patutils
     patutils.massSearchReplaceAnyInputTag(process.muonPFIsolationDepositsSequence, cms.InputTag('muons1stStep'), cms.InputTag('muons'))
@@ -34,7 +34,7 @@ def configurePrePatMuon(process) :
         * process.pfNoPileUpSequence
         * process.pfParticleSelectionSequence
         * process.muonPFIsolationDepositsSequence)
-    
+
 
 def configurePatMuonUserPFIso(process):
     print 'adding PF isolation to PAT Muons'
@@ -48,7 +48,7 @@ def configurePatMuonUserPFIso(process):
             cms.InputTag("muPFIsoDepositPU")
             )
         )
-    
+
     process.patMuons.userIsolation = cms.PSet(
         # CV: strings for Isolation values defined in PhysicsTools/PatAlgos/src/MultiIsolator.cc
         pfChargedHadron = cms.PSet(
@@ -84,18 +84,18 @@ def configurePatMuonUserPFIso(process):
                 )
             )
         )
-    
+
 def configureDiMuonVetoFilter(process) :
     process.globalMuons = cms.EDFilter("PATMuonSelector",
                                src = cms.InputTag('patMuons'),
                                cut = cms.string("isGlobalMuon"),
                                filter = cms.bool(False)
                                )
-    
+
     process.diMuonVeto = cms.EDFilter("PATCandViewCountFilter",
                               src = cms.InputTag('globalMuons'),
                               minNumber = cms.uint32(1),
                               maxNumber = cms.uint32(1)
                               )
     process.diMuVetoFilter = cms.Sequence(process.globalMuons*process.diMuonVeto)
-    
+

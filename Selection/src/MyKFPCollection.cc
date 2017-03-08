@@ -167,12 +167,10 @@ MyKineFitParticle MyEventSelection::MyKineFitPartConverter(const pat::Particle& 
   MyKineFitParticle newKFP;
   newKFP.Reset();
   newKFP.p4.SetCoordinates(ikfp.px(), ikfp.py(), ikfp.pz(), ikfp.energy());
-  newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
-  newKFP.part_id = ikfp.pdgId();
+  //newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
+  //newKFP.part_id = ikfp.pdgId();
   //newKFP.part_id = ikfp.pid();
   //newKFP.part_mother_id = ikfp.motherID(); 
-  //newKFP.part_mother_id = ikfp.numberOfMothers();
-  //newKFP.part_mother_id = ikfp.mother().pdgID();
   newKFP.charge = ikfp.charge(); 
   return newKFP;
 }

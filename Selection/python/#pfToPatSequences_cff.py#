@@ -3,12 +3,12 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 from PhysicsTools.PatAlgos.tools.trigTools import *
 from RecoJets.Configuration.RecoPFJets_cff import kt6PFJets
 from CommonTools.ParticleFlow.Tools.enablePileUpCorrection import enablePileUpCorrection
-from MiniTree.Selection.LocalSources_cff import toPrint
+    
 ##
 ## adds pat sequence
 ##
 def addpf2PatSequence(process, runOnMC) :
-
+    
     postfix = "PFlow"
 
     #jet energy corrections
@@ -27,20 +27,20 @@ def addpf2PatSequence(process, runOnMC) :
               )
     #enablePileUpCorrection( process, postfix=postfix, doRho=True)  #old
     enablePileUpCorrection( process, postfix=postfix)
-
+                                                        
     #switch to hpsPFTau
     #adaptPFTaus(process,"hpsPFTau",postfix=postfix) # already hpsPFTau in 52X
     #remove tau selection
     getattr(process,"pfTaus"+postfix).discriminators = [cms.PSet(
                 discriminator=cms.InputTag("pfTausBaseDiscriminationByDecayModeFinding"+postfix),
                 selectionCut=cms.double(0.5) )]
-
+    
     #disable mc matching for photons
     removeMCMatching(process,names=['Photons'],postfix=postfix)
     process.patElectronsPFlow.embedTrack=True
     process.patMuonsPFlow.embedTrack=True
 #    process.patMETsPFlow.userFloats
-
+           
     #configure top projections
     getattr(process,"pfNoPileUp"+postfix).enable = True
     getattr(process,"pfNoMuon"+postfix).enable = True
@@ -51,7 +51,7 @@ def addpf2PatSequence(process, runOnMC) :
 
     applyPostfix(process,"pfIsolatedMuons",postfix).isolationCut = cms.double(9999.)
     applyPostfix(process,"pfIsolatedElectrons",postfix).isolationCut = cms.double(9999.)
-
+    
     #CiC electron ID
     process.load( "RecoEgamma.ElectronIdentification.cutsInCategoriesElectronIdentificationV06_cfi" )
     process.eidCiCSequence = cms.Sequence(
@@ -84,7 +84,7 @@ def addpf2PatSequence(process, runOnMC) :
     applyPostfix( process, 'patElectrons', postfix ).electronIDSources.simpleEleId70cIso =cms.InputTag("simpleEleId70cIsoPFlow")
     applyPostfix( process, 'patElectrons', postfix ).electronIDSources.simpleEleId60cIso =cms.InputTag("simpleEleId60cIsoPFlow")
     ################
-
+    
     # match the trigger information for selected pat leptons
     ##process.load("PhysicsTools.PatAlgos.triggerLayer1.triggerProducer_cff")
     ##process.triggerProducerPF = process.patTrigger.clone()
@@ -115,13 +115,14 @@ def addpf2PatSequence(process, runOnMC) :
     ##                         sequence        = 'patPF2PATSequence' + postfix,
     ##                         postfix         = postfix )
     ##removeCleaningFromTriggerMatching( process, sequence = 'patPF2PATSequence' + postfix )
-
-
+    
+    
     #create the path
     process.patSequence = cms.Sequence(
         process.eidCiCSequence*
         getattr(process,"patPF2PATSequence"+postfix)
         )
-    toPrint("PAT path has been defined","")
+    print " *** PAT path has been defined"
+    
 
 
