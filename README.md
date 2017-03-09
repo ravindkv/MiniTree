@@ -1,19 +1,19 @@
 # MiniTree
 
-(1): SET UP THE CMSSSW
+## Set the CMSSSW release ##
 
-cmsrel CMSSW_8_0_25
-cd CMSSW_8_0_25/src/
-cmsenv
+* cmsrel CMSSW_8_0_25
+* cd CMSSW_8_0_25/src/
+* cmsenv
 
-(2): DOWNLOAD THIS PACKAGE
+## Download the MiniTree package ##
 
-git clone https://github.com/ravindkv/MiniTree.git
+* git clone https://github.com/ravindkv/MiniTree.git
 
-(3): RUN THE CODES
+## Compile and Run the codes ##
 
-cd MiniTree 
-scram b -j20
-cd Selection/test
-cmsRun muons_miniAOD_to_ntuple_13TeV_cfg.py
+* cd MiniTree 
+* scram b -j20
+* cd Selection/test
+* cmsRun muons_miniAOD_to_ntuple_13TeV_cfg.py
 
