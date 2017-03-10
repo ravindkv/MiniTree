@@ -17,7 +17,7 @@ class MyMuon
   
   void Reset();
   
-  std::string GetName() { return name; };
+  ///std::string GetName() { return name; };
 
   //https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2
 
@@ -25,7 +25,8 @@ class MyMuon
   int charge;
   int gen_id;
   int gen_mother_id;
-  std::string name;
+  //std::string name;
+  TString muName;
   MyLorentzVector p4; 
   int type;
   Point3D    vertex;   

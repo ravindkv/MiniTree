@@ -6,8 +6,8 @@ SampleInfo::SampleInfo()
   mcEvtType = 0;
   pileup.clear();
   truepileup.clear();
-  puWeights.clear();
-  truepuWeights.clear();
+  ///puWeights.clear();
+  ///truepuWeights.clear();
   hepNUP = -99;
   topPtWeights.clear();
 }

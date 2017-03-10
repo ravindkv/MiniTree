@@ -1,11 +1,13 @@
 #include "MiniTree/Selection/interface/MyElectron.h"
 
 MyElectron::MyElectron():
+
   ///basic
-  charge(-999.), 
+  charge(0), 
   gen_id(0),
   gen_mother_id(0),
-  name(""),
+  //name(""),
+  eleName(""),
   
   ///sel
   sigmaIetaIeta(-999),
@@ -41,20 +43,21 @@ MyElectron::~MyElectron()
 void MyElectron::Reset()
 {
   ///basic
-  charge = -999.; 
+  charge = 0; 
   gen_id = 0;
   gen_mother_id = 0;
-  name = "";
-  p4.SetCoordinates(0.0,0.0,0.0,0.0);
-  vertex.SetCoordinates(0.0,0.0,0.0);
+ // name = "";
+  eleName = "";
+  p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
+  vertex.SetCoordinates(0.0, 0.0, 0.0);
  
   ///sel
-  sigmaIetaIeta = 999.;
-  dEtaInSeed = 999.;
-  dPhiIn = 999.;
-  hadOverEm = 999.;
-  iEminusiP = 999.;
-  nInnerHits = 999.;
+  sigmaIetaIeta = -999.;
+  dEtaInSeed = -999.;
+  dPhiIn = -999.;
+  hadOverEm = -999.;
+  iEminusiP = -999.;
+  nInnerHits = -999.;
   isPassConVeto = true;
   
   ///ids
@@ -72,4 +75,4 @@ void MyElectron::Reset()
   Dz = 999.;
   trigger_ele_pt = 0;
   quality = 0;
-}
+  }

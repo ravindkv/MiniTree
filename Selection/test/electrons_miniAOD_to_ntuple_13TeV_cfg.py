@@ -14,7 +14,8 @@ process.maxEvents.input = cms.untracked.int32(-1)
 #OUTPUT FILE
 import datetime
 today_date = datetime.date.today()
-output_fileName = input_fileName.split("/")[4].split("_")[0] +"_ntuple_"+str(today_date)+"_electrons.root"
+sample_name = input_fileName.split("/")[4].split("_")[0]
+output_fileName = sample_name +"_ntuple_"+str(today_date)+"_electrons.root"
 process.TFileService.fileName = cms.string(output_fileName)
 
 # config parameters ------------------------------------------------------------
@@ -58,7 +59,7 @@ addSemiLepKinFitElectron(process, isData)
 # add the analysis modules ----------------------------------------------------
 process.load('MiniTree.Selection.selection_cfi')
 process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
-process.myMiniTreeProducer.MCTruth.sampleCode = cms.string('TTBAR')
+process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(sample_name)
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
 #process.myMiniTreeProducer.Taus.sources = cms.VInputTag("patTaus", "patTausPFlow")
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)

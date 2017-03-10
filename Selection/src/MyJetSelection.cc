@@ -31,7 +31,8 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     }
     
     TString rawtag="Jets";
-    std::string tag(rawtag);
+    //std::string tag(rawtag);
+    TString tag(rawtag);
     
     edm::Handle<pat::JetCollection>ijets;
     iEvent.getByToken( Jetsources, ijets); // 76x
@@ -156,7 +157,9 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
   newJet.JECs = jetCorrections;
   newJet.JECUncertainty = 1.0;  //default, get it later from CondDB.
   //SV
-  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
+  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex();
+  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookChapter7
+  //const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
   if(svTagInfo){
     for(size_t iv = 0; iv < svTagInfo->nVertices(); iv++){
       const reco::Vertex& sv = svTagInfo->secondaryVertex(iv);

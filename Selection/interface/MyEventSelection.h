@@ -9,7 +9,6 @@
 #ifndef __MYEVENTSELECTION_H__
 #define __MYEVENTSELECTION_H__
 
-
 // system include files
 #include <memory>
 #include <string>
@@ -95,7 +94,6 @@ public:
   void Reset() {event_.Reset();}
   MyEvent * getData() {return &event_;}
   
-  
   //user functions
   std::vector<std::string> getHLT(const edm::Event&, const edm::EventSetup&);
   std::vector<MyVertex> getVertices(const edm::Event&, const edm::EventSetup&);
@@ -108,8 +106,6 @@ public:
   MyElectron MyElectronConverter(const pat::Electron&, TString&);
   std::vector<MyMuon> getMuons(const edm::Event&, const edm::EventSetup&);
   MyMuon MyMuonConverter(const pat::Muon&, TString&);
-//  std::vector<MyTau> getTaus(const edm::Event&, const edm::EventSetup&);
-//  MyTau MyTauConverter(const pat::Tau&, TString&);
   std::vector<MyKineFitParticle> getKineFitParticles (const edm::Event&, const edm::EventSetup&);
   MyKineFitParticle MyKineFitPartConverter(const pat::Particle&, TString&);
   
@@ -125,18 +121,11 @@ public:
   static bool sumPtOrder(const reco::Vertex *, const reco::Vertex *);
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
-  std::vector<double> defaultElectronIsolation(const pat::Electron&, bool isPF=false);
-  // ------------ 13TeV
-  std::vector<double> defaultPFElectronIsolation(const pat::Electron&,bool isPF=false);
+  std::vector<double> defaultPFElectronIsolation(const pat::Electron&);
 
-  std::vector<double> defaultPFElectronIsolation (const pat::Electron&, double);
   int assignDYchannel(const edm::Event&, const edm::EventSetup&);
   int assignWJets(const edm::Event&, const edm::EventSetup&);
   int assignTTEvent(const edm::Event&, const edm::EventSetup&);
-//  pat::Tau* getTauMatchedtoJet(const pat::Jet& iJet, const std::vector<pat::Tau> *tauColl);
-
-  // ---- General MyEventSelection information.
-  //void BookHistos(edm::Service<TFileService>);
   void BookHistos();
 
 private:
@@ -149,25 +138,15 @@ private:
   edm::ParameterSet configParamsMuons_;
   edm::ParameterSet configParamsJets_;
   edm::ParameterSet configParamsMETs_;
-  edm::ParameterSet configParamsTaus_;
   edm::ParameterSet configParamshlt_;
   edm::ParameterSet configParamsMC_;
   edm::ParameterSet configParamsKFPs_;
   //PVx
   //  edm::Handle<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
-
   edm::Handle<reco::BeamSpot> beamSpot_; // defined here as used by electron selection
   edm::EDGetTokenT<reco::BeamSpot> bsSource; // new 76x
 
-  // Muon
-  edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
-
-  // Electrons
-  edm::EDGetTokenT<pat::ElectronCollection> Elesources;
-  edm::EDGetTokenT<reco::ConversionCollection> EleConversion_;
-  edm::EDGetTokenT<double> eventrhoToken_;
-  
   //KFP
   //edm::EDGetTokenT <pat::ParticleCollection>ikfpSource;
   edm::EDGetTokenT <vector<double>> chi2OfFitSource;
@@ -192,21 +171,18 @@ private:
   edm::EDGetTokenT <int> njetsOfFitJERDownSource;
  
 
-  // Jets
+  // Muon, Electrons, Jets, MET, Trigger
+  edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
+  edm::EDGetTokenT<pat::ElectronCollection> Elesources;
   edm::EDGetTokenT<pat::JetCollection> Jetsources;
   edm::EDGetTokenT<pat::TriggerEvent> TrigEvent_;
-  //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> TrigEvent_;
   edm::EDGetTokenT<reco::JetIDValueMap> jetIDMapToken_;
-  // MET
   edm::EDGetTokenT<pat::METCollection> Metsources;
-
-  // Trigger 
   edm::EDGetTokenT<edm::TriggerResults>  hlt_;
 
   const reco::Vertex *bestPrimVertex_;
   reco::Vertex refVertex_;
   math::XYZPoint refPoint_;
-
   edm::ESHandle<TransientTrackBuilder> trackBuilder;
 
   // MC and PU
@@ -217,10 +193,6 @@ private:
   JetIDSelectionFunctor jetIDFunctor_;
   PFJetIDSelectionFunctor pfjetIDFunctor_;
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
-
-  //electron
-  //the rec hits 
-  edm::Handle< EcalRecHitCollection > ebRecHits_, eeRecHits_;
 
   edm::Service<TFileService> fs_;
   std::vector<TFileDirectory> dirs_;

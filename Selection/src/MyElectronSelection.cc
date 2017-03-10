@@ -18,62 +18,52 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   selElectrons.clear();
   
   try{
-    //std::string id = configParamsElectrons_.getParameter<std::string>("id");
-    //double maxRelIso = configParamsElectrons_.getParameter<double>("maxRelIso");
-    
-    //Conversion rejection
-    //edm::Handle<reco::ConversionCollection> hConversions;
-    //iEvent.getByToken(EleConversion_, hConversions); // 76x
+    std::string id = configParamsElectrons_.getParameter<std::string>("id");
+    double maxRelIso = configParamsElectrons_.getParameter<double>("maxRelIso");
+    double minEt = configParamsElectrons_.getParameter<double>("minEt");
+    double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
+    double mvacut = configParamsElectrons_.getParameter<double>("mvacut");
     
     TString rawtag="Electrons";
-    std::string tag(rawtag);
-    
+    TString tag(rawtag);
+    //std::string tag(rawtag);
     edm::Handle<pat::ElectronCollection>ieles;
-    iEvent.getByToken(Elesources, ieles);   // 76x
-
-   /* //pass conversion veto
-    //iEvent.getByLabel(contentTags_["beamspot"],_thebs);  
-    EffectiveAreas _effectiveAreas;
-    constexpr static char rhoString_[] = "rho";
-    edm::InputTag rhoTag = c.getParameter<edm::InputTag>("rho");
-    contentTags_.emplace(rhoString_,rhoTag);
-    iEvent.getByLabel(contentTags_[rhoString_],_rhoHandle);
-    */ 
+    iEvent.getByToken(Elesources, ieles); 
+    
     if(ieles.isValid()){
       for(size_t iEle = 0; iEle < ieles->size(); iEle++)
 	{
 	  const pat::Electron eIt = ((*ieles)[iEle]);
+      
 	  MyElectron newElectron = MyElectronConverter(eIt, rawtag);
-	  newElectron.name = tag;
+
+      newElectron.eleName = tag; ///Memory leak
 	  
 	  //make selections
-  /*  bool passKin = true, passId = true, passIso = true;
+      bool passKin = true, passId = true, passIso = true;
 	  if(newElectron.p4.Et() < minEt || 
-	     fabs(newElectron.p4.Eta()) > maxEta || 
-	     newElectron.electronSCEt < minSCEt) passKin = false;
-	  // apply mva Id
+	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
+	  
+      //apply mva Id
 	  double mvaid = eIt.electronID(id);
 	  if(mvaid < mvacut) passId = false;
-	  if(newElectron.nMissingHits != 0) passId = false;
+	  //if(newElectron.nMissingHits != 0) passId = false;
 	  
       //iso
-	  if(newElectron.pfRelIso > maxRelIso) passIso = false;
-	  
+      if(newElectron.pfRelIso > maxRelIso) passIso = false;
 	  int quality = 0;
 	  if(passKin)quality  = 1;
-	  if(passId)quality |= 1<<1;
+      if(passId)quality |= 1<<1;
 	  if(passIso)quality |= 1<<2;
 	  newElectron.quality = quality;
 	  
 	  if(passKin)selElectrons.push_back(newElectron);
-  */
       selElectrons.push_back(newElectron);
     }//for loop
     }
-  }catch(std::exception &e){
+    }catch(std::exception &e){
     std::cout << "[Electron Selection] : check selection " << e.what() << std::endl;
-  }
-  
+  }  
   return selElectrons;
 }
 
@@ -82,7 +72,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
 {
   MyElectron newElectron;
   newElectron.Reset();
- 
   ///basic
   newElectron.charge = iEle.charge(); 
   const reco::GenParticle *gen = iEle.genLepton();
@@ -130,9 +119,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.eidWPs = eidWPs;
   
   ///iso
-  bool isPF = false;
-  if(dirtag.Contains("PFlow"))isPF = true;
-  std::vector<double> pfiso = defaultPFElectronIsolation(iEle,isPF);
+  std::vector<double> pfiso = defaultPFElectronIsolation(iEle);
   newElectron.ChHadIso = pfiso[0]; 
   newElectron.PhotonIso = pfiso[1];  
   newElectron.NeuHadIso = pfiso[2];  
@@ -140,23 +127,19 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
   myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
-
   return newElectron;
 }
 
-std::vector<double> MyEventSelection::defaultPFElectronIsolation (const pat::Electron& ele, bool isPF)
+std::vector<double> MyEventSelection::defaultPFElectronIsolation (const pat::Electron& ele)
 {
   double ePt((double)ele.pt());
   double norm=std::max((double)20.0,(double)ePt);
   double puOffsetCorrection = 0.0;
   std::vector<double> values(4,0);
-  if(isPF)
-  {
     values[0] = ele.chargedHadronIso();
     values[1] = ele.photonIso();
     values[2] = ele.neutralHadronIso();
     values[3] =(std::max(ele.photonIso()+ele.neutralHadronIso() - puOffsetCorrection, 0.0) + ele.chargedHadronIso())/norm;
-  }
-  return values;
-}
 
+    return values;
+}

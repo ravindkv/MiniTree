@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 #include <string>
-
 #include "MomentumVec.h"
 
 class MyElectron 
@@ -16,7 +15,7 @@ class MyElectron
   
   void Reset();
   
-  std::string GetName() { return name; };
+  ///std::string GetName() { return name; };
  
 //Variables : https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2  
 
@@ -24,7 +23,9 @@ class MyElectron
   int charge;
   int gen_id;
   int gen_mother_id;
-  std::string name;
+  //std::string name; ///Memory leak
+  TString eleName; 
+
   MyLorentzVector p4;
   Point3D       vertex;   
 
@@ -52,8 +53,6 @@ class MyElectron
   double Dz;
   double trigger_ele_pt;
   int quality;
-
  private :
-
 };
 #endif

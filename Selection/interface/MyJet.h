@@ -19,7 +19,8 @@ class MyJet
   ///basic
   MyLorentzVector Genp4;      //4 vector of matched genJet
   double jetCharge;
-  std::string jetName;
+  ///std::string jetName;
+  TString jetName;
   MyLorentzVector p4;         // 4 vector of jet.
   int parton_id;
   int parton_mother_id;

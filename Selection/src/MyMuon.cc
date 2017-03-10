@@ -6,7 +6,7 @@ MyMuon::MyMuon():
   charge(0),
   gen_id(0),
   gen_mother_id(0),
-  name(""),
+  muName(""),
   type(0),
   
   ///id
@@ -14,12 +14,14 @@ MyMuon::MyMuon():
   isGlobalMuon(true),
   isPFMuon(true),
   isTrackerMuon(true),
+  
   //Medium
   chi2LocalPosition(-999.),
   normChi2(-999.),
   segmentCompatibility(-999.),
   trkKink(-999.),
   validFraction(-999.),
+ 
   //Tight
   D0(-999.),
   Dz(-999.),
@@ -50,7 +52,7 @@ void MyMuon::Reset()
   charge = 0;
   gen_id = 0;
   gen_mother_id = 0;
-  name = "";
+  muName = "";
   p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
   type = 0;
   vertex.SetCoordinates(0.0, 0.0, 0.0);

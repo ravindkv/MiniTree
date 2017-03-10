@@ -12,7 +12,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   configParamsMETs_ = iConfig.getParameter<edm::ParameterSet>("Mets");
   configParamsMuons_ = iConfig.getParameter<edm::ParameterSet>("Muons");
   configParamsElectrons_ = iConfig.getParameter<edm::ParameterSet>("Electrons");
-  //configParamsTaus_ = iConfig.getParameter<edm::ParameterSet>("Taus");
   configParamshlt_ = iConfig.getParameter<edm::ParameterSet>("Trigger");
   configParamsMC_ = iConfig.getParameter<edm::ParameterSet>("MCTruth");
   configParamsKFPs_ = iConfig.getParameter<edm::ParameterSet>("KineFit");
@@ -166,7 +165,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   int nIsoMuon = 0, nIsoElectron = 0;
   std::vector<MyElectron> electrons = event_.Electrons;
   for(size_t iele = 0; iele < electrons.size(); iele++){
-    std::string algo = electrons[iele].name;
+    //std::string algo = electrons[iele].eleName;
+    std::string algo(electrons[iele].eleName);
     //if(algo.find("PFlow") == std::string::npos) continue;
     bool passKin = false, passId = false, passIso = false;
     int quality = electrons[iele].quality;
@@ -174,23 +174,25 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     if((quality >> 1) & 0x1)passId = true;
     if((quality >> 2) & 0x1)passIso = true;
     if(passKin && passId && passIso){
+    ///if(passKin && passId){
      myhistos_["SelElePt"]->Fill(electrons[iele].p4.Pt());
      myhistos_["SelEleEta"]->Fill(electrons[iele].p4.Eta());
       nIsoElectron++;
     }
   }
   myhistos_["SelEleMultiplicity"]->Fill(nIsoElectron);
-
   std::vector<MyMuon> muons = event_.Muons;
   for(size_t imu = 0; imu < muons.size(); imu++){
-    std::string algo = muons[imu].name;
+    //std::string algo = muons[imu].muName;
+    std::string algo(muons[imu].muName);
     //if(algo.find("PFlow") == std::string::npos) continue;
-    bool passKin = false, passId = false, passIso = false;
+    bool passKin = false, passId = false;///, passIso = false;
     int quality = muons[imu].quality;
     if(quality & 0x1)passKin = true;
     if((quality >> 1) & 0x1)passId = true;
-    if((quality >> 2) & 0x1)passIso = true;
-    if(passKin && passId && passIso){
+    ///if((quality >> 2) & 0x1)passIso = true;
+    ///if(passKin && passId && passIso){
+    if(passKin && passId){
       myhistos_["SelMuPt"]->Fill(muons[imu].p4.Pt());
       myhistos_["SelMuEta"]->Fill(muons[imu].p4.Eta());
       nIsoMuon++;
@@ -207,9 +209,11 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   std::vector<MyJet> jets = event_.Jets;
   int nJets = 0, nHighPtJets = 0;
   for(size_t ijet = 0; ijet < jets.size(); ijet++){
-    std::string algo = jets[ijet].jetName;
+    //std::string algo = jets[ijet].jetName;
+    std::string algo(jets[ijet].jetName);
     //if(algo.find("PFlow") == std::string::npos) continue;
     if(isData_ && algo.find("ResCor") == std::string::npos) continue;
+    ///if(isData_ && algo.find("ResCor") == std::string::npos) continue;
     bool passKin = false, passId = false;
     int quality = jets[ijet].quality;
     if(quality & 0x1)passKin = true;

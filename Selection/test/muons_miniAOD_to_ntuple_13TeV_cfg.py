@@ -8,12 +8,13 @@ from MiniTree.Selection.LocalSources_cff import toPrint
 input_fileName = "/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root"
 #input_fileName = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 process.source.fileNames = [input_fileName]
-process.maxEvents.input = cms.untracked.int32(2000)
+process.maxEvents.input = cms.untracked.int32(5000)
 
 #OUTPUT FILE
 import datetime
 today_date = datetime.date.today()
-output_fileName = input_fileName.split("/")[4].split("_")[0]+"_ntuple_"+str(today_date)+"_muons.root"
+sample_name = input_fileName.split("/")[4].split("_")[0]
+output_fileName = sample_name+"_ntuple_"+str(today_date)+"_muons.root"
 process.TFileService.fileName = cms.string(output_fileName)
 
 #CONFIG PARAMETERS -----------------------------------------------------------
@@ -58,7 +59,7 @@ addSemiLepKinFitMuon(process, isData) #important
 # ADD THE ANALYSIS MODULE ----------------------------------------------------
 process.load('MiniTree.Selection.selection_cfi')
 process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
-process.myMiniTreeProducer.MCTruth.sampleCode = cms.string('TTBAR')
+process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(sample_name)
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
 #process.myMiniTreeProducer.Taus.sources = cms.VInputTag("patTaus", "patTausPFlow")
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)

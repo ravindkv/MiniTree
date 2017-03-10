@@ -15,8 +15,8 @@ class SampleInfo
   int mcEvtType;
   std::vector<double>pileup;
   std::vector<double>truepileup;
-  std::vector<double>puWeights;
-  std::vector<double>truepuWeights;
+  ///std::vector<double>puWeights;
+  ///std::vector<double>truepuWeights;
   int hepNUP;
   std::vector<double>topPtWeights;
   
