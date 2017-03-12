@@ -5,11 +5,6 @@
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
 
-// ---- 13 TeV
-#include "PhysicsTools/SelectorUtils/interface/CutApplicatorWithEventContentBase.h"
-#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
-#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
-
 std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
@@ -19,11 +14,22 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   
   try{
     std::string id = configParamsElectrons_.getParameter<std::string>("id");
-    double maxRelIso = configParamsElectrons_.getParameter<double>("maxRelIso");
+    double maxRelCombPFIsoEA = configParamsElectrons_.getParameter<double>("maxRelCombPFIsoEA");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
     double mvacut = configParamsElectrons_.getParameter<double>("mvacut");
+    std::string triggerMatch = configParamsElectrons_.getParameter<std::string>("triggerMatch");  
     
+   //Compute the rho, for relCombPFIsoEAcorr
+    edm::Handle<double> hRho;
+    iEvent.getByToken(eventrhoToken_, hRho);
+    double rho_ = hRho.isValid() ? *hRho : 0;
+    /*
+    //get triger match
+    edm::Handle< pat::TriggerEvent > triggerEvent;
+    iEvent.getByToken(TrigEvent_, triggerEvent );
+    */
+    //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);
     //std::string tag(rawtag);
@@ -34,24 +40,33 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       for(size_t iEle = 0; iEle < ieles->size(); iEle++)
 	{
 	  const pat::Electron eIt = ((*ieles)[iEle]);
-      
 	  MyElectron newElectron = MyElectronConverter(eIt, rawtag);
-
-      newElectron.eleName = tag; ///Memory leak
-	  
-	  //make selections
+      newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
+      
+      //make selections
       bool passKin = true, passId = true, passIso = true;
 	  if(newElectron.p4.Et() < minEt || 
 	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-	  
+	  /*  
+      //trigger_ele_pt
+      std::string tagS(tag);
+      std::string labelMatcher = tagS+triggerMatch;
+      pat::helper::TriggerMatchHelper tmhelper;
+      const pat::TriggerObjectRef objRef(tmhelper.triggerMatchObject( ieles, iEle, labelMatcher, iEvent, *triggerEvent));
+      if(objRef.isAvailable()){
+        newElectron.trigger_ele_pt = objRef->pt();
+      }
+      */
       //apply mva Id
 	  double mvaid = eIt.electronID(id);
 	  if(mvaid < mvacut) passId = false;
 	  //if(newElectron.nMissingHits != 0) passId = false;
 	  
-      //iso
-      if(newElectron.pfRelIso > maxRelIso) passIso = false;
-	  int quality = 0;
+      //Rel comb PF iso with EA
+	  newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
+      if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
+	  
+      int quality = 0;
 	  if(passKin)quality  = 1;
       if(passId)quality |= 1<<1;
 	  if(passIso)quality |= 1<<2;
@@ -93,15 +108,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   //abs(dPhiIn)
   newElectron.dPhiIn = iEle.deltaPhiSuperClusterTrackAtVtx();
   newElectron.hadOverEm = iEle.hadronicOverEm();
-  //Rel. comb. PF iso with EA corr
-  //const reco::GsfElectron::PflowIsolationVariables& pfIso = iEle.pfIsolationVariables();
-   //const float chad = pfIso.sumChargedHadronPt;
-   //const float nhad = pfIso.sumNeutralHadronEt;
-   //const float pho = pfIso.sumPhotonEt;
-   //const float  eA = _effectiveAreas.getEffectiveArea( absEta );
-   //const float rho = _rhoHandle.isValid() ? (float)(*_rhoHandle) : 0; // std::max likes float arguments
-   //const float iso = chad + std::max(0.0f, nhad + pho - rho*eA);
-   //const float iso = chad + std::max(0.0f, nhad + pho);
   //abs(1/E-1/p) 
   const float ecal_energy_inverse = 1.0/iEle.ecalEnergy();
   const float eSCoverP = iEle.eSuperClusterOverP();
@@ -116,8 +122,30 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.isEE = iEle.isEB();
   newElectron.isEB = iEle.isEE();
   std::map<std::string, float> eidWPs; eidWPs.clear();
+  const std::vector<pat::Electron::IdPair> & eids = iEle.electronIDs();
+  int iid_cic = 0, iid_vbtf=0;
+  for(size_t id = 0; id < eids.size(); id++){
+    std::string id_name = eids[id].first;
+    double id_value = eids[id].second;
+    eidWPs[id_name] = id_value;
+     
+    if(id_name.find("MC") != std::string::npos){
+      iid_cic++;
+      if(int(id_value) & 0x1){
+        myhistos_["cic_id_"+dirtag]->Fill(iid_cic);
+      }
+      ///myhistos_["cic_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_cic+1, id_name.c_str());
+    }
+    else{
+      iid_vbtf++;
+      if(int(id_value) & 0x1){
+        myhistos_["vbtf_id_"+dirtag]->Fill(iid_vbtf);
+      }
+      ///myhistos_["vbtf_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_vbtf+1, id_name.c_str());
+   }
+  }
   newElectron.eidWPs = eidWPs;
-  
+
   ///iso
   std::vector<double> pfiso = defaultPFElectronIsolation(iEle);
   newElectron.ChHadIso = pfiso[0]; 
@@ -126,7 +154,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PileupIso = pfiso[3];
   newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
   newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
-  myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
   return newElectron;
 }
 
@@ -140,6 +167,18 @@ std::vector<double> MyEventSelection::defaultPFElectronIsolation (const pat::Ele
     values[1] = ele.photonIso();
     values[2] = ele.neutralHadronIso();
     values[3] =(std::max(ele.photonIso()+ele.neutralHadronIso() - puOffsetCorrection, 0.0) + ele.chargedHadronIso())/norm;
-
     return values;
+}
+
+//Rel. comb. PF iso with EA corr
+float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag)
+{
+  double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, iEle.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
+  const reco::GsfElectron::PflowIsolationVariables& pfIso = iEle.pfIsolationVariables();
+  const float chad = pfIso.sumChargedHadronPt;
+  const float nhad = pfIso.sumNeutralHadronEt;
+  const float pho = pfIso.sumPhotonEt;
+  const float relCombPFIsoEAcorr = chad + std::max(0.0, nhad + pho - rho_* EffArea_);
+  myhistos_["relCombPFIsoEA_"+dirtag]->Fill(relCombPFIsoEAcorr); 
+  return relCombPFIsoEAcorr;
 }

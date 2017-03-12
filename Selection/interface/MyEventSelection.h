@@ -66,7 +66,8 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 //---------------- 13 TeV -------
-#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+// //https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleEffAreaPFIsoCut.  cc#L83-L94
+//#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorWithEventContentBase.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorBase.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
@@ -108,7 +109,7 @@ public:
   MyMuon MyMuonConverter(const pat::Muon&, TString&);
   std::vector<MyKineFitParticle> getKineFitParticles (const edm::Event&, const edm::EventSetup&);
   MyKineFitParticle MyKineFitPartConverter(const pat::Particle&, TString&);
-  
+ 
   MyTrack myTrackConverter(const reco::TransientTrack&);
   MyTrack myTrackConverter(const reco::Track&);
   MyTrack myTrackConverter(const reco::PFCandidate&);
@@ -122,6 +123,7 @@ public:
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
   std::vector<double> defaultPFElectronIsolation(const pat::Electron&);
+  float relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag);
 
   int assignDYchannel(const edm::Event&, const edm::EventSetup&);
   int assignWJets(const edm::Event&, const edm::EventSetup&);
@@ -174,6 +176,8 @@ private:
   // Muon, Electrons, Jets, MET, Trigger
   edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
+  edm::EDGetTokenT<double> eventrhoToken_;
+
   edm::EDGetTokenT<pat::JetCollection> Jetsources;
   edm::EDGetTokenT<pat::TriggerEvent> TrigEvent_;
   edm::EDGetTokenT<reco::JetIDValueMap> jetIDMapToken_;

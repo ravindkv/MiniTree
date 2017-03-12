@@ -48,7 +48,7 @@ class MyElectron
   double PhotonIso;  
   double NeuHadIso;  
   double PileupIso;
-  double pfRelIso;//Rel. comb. PF iso with EA corr
+  double relCombPFIsoEA;//Rel. comb. PF iso with EA corr
   double D0;
   double Dz;
   double trigger_ele_pt;

@@ -30,7 +30,7 @@ w2munu = fillFrom('/lustre/lip.pt/data/cmslocal/samples/CMSSW_3_8_6/w2MuNu')
 #NICE WAY TO PRINT STRINGS
 def toPrint(string, value):
     length = (len(string)+len(str(value))+2)
-    line = "*"*length
+    line = "-"*length
     print ""
     print "* "+ line +                    " *"
     print "| "+ " "*length +              " |"

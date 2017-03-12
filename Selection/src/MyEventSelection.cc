@@ -16,7 +16,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   configParamsMC_ = iConfig.getParameter<edm::ParameterSet>("MCTruth");
   configParamsKFPs_ = iConfig.getParameter<edm::ParameterSet>("KineFit");
   runKineFitter_ = configParamsKFPs_.getParameter<bool>("runKineFitter");
-  
+
   //KFP
   //std::vector<edm::InputTag> sources = configParamsKFPs_.getParameter<std::vector<edm::InputTag> >("sources");
   edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
@@ -73,7 +73,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   // Elctrons
   Elesources = cc.consumes<pat::ElectronCollection>(configParamsElectrons_.getParameter<edm::InputTag>("sources"));
   //EleConversion_ = cc.consumes<reco::ConversionCollection>(edm::InputTag("reducedEgamma"));
-  //eventrhoToken_ = cc.consumes<double>(edm::InputTag("kt6PFJets", "rho"));
+  eventrhoToken_ = cc.consumes<double>(configParamsElectrons_.getParameter<edm::InputTag>("rhoIso"));
   jetIDMapToken_ = cc.consumes<reco::JetIDValueMap>(edm::InputTag("ak5JetID"));
 
   // Jets
@@ -162,6 +162,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true; cout <<"ele trig passed"<<endl;}
     if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true; cout<<"mu trig passed"<<endl;}
   }
+  ///Electrons
   int nIsoMuon = 0, nIsoElectron = 0;
   std::vector<MyElectron> electrons = event_.Electrons;
   for(size_t iele = 0; iele < electrons.size(); iele++){
@@ -181,6 +182,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     }
   }
   myhistos_["SelEleMultiplicity"]->Fill(nIsoElectron);
+  
+  ///Muons
   std::vector<MyMuon> muons = event_.Muons;
   for(size_t imu = 0; imu < muons.size(); imu++){
     //std::string algo = muons[imu].muName;
@@ -206,6 +209,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   //  int nIsoLepton = nIsoElectron;
   if(inputch==std::string("muon")){ nIsoLepton = nIsoMuon; /*std::cout << "muon found" << std::endl;*/}
 
+  ///Jets
   std::vector<MyJet> jets = event_.Jets;
   int nJets = 0, nHighPtJets = 0;
   for(size_t ijet = 0; ijet < jets.size(); ijet++){
@@ -311,7 +315,9 @@ void MyEventSelection::BookHistos()
   myhistos_["pt_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pt_"+elerawtag, "Electron Pt", 200, 0., 500.);
   myhistos_["eta_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+elerawtag, "Electron #eta", 60, -3.0, 3.0);
   myhistos_["phi_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+elerawtag, "Electron #phi", 80, -4.05, 3.95);
-  myhistos_["pfRelIso_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pfRelIso_"+elerawtag, "Electron rel pf iso", 100, 0, 5.);
+  myhistos_["relCombPFIsoEA_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("relCombPFIsoEA_"+elerawtag, "Electron rel pf iso", 100, 0, 5.);
+  myhistos_["cic_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("cic_id_"+elerawtag, "Ele CiC id", 25, 0.,  25.);
+  myhistos_["vbtf_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("vbtf_id_"+elerawtag,"Ele VBTF id", 25,   0., 25.);
 
   ///Muons
   TString murawtag="Muons";

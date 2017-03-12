@@ -27,7 +27,7 @@ MyElectron::MyElectron():
   PhotonIso(999.),   
   NeuHadIso(999.),   
   PileupIso(999.), 
-  pfRelIso(999.),
+  relCombPFIsoEA(999.),
   D0(999.),
   Dz(999.),
   trigger_ele_pt(0),
@@ -70,7 +70,7 @@ void MyElectron::Reset()
   PhotonIso = 999.;    
   NeuHadIso = 999.;    
   PileupIso = 999.;  
-  pfRelIso = 999.; 
+  relCombPFIsoEA = 999.; 
   D0 = 999.;
   Dz = 999.;
   trigger_ele_pt = 0;

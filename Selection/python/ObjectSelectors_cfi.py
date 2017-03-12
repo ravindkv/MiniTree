@@ -58,10 +58,13 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
 
                         id = cms.string('cutBasedElectronID-Spring15-25ns-V1-standalone-loose'),
                         #id = cms.string('cutBasedElectronID-Summer16-80X-V1-loose'),
-                        maxRelIso = cms.double(0.30),
+                        maxRelCombPFIsoEA = cms.double(0.0994),
                         minEt = cms.double(10),
                         maxEta = cms.double(2.5),
                         mvacut = cms.double(0.30),
+                        #rho = cms.InputTag("kt6PFJets", "rho")
+#https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_tools.py#L317
+                        rhoIso = cms.InputTag("fixedGridRhoFastjetAll")
                         )
 
 #my base values for jet selection -----------------------------------------------
