@@ -31,8 +31,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     */
     //get electrons
     TString rawtag="Electrons";
-    TString tag(rawtag);
-    //std::string tag(rawtag);
+    TString tag(rawtag);//std::string tag(rawtag);
     edm::Handle<pat::ElectronCollection>ieles;
     iEvent.getByToken(Elesources, ieles); 
     
@@ -47,7 +46,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       bool passKin = true, passId = true, passIso = true;
 	  if(newElectron.p4.Et() < minEt || 
 	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-	  /*  
+      /*
       //trigger_ele_pt
       std::string tagS(tag);
       std::string labelMatcher = tagS+triggerMatch;
@@ -69,9 +68,8 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       int quality = 0;
 	  if(passKin)quality  = 1;
       if(passId)quality |= 1<<1;
-	  if(passIso)quality |= 1<<2;
+      if(passIso)quality |= 1<<2;
 	  newElectron.quality = quality;
-	  
 	  if(passKin)selElectrons.push_back(newElectron);
       selElectrons.push_back(newElectron);
     }//for loop

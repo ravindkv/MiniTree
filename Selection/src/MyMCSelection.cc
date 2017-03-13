@@ -18,24 +18,15 @@ std::vector<MyMCParticle> MyEventSelection::getMCParticles(const edm::Event& iEv
     for(size_t i = 0; i < genParticles->size(); ++ i)
       {
 	const reco::GenParticle & part = (*genParticles)[i];
-
-	/*
-	  cout << "  particle "
-	  << " " << part.pdgId()
-	  << " " << part.status()
-	  << " " << part.pt()
-	  << " " << part.eta()
-	  << " " << part.phi()
-	  << endl;
-	*/
+	  //cout << "  particle "<< " " << part.pdgId()<< " " << part.status()
+      //    << " " << part.pt()<< " " << part.eta()<< " " << part.phi()<< endl;
 
 	int id = part.pdgId();
 
 	if(part.status() == 1 && (abs(id) == 12 || abs(id) == 14 || abs(id) == 16)){
 	  mcMetX += part.px();
 	  mcMetY += part.py();
-	}
-	
+    }
 
 	if( ( part.status() == 3) || (part.status() == 2 && abs(id) < 6 && part.pt() > 10) || (part.status() == 1 && abs(id) < 17 && part.pt() > 10)) {
 	  
@@ -64,9 +55,8 @@ std::vector<MyMCParticle> MyEventSelection::getMCParticles(const edm::Event& iEv
 	}
       }
     mcMET.p4.SetCoordinates(mcMetX, mcMetY, 0, sqrt(mcMetX*mcMetX + mcMetY*mcMetY));
-    
   }
-  //std::cout<<"stored mc particles "<<mcParticles.size()<<std::endl;
+  //std::cout<<"stored mc particles =  "<<mcParticles.size()<<std::endl;
   return mcParticles;
 }
 
@@ -109,17 +99,14 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
  
  
   //store GenPileup info
-
   double npuVertices_=0, nOOTpuVertices_=0;
   double nTruePuVertices_=0, nTrueOOTPuVertices_=0;
-  
   edm::Handle<std::vector<PileupSummaryInfo> > puInfoH;
   iEvent.getByToken(PUInfoTag_, puInfoH);
  
- 
   if(puInfoH.isValid())
     { 
-      //std::cout << "valid puInfoH" << std::endl;
+      //std::cout << "valid puInfoH = " << std::endl;
       double nOOTpuVertices(0),npuVertices(0);
       double nTrueOOTPuVertices(0),nTruePuVertices(0);
       for(std::vector<PileupSummaryInfo>::const_iterator it =
@@ -140,7 +127,7 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
       nOOTpuVertices_ = nOOTpuVertices;
       nTruePuVertices_ = nTruePuVertices;
       nTrueOOTPuVertices_ = nTrueOOTPuVertices;
-      //std::cout<<"npuVertices_ "<<npuVertices_<<std::endl;
+     // std::cout<<"npuVertices_ =  "<<npuVertices_<<std::endl;
     }
 
   std::vector<double>pu; pu.clear();
@@ -185,7 +172,7 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
   if(LHEHandle.isValid()){
     LHE = LHEHandle.product();
     hepNUP_ = (LHE->hepeup()).NUP;
-    //cout << hepNUP_ << endl;
+    //cout << "hepNUP_ = "<<hepNUP_ << endl;
   }
   mcInfo.hepNUP = hepNUP_;
 
@@ -202,15 +189,13 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
     double pt_top = -1.0; double pt_antitop = -1.0;
     for(size_t i = 0; i < genParticles->size(); ++ i)
       {
-        const reco::GenParticle & part = (*genParticles)[i];
+      const reco::GenParticle & part = (*genParticles)[i];
 	//int id = part.pdgId();
-
-        if(part.status() == 3 &&  part.pdgId() == 6)
+      if(part.status() == 3 &&  part.pdgId() == 6)
 	  pt_top = part.pt();
 	else if(part.status() == 3 &&  part.pdgId() == -6)
 	  pt_antitop = part.pt();
       }
-
     if(pt_top >= 0 && pt_antitop >= 0){
       double topPtWeight_LJ = sqrt(exp(0.159 - 0.00141*pt_top)*exp(0.159 - 0.00141*pt_antitop));
       double topPtWeight_2L = sqrt(exp(0.148 - 0.00129*pt_top)*exp(0.148 - 0.00129*pt_antitop));
@@ -331,8 +316,8 @@ int MyEventSelection::assignWJets(const edm::Event& iEvent, const edm::EventSetu
     else if(quarkCounter == 0 && muonCounter == 1     ) { wChannel = MyEvent::WMUNU;  }
     else if(quarkCounter == 0 && tauCounter == 1      ) { wChannel = MyEvent::WTAUNU; }
     
-    //cout<<"WChannel "<<wChannel<<endl;
-    
+    cout<<"WChannel =  "<<wChannel<<endl;
+    cout<<endl; 
     return wChannel;
     
 }

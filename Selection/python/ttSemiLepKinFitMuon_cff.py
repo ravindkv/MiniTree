@@ -34,7 +34,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #only used for data
     process.cleanPatJetsResCor = process.cleanPatJets.clone()
-    process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
+    ##process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
     process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
 
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
@@ -136,7 +136,17 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
+
     process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+    if isData :
+        process.kinFitSequence.remove(process.cleanPatJetsResCor)
+        process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
+                process.scaledJetEnergyNominal*process.selectedPatMuons*
+                process.selectedPatElectrons* process.selectedPatPhotons*
+                process.selectedPatTaus* process.selectedPatJets*
+                process.cleanPatMuons* process.cleanPatElectrons*
+                process.cleanPatPhotons*process.cleanPatTaus*
+                process.cleanPatJets*process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
 
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
@@ -157,3 +167,4 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
     toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
+

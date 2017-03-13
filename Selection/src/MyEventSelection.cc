@@ -159,8 +159,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   bool passTrig = false;
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
-    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true; cout <<"ele trig passed"<<endl;}
-    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true; cout<<"mu trig passed"<<endl;}
+    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;}// cout <<"ele trig passed"<<endl;}
+    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}// cout<<"mu trig passed"<<endl;}
   }
   ///Electrons
   int nIsoMuon = 0, nIsoElectron = 0;
@@ -189,13 +189,13 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     //std::string algo = muons[imu].muName;
     std::string algo(muons[imu].muName);
     //if(algo.find("PFlow") == std::string::npos) continue;
-    bool passKin = false, passId = false;///, passIso = false;
+    bool passKin = false, passId = false, passIso = false;
     int quality = muons[imu].quality;
     if(quality & 0x1)passKin = true;
     if((quality >> 1) & 0x1)passId = true;
-    ///if((quality >> 2) & 0x1)passIso = true;
-    ///if(passKin && passId && passIso){
-    if(passKin && passId){
+    if((quality >> 2) & 0x1)passIso = true;
+    if(passKin && passId && passIso){
+    ///if(passKin && passId){
       myhistos_["SelMuPt"]->Fill(muons[imu].p4.Pt());
       myhistos_["SelMuEta"]->Fill(muons[imu].p4.Eta());
       nIsoMuon++;
@@ -213,11 +213,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   std::vector<MyJet> jets = event_.Jets;
   int nJets = 0, nHighPtJets = 0;
   for(size_t ijet = 0; ijet < jets.size(); ijet++){
-    //std::string algo = jets[ijet].jetName;
     std::string algo(jets[ijet].jetName);
-    //if(algo.find("PFlow") == std::string::npos) continue;
     if(isData_ && algo.find("ResCor") == std::string::npos) continue;
-    ///if(isData_ && algo.find("ResCor") == std::string::npos) continue;
     bool passKin = false, passId = false;
     int quality = jets[ijet].quality;
     if(quality & 0x1)passKin = true;

@@ -44,6 +44,5 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
     hltPaths.push_back(trigName);
   }
   //  }
-  
   return hltPaths;
 }

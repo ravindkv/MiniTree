@@ -2,7 +2,6 @@
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
-//#include "CMGTools/External/interface/PileupJetIdentifier.h"
 #include "DataFormats/BTauReco/interface/SecondaryVertexTagInfo.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
@@ -15,20 +14,13 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   
   jetIDFunctor_ = JetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("CaloJetId") );
   pfjetIDFunctor_ = PFJetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("PFJetId") );
-  
   // jet ID handle
-  //edm::Handle<reco::JetIDValueMap> hJetIDMap; // already defined in MyEventSelection.h
   iEvent.getByToken( jetIDMapToken_, hJetIDMap ); // 76x
   
   try{
     //config parameters
     double minPt = configParamsJets_.getParameter<double>("minPt");
     double maxEta = configParamsJets_.getParameter<double>("maxEta");
-    try{ 
-      //      iEvent.getByLabel(puMVADiscriminantResCor, puJetIdMVARC);
-      //      iEvent.getByLabel(puMVAIDResCor, puJetIdFlagRC);
-    }catch(std::exception &e){ 
-    }
     
     TString rawtag="Jets";
     //std::string tag(rawtag);
@@ -66,19 +58,13 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
 	  newJet.JECUncertainty = JECUncertainty;
 	  
 	  //make selections
-	  bool passKin = true, passId = true, passIso = true;
+	  bool passKin = true, passId = true;
 	  if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
+	  if(!(newJet.jetIDLoose)) passId = false;
 	  
-      //ids
-	  ///if(!(newJet.jetIDLoose))passId = false;
-          	  
-	  int quality = 0;
+      int quality = 0;
 	  if(passKin)quality  = 1;
-	  //std::cout<<"jet quality "<<quality<<std::endl;
 	  if(passId)quality |= 1<<1;
-	  //std::cout<<"jet quality "<<quality<<std::endl;
-	  if(passIso)quality |= 1<<2;
-	  //std::cout<<"jet quality "<<quality<<std::endl;
 	  newJet.quality = quality;
 	  
 	  if(passKin && passId) selJets.push_back(newJet);
@@ -98,7 +84,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
 {
   MyJet newJet;
   newJet.Reset();
-  
+
   ///basic
   const reco::GenJet *genJet = iJet.genJet();
   if(genJet){
@@ -134,7 +120,11 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
       newJet.neutralMultiplicity = iJet.neutralMultiplicity();
       myhistos_["emf_"+dirtag]->Fill(iJet.chargedEmEnergyFraction() + iJet.neutralEmEnergyFraction());
     }
-  
+  pat::strbitset jetid = jetIDFunctor_.getBitTemplate();
+  pat::strbitset pfjetid = pfjetIDFunctor_.getBitTemplate();
+  pfjetid.set(false);
+  newJet.jetIDLoose = pfjetIDFunctor_( iJet, pfjetid );
+
   ///btag, JEC & SV
   //btag : https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
   std::map<std::string, double> discr; discr.clear();
@@ -157,10 +147,9 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
   newJet.JECs = jetCorrections;
   newJet.JECUncertainty = 1.0;  //default, get it later from CondDB.
   //SV
-  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex();
-  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookChapter7
-  //const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
-  if(svTagInfo){
+  //http://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_8_0_25/doc/html/dd/dc2/PatBasicFWLiteJetAnalyzer_8cc_source.html
+  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
+  if(svTagInfo !=0){
     for(size_t iv = 0; iv < svTagInfo->nVertices(); iv++){
       const reco::Vertex& sv = svTagInfo->secondaryVertex(iv);
       if(!(sv.isFake())){

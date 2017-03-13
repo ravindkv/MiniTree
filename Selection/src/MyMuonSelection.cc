@@ -23,7 +23,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
     int minMuonHits = configParamsMuons_.getParameter<int>("minMuonHits");
     int minPixelHits = configParamsMuons_.getParameter<int>("minPixelHits");
     int minTrackerLayers = configParamsMuons_.getParameter<int>("minTrackerLayers");
-    ///double maxRelIso = configParamsMuons_.getParameter<double>("maxRelIso");
+    double maxRelIso = configParamsMuons_.getParameter<double>("maxRelIso");
 
     TString rawtag="Muons";
     //std::string tag(rawtag);
@@ -40,7 +40,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
 	  //make selections
-	  bool passKin = true, passId = true;///, passIso = true;
+	  bool passKin = true, passId = true, passIso = true;
 	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
       //id
 	  if(newMuon.nMuonHits <= minMuonHits)passId = false;
@@ -51,11 +51,11 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  if(mIt.isGlobalMuon() && mIt.isTrackerMuon())isGlobal=true;
 	  if(!isGlobal)passId = false;
       //iso
-	  ///if(newMuon.pfRelIso > maxRelIso)passIso = false;
+	  if(newMuon.pfRelIso > maxRelIso)passIso = false;
       int quality = 0;
 	  if(passKin)quality  = 1; // quality = 0000 0000 0000 0001 = 1
 	  if(passId)quality |= 1<<1;// quality =  0000 0000 0000 0001 | 0000 0000 0000 0010 = 3
-	  ///if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
+	  if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
 	  newMuon.quality = quality;
 	  if(passKin) selMuons.push_back(newMuon);
 	}

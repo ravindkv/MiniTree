@@ -18,6 +18,7 @@ MyJet::MyJet():
   chargedMultiplicity(0.),
   chargedEmEnergyFraction(999.),
   neutralMultiplicity(0.),
+  jetIDLoose(false),
   
   ///JEC
   JECUncertainty(999.),
@@ -51,6 +52,7 @@ void MyJet::Reset()
   chargedMultiplicity = 0.;
   chargedEmEnergyFraction = 999.;
   neutralMultiplicity = 0.;
+  jetIDLoose = false;
   
   ///btag, JEC, SV
   bDiscriminator.clear();

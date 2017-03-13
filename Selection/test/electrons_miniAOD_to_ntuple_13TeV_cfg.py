@@ -22,7 +22,6 @@ process.TFileService.fileName = cms.string(output_fileName)
 procName='LOCALUSER'
 trigMenu = 'HLT'
 isData=False
-isAOD=True
 isFastsim = False
 #mutriglist = [ 'HLT_Mu15_v2' ]
 mutriglist = [ 'HLT_IsoMu24_eta2p1_v8' ]
@@ -47,7 +46,7 @@ process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_miniAODv2_
 if(addPF2PAT):
     toPrint("Adding PF2PAT objects","")
     addpf2PatSequence(process, not isData)
-defineBasePreSelection(process,False,not isFastsim and not isAOD)
+#defineBasePreSelection(process,False,not isFastsim and not isAOD)
 
 #configureTauProduction(process, not isData)
 #addJetMETExtra(process,isData,applyResJEC,isAOD)
@@ -89,11 +88,5 @@ else :
 '''
 process.schedule = cms.Schedule(process.kineFit, process.p)
 ##process.schedule = cms.Schedule(process.ele_extra, process.pat_default, process.met_extra, process.ele_embed, process.kineFit, process.p)
-
 checkProcessSchedule(storeOutPath,True)
 
-if(isAOD) :
-    from PhysicsTools.PatAlgos.tools.coreTools import *
-    #restrictInputToAOD(process)
-    process.myMiniTreeProducer.Electrons.ebRecHits = cms.InputTag("reducedEcalRecHitsEB")
-    process.myMiniTreeProducer.Electrons.eeRecHits = cms.InputTag("reducedEcalRecHitsEE")

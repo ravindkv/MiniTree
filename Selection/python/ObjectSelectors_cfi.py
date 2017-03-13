@@ -2,7 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 #my base values for trigger bit selection -------------------
 BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
-                           bits = cms.vstring('HLT_Mu9','HLT_Ele10_LW_L1R_v2','HLT_Jet30'),
+                           #bits = cms.vstring('HLT_Mu9','HLT_Ele10_LW_L1R_v2','HLT_Jet30'),
+                           bits = cms.vstring('HLT_AK4CaloJet30_v3','HLT_HcalPhiSym_v2','HLT_HcalPhiSym_v2'),
                            )
 
 #my base values for vertex selection ---------------------------------
@@ -34,7 +35,8 @@ BaseTrackSet = cms.PSet( source = cms.InputTag("generalTracks"),
 
 #my base values for muon selection ---------------------------------------
 BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
-                          triggerEvent = cms.InputTag("patTriggerEvent"),
+                          #triggerEvent = cms.InputTag("patTriggerEvent"),
+                          triggerEvent = cms.InputTag("patTrigger"),
                           triggerMatch = cms.string("TrigMatch"),
 
                           minPt = cms.double(10),
@@ -43,17 +45,16 @@ BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
                           minMatchStations = cms.int32(1),
                           minPixelHits = cms.int32(0),
                           minTrackerLayers = cms.int32(5),
-                          maxRelIso = cms.double(0.30),
+                          maxRelIso = cms.double(0.25),
                           )
 
 
 
 # base values for electron selection ----------------------------------------------
 BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
-                        ebRecHits = cms.InputTag("ecalRecHit:EcalRecHitsEB"),
-                        eeRecHits = cms.InputTag("ecalRecHit:EcalRecHitsEE"),
                         dedxSource = cms.InputTag("dedxHarmonic2"),
-                        triggerEvent = cms.InputTag("patTriggerEvent"),
+                        #triggerEvent = cms.InputTag("patTriggerEvent"),
+                        triggerEvent = cms.InputTag("patTrigger"),
                         triggerMatch = cms.string("TrigMatch"),
 
                         id = cms.string('cutBasedElectronID-Spring15-25ns-V1-standalone-loose'),
@@ -72,7 +73,8 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        CaloJetId = cms.PSet( version = cms.string("PURE09"), quality = cms.string("LOOSE") ),
                        PFJetId = cms.PSet( version = cms.string("FIRSTDATA"), quality = cms.string("LOOSE") ),
                        dedxSource = cms.InputTag("dedxHarmonic2"),
-                       triggerEvent = cms.InputTag("patTriggerEvent"),
+                       #triggerEvent = cms.InputTag("patTriggerEvent"),
+                       triggerEvent = cms.InputTag("selectedPatTrigger"),
                        triggerMatch = cms.string("TrigMatch"),
                        useRawJets = cms.bool(False),
                        minPt = cms.double(17),

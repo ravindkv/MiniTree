@@ -36,7 +36,8 @@ class MyJet
   int chargedMultiplicity;
   double chargedEmEnergyFraction; 
   int neutralMultiplicity; //Number of Neutral Particles
-  
+  bool jetIDLoose; 
+ 
   ///Btag, JEC & SV
   std::map<std::string, double>bDiscriminator;
   std::map<std::string, double>JECs;
