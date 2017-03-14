@@ -4,11 +4,11 @@ from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 from MiniTree.Selection.LocalSources_cff import toPrint
 
 #INPUT FILE
-input_fileName = "/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver1-v1/100000/08AD7B2D-34EE-E611-A7DA-001E674DA2E8.root"
-#input_fileName = "/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root"
+#input_fileName = "/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver1-v1/100000/08AD7B2D-34EE-E611-A7DA-001E674DA2E8.root"
+input_fileName = "/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/70000/FED53EE4-7D16-E611-AE17-B083FED406AD.root"
 #input_fileName = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 process.source.fileNames = [input_fileName]
-process.maxEvents.input = cms.untracked.int32(10000)
+process.maxEvents.input = cms.untracked.int32(500)
 
 #OUTPUT FILE
 import datetime
@@ -21,7 +21,7 @@ process.TFileService.fileName = cms.string(output_fileName)
 procName='LOCALUSER'
 trigMenu = 'HLT'
 #trigMenu = 'HLT2' #https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
-isData=True
+isData=False
 isFastsim = False
 #Trigger list
 mutriglist = [ 'HLT_IsoMu27_v3' ]

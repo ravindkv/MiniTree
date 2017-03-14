@@ -24,11 +24,11 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
     double rho_ = hRho.isValid() ? *hRho : 0;
-    /*
+    
     //get triger match
     edm::Handle< pat::TriggerEvent > triggerEvent;
     iEvent.getByToken(TrigEvent_, triggerEvent );
-    */
+    
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
@@ -46,7 +46,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       bool passKin = true, passId = true, passIso = true;
 	  if(newElectron.p4.Et() < minEt || 
 	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-      /*
+      
       //trigger_ele_pt
       std::string tagS(tag);
       std::string labelMatcher = tagS+triggerMatch;
@@ -55,7 +55,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       if(objRef.isAvailable()){
         newElectron.trigger_ele_pt = objRef->pt();
       }
-      */
+      
       //apply mva Id
 	  double mvaid = eIt.electronID(id);
 	  if(mvaid < mvacut) passId = false;
@@ -132,14 +132,14 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
       if(int(id_value) & 0x1){
         myhistos_["cic_id_"+dirtag]->Fill(iid_cic);
       }
-      ///myhistos_["cic_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_cic+1, id_name.c_str());
+      //myhistos_["cic_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_cic+1, id_name.c_str());
     }
     else{
       iid_vbtf++;
       if(int(id_value) & 0x1){
         myhistos_["vbtf_id_"+dirtag]->Fill(iid_vbtf);
       }
-      ///myhistos_["vbtf_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_vbtf+1, id_name.c_str());
+      //myhistos_["vbtf_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_vbtf+1, id_name.c_str());
    }
   }
   newElectron.eidWPs = eidWPs;
