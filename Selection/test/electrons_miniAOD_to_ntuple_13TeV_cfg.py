@@ -9,7 +9,7 @@ input_fileName = "/store/mc/RunIISpring16MiniAODv1/W1JetsToLNu_TuneCUETP8M1_13Te
 #input_fileName = "/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/90000/FC334468-36E6-E611-962C-008CFA051EC0.root"
 #input_fileName = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 process.source.fileNames = [input_fileName]
-process.maxEvents.input = cms.untracked.int32(-1)
+process.maxEvents.input = cms.untracked.int32(100)
 
 #OUTPUT FILE
 import datetime
