@@ -32,6 +32,14 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
+    #clean taus
+    '''
+    process.cleanPatTaus.preselection = cms.string('tauID("decayModeFinding") > 0.5 &'
+            'tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5 &'
+            ' tauID("againstMuonTight3") > 0.5 &'
+            ' tauID("againstElectronVLooseMVA5") > 0.5'
+            )
+    '''
     #only used for data
     process.cleanPatJetsResCor = process.cleanPatJets.clone()
     ##process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
@@ -77,8 +85,8 @@ def addSemiLepKinFitMuon(process, isData=False) :
     #set b-tagging in KineFit
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
     #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)

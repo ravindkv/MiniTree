@@ -190,11 +190,13 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
     for(size_t i = 0; i < genParticles->size(); ++ i)
       {
       const reco::GenParticle & part = (*genParticles)[i];
-	//int id = part.pdgId();
-      if(part.status() == 3 &&  part.pdgId() == 6)
-	  pt_top = part.pt();
-	else if(part.status() == 3 &&  part.pdgId() == -6)
-	  pt_antitop = part.pt();
+	  //int id = part.pdgId();
+      //if(part.status() == 3 &&  part.pdgId() == 6)
+      if(part.pdgId() == 6)
+	    pt_top = part.pt();
+	  //else if(part.status() == 3 &&  part.pdgId() == -6)
+	  else if(part.pdgId() == -6)
+	    pt_antitop = part.pt();
       }
     if(pt_top >= 0 && pt_antitop >= 0){
       double topPtWeight_LJ = sqrt(exp(0.159 - 0.00141*pt_top)*exp(0.159 - 0.00141*pt_antitop));

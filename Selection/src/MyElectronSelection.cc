@@ -24,7 +24,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
     double rho_ = hRho.isValid() ? *hRho : 0;
-    /*
+   /* 
     //get triger match
     edm::Handle< pat::TriggerEvent > triggerEvent;
     iEvent.getByToken(TrigEvent_, triggerEvent );
@@ -46,7 +46,9 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
       bool passKin = true, passId = true, passIso = true;
 	  if(newElectron.p4.Et() < minEt || 
 	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-      /*
+      
+      
+     /* 
       //trigger_ele_pt
       std::string tagS(tag);
       std::string labelMatcher = tagS+triggerMatch;
@@ -56,6 +58,8 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         newElectron.trigger_ele_pt = objRef->pt();
       }
       */
+      
+      
       //apply mva Id
 	  double mvaid = eIt.electronID(id);
 	  if(mvaid < mvacut) passId = false;

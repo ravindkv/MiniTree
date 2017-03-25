@@ -59,7 +59,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
 
     #only used for data
     process.cleanPatJetsResCor = process.cleanPatJetsUser.clone()
-    process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
+    #process.cleanPatJetsResCor.src = cms.InputTag("selectedPatJetsResCor")
     process.cleanPatJetsResCor.preselection = cms.string("pt>24 && abs(eta)<2.5")
 
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
@@ -101,8 +101,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
     #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 
@@ -161,6 +161,16 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
 
     process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+    if isData :
+        process.kinFitSequence.remove(process.cleanPatJetsResCor)
+        process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
+                process.scaledJetEnergyNominal*process.selectedPatMuons*
+                process.selectedPatElectrons* process.selectedPatPhotons*
+                process.selectedPatTaus* process.selectedPatJets*
+                process.cleanPatMuons* process.cleanPatElectrons*
+                process.cleanPatPhotons*process.cleanPatTaus*
+                process.cleanPatJets* process.cleanPatElectronsUser*
+                process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,

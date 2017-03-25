@@ -105,6 +105,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
   myhistos_["phi_"+dirtag]->Fill(iJet.phi());
 
   newJet.partonFlavour = double(iJet.partonFlavour());
+  //vertex.fCoordinates.fXYZ are zero, in the MINIAOD
   newJet.vertex.SetCoordinates(iJet.vx(), iJet.vy(), iJet.vz());
   
   ///ids

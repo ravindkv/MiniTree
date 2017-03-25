@@ -108,7 +108,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	      newKfp.chi2OfFit = chi2Up_->size()>0 ? (*chi2Up_)[0] : 999.; 
           newKfp.statusOfFit = statusUp_->size()>0 ? (*statusUp_)[0] : 0; 
           newKfp.probOfFit = probUp_->size() > 0 ? (*probUp_)[0] : 0; 
-	      newKfp.njetsOfFit = *njetsUp_>0 && *njetsUp_<100 ? *njetsUp_:0;
+	      newKfp.njetsOfFit = *njetsUp_;
 	     // std::cout<<" JES UP chi2 =  "<<newKfp.chi2OfFit<<std::endl;
 	    }
 	    
@@ -116,7 +116,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
 	      newKfp.chi2OfFit = chi2Down_->size()>0 ? (*chi2Down_)[0] : 999.;  
           newKfp.statusOfFit = statusDown_->size()>0 ? (*statusDown_)[0] : 0;  
           newKfp.probOfFit = probDown_->size() > 0 ? (*probDown_)[0] : 0;  
-	      newKfp.njetsOfFit = *njetsDown_>0 && *njetsDown_<100 ? *njetsDown_:0;
+	      newKfp.njetsOfFit = *njetsDown_;
 	      //std::cout<<" JES Down chi2 =  "<<newKfp.chi2OfFit<<std::endl;
             }
 
@@ -124,7 +124,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
           newKfp.chi2OfFit = chi2JerUp_->size()>0 ? (*chi2JerUp_)[0] : 999.;  
           newKfp.statusOfFit = statusJerUp_->size()>0 ? (*statusJerUp_)[0] : 0;  
           newKfp.probOfFit = probJerUp_->size() > 0 ? (*probJerUp_)[0] : 0;  
-	      newKfp.njetsOfFit = *njetsJerUp_>0 && *njetsJerUp_<100 ? *njetsJerUp_:0;
+	      newKfp.njetsOfFit = *njetsJerUp_;
 	      //std::cout<<" JER UP chi2 =  "<<newKfp.chi2OfFit<<std::endl; 
             } 
         
@@ -132,7 +132,7 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
           newKfp.chi2OfFit = chi2JerDown_->size()>0 ? (*chi2JerDown_)[0] : 999.;   
           newKfp.statusOfFit = statusJerDown_->size()>0 ? (*statusJerDown_)[0] : 0;   
           newKfp.probOfFit = probJerDown_->size() > 0 ? (*probJerDown_)[0] : 0;   
-	      newKfp.njetsOfFit = *njetsJerDown_>0 && *njetsJerDown_<100 ? *njetsJerDown_:0;
+	      newKfp.njetsOfFit = *njetsJerDown_;
 	      //std::cout<<" JER Down chi2 =  "<<newKfp.chi2OfFit<<std::endl; 
             }
            
