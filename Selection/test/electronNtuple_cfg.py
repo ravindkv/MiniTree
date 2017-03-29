@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from MiniTree.Selection.LocalRunSkeleton_cff import *
-from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
+from MiniTree.Selection.ttSemiLepKinFitElectron_cff import *
 from MiniTree.Selection.LocalSources_cff import toPrint
 
 #INPUT FILE
@@ -21,28 +21,18 @@ inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-p
 
 #inFile = "/store/mc/RunIISummer16MiniAODv2/DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0C26B9DF-D3C8-E611-A9D1-0CC47A7452DA.root"
 
-#inFile = "/store/mc/RunIISummer16MiniAODv2/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/007FD85E-66B9-E611-AD58-0CC47A546E5E.root"
-
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(5000)
+process.maxEvents.input = cms.untracked.int32(300)
 
 #OUTPUT FILE
 import datetime
 date = datetime.date.today()
 samp_code = inFile.split("/")[4].split("_")[0]
-outFile = samp_code+"_ntuple_"+str(date)+"_muons.root"
-process.TFileService.fileName = cms.string(outFile)
+outFile = samp_code +"_ntuple_"+str(date)+"_electrons.root"
+#process.TFileService.fileName = cms.string(outFile)
 
-#NEEDED FOR MULTICRAB ------------------------------------------------------
-import FWCore.ParameterSet.VarParsing as VarParsing
-options = VarParsing.VarParsing ('analysis')
-options.register ('sampleCode',
-                  samp_code, # default value
-                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
-                  VarParsing.VarParsing.varType.string, # string, int, or float
-                  'Sample code for the input root file')
-options.parseArguments()
-print options.sampleCode
+#for multi CRAB
+process.TFileService.fileName = cms.string("outFile_.root")
 
 #CONFIG PARAMETERS -----------------------------------------------------------
 procName='LOCALUSER'
@@ -50,20 +40,18 @@ procName='LOCALUSER'
 trigMenu = 'HLT'
 isFastsim = False
 #Trigger list : http://fwyzard.web.cern.ch/fwyzard/hlt/2016/summary
-mutriglist = [ 'HLT_IsoMu27_v*' ]
-egtriglist = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v*']
-jettriglist = [ 'HLT_JetE30_NoBPTX_v*' ]
+mutriglist = [ 'HLT_IsoMu27_v3' ]
+egtriglist = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v2']
+jettriglist = [ 'HLT_JetE30_NoBPTX_v2' ]
 trigpath = ''
-#Extra modules
 applyResJEC=False
 addPF2PAT=False
 storeOutPath=False
-filterHBHEnoise = False
-producePDFweights=False
-isAOD = False
+#channel = electron
 
 #START PROCESS CONFIGURATION -------------------------------------------------
 process.setName_(procName)
+producePDFweights=False
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6')
 
@@ -78,7 +66,7 @@ defineBasePreSelection(process,False, False)
 addTriggerMatchExtra(process,egtriglist,mutriglist,jettriglist,False,trigMenu)
 defineGenUtilitiesSequence(process)
 #configureElectronMVAIdIso(process)
-addSemiLepKinFitMuon(process, isData) #important
+addSemiLepKinFitElectron(process, isData)
 
 # ADD THE ANALYSIS MODULE ----------------------------------------------------
 process.load('MiniTree.Selection.selection_cfi')
@@ -86,7 +74,9 @@ process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 if isData:
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("DATA")
 else:
-    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(options.sampleCode)
+    #process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(samp_code)
+    #for multi CRAB
+    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
@@ -94,23 +84,22 @@ process.myMiniTreeProducer.Trigger.bits = cms.vstring()
 process.myMiniTreeProducer.Trigger.bits = mutriglist
 process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
+process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('electron')
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
-process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')
 
 #ANALYSIS SEQUENCE ------------------------------------------------------------
 process.p  = cms.Path(process.kinFitSequence*process.allEventsFilter*process.basePreSel*process.myMiniTreeProducer)
 process.schedule = cms.Schedule(process.p)
-###process.met_extra = cms.Path(process.RecoMetSequence * process.patPfMetT0pcT1Txy)
-#process.ele_extra = cms.Path(process.mvaID + process.pfIsolationSequence)
-#process.ele_embed = cms.Path(process.EleEmbedSequence)
+##process.met_extra = cms.Path(process.RecoMetSequence * process.patPfMetT0pcT1Txy)
+##process.ele_extra = cms.Path(process.mvaID + process.pfIsolationSequence)
+##process.ele_embed = cms.Path(process.EleEmbedSequence)
+#process.p  = cms.Path( process.basePreSel*process.myMiniTreeProducer)
 '''
 if( addPF2PAT ):
     process.pat_default = cms.Path( process.patSequence * process.patDefaultSequence * process.puJetIdSqeuence)
 else :
     process.pat_default = cms.Path( process.patDefaultSequence * process.puJetIdSqeuence)
 '''
-#process.schedule = cms.Schedule(process.ele_extra, process.pat_default, process.met_extra, process.ele_embed, process.kineFit, process.p)
-#process.schedule = cms.Schedule(process.met_extra, process.kineFit, process.p)
-#process.schedule = cms.Schedule(process.met_extra, process.p) #important
+##process.schedule = cms.Schedule(process.ele_extra, process.pat_default, process.met_extra, process.ele_embed, process.kineFit, process.p)
 checkProcessSchedule(storeOutPath,True)
 
