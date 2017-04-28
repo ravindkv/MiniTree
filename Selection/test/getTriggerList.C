@@ -3,7 +3,7 @@
 void getTriggerList()
 {
   //  TFile f1("Monitor_254_1_sdA.root");
-  TFile f1("mc_electron_May_2016.root");
+  TFile f1("TTJets_ntuple_MuChannel.root");
   TH1F* h1 = (TH1F*)f1.Get("myMiniTreeProducer/trigger/trigger_bitsrun");
   ofstream out;
   out.open("trigPaths.txt");
