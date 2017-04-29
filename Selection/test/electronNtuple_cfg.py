@@ -42,9 +42,20 @@ procName='LOCALUSER'
 trigMenu = 'HLT'
 isFastsim = False
 #Trigger list : http://fwyzard.web.cern.ch/fwyzard/hlt/2016/summary
-mutriglist = [ 'HLT_IsoMu27_v3' ]
-egtriglist = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v2']
-jettriglist = [ 'HLT_JetE30_NoBPTX_v2' ]
+mutriglist =  ['HLT_IsoMu27_v3',
+               'HLT_IsoMu27_v4',
+               'HLT_IsoMu27_v5',
+               'HLT_IsoMu27_v7']
+egtriglist =  ['HLT_Ele27_eta2p1_WPLoose_Gsf_v2',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v3',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v4',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v5',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v6',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v7',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v8']
+jettriglist = ['HLT_JetE30_NoBPTX_v2',
+               'HLT_JetE30_NoBPTX_v3',
+               'HLT_JetE30_NoBPTX_v4']
 trigpath = ''
 applyResJEC=False
 addPF2PAT=False

@@ -6,12 +6,11 @@ from MiniTree.Selection.LocalSources_cff import toPrint
 #INPUT FILE
 isData=False
 #inFile = "/store/data/Run2016B/SingleMuon/MINIAOD/23Sep2016-v3/00000/00AE0629-1F98-E611-921A-008CFA1112CC.root"
-inFile = "/store/data/Run2016H/SingleElectron/MINIAOD/03Feb2017_ver3-v1/110000/02973E99-69EC-E611-9913-5065F381A2F1.root"
+#inFile = "/store/data/Run2016H/SingleElectron/MINIAOD/03Feb2017_ver3-v1/110000/02973E99-69EC-E611-9913-5065F381A2F1.root"
 
 #............ MC...........
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
-
-#inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
+inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
 
 #inFile = "/store/mc/RunIISummer16MiniAODv2/ChargedHiggsToCS_M100_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/130000/0232D769-42FB-E611-A618-D4AE526DF090.root"
 
@@ -22,7 +21,7 @@ inFile = "/store/data/Run2016H/SingleElectron/MINIAOD/03Feb2017_ver3-v1/110000/0
 #inFile = "/store/mc/RunIISummer16MiniAODv2/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/007FD85E-66B9-E611-AD58-0CC47A546E5E.root"
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(10000)
+process.maxEvents.input = cms.untracked.int32(-1)
 
 #OUTPUT FILE
 import datetime
@@ -39,9 +38,20 @@ procName='LOCALUSER'
 trigMenu = 'HLT'
 isFastsim = False
 #Trigger list : http://fwyzard.web.cern.ch/fwyzard/hlt/2016/summary
-mutriglist = [ 'HLT_IsoMu27_v7' ]
-egtriglist = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v8']
-jettriglist = [ 'HLT_JetE30_NoBPTX_v4' ]
+mutriglist =  ['HLT_IsoMu27_v3',
+               'HLT_IsoMu27_v4',
+               'HLT_IsoMu27_v5',
+               'HLT_IsoMu27_v7']
+egtriglist =  ['HLT_Ele27_eta2p1_WPLoose_Gsf_v2',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v3',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v4',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v5',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v6',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v7',
+               'HLT_Ele27_eta2p1_WPLoose_Gsf_v8']
+jettriglist = ['HLT_JetE30_NoBPTX_v2',
+               'HLT_JetE30_NoBPTX_v3',
+               'HLT_JetE30_NoBPTX_v4']
 trigpath = ''
 #Extra modules
 applyResJEC=False
