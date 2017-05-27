@@ -2,12 +2,12 @@
 
 MyTrack::MyTrack():
   trackCharge(0),
-  chiSquared(999.), 
-  nHits(-999.),
-  nPixHits(-999.),
-  particleType(-999.),
-  d0(-9999.),
-  d0Error(-9999.)
+  chiSquared(9.), 
+  nHits(-9.),
+  nPixHits(-9.),
+  particleType(-9.),
+  d0(-9.),
+  d0Error(-9.)
 {
 }
 
@@ -20,11 +20,11 @@ void MyTrack::Reset(){
   p4.SetCoordinates(0.0,0.0,0.0,0.0);
   
   trackCharge = 0;
-  chiSquared = 999.;
-  nHits = -999.;
-  nPixHits = -999.;
-  particleType = -999.;
-  d0 = -9999.;
-  d0Error = -9999.;
+  chiSquared = 9.;
+  nHits = -9.;
+  nPixHits = -9.;
+  particleType = -9.;
+  d0 = -9.;
+  d0Error = -9.;
   
 }

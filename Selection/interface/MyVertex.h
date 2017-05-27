@@ -24,6 +24,10 @@ class MyVertex
   double rho;  // for maxd0 selection (<2)
   Point3D        XYZ;      //  position
   
+  //fixedGridRhoAll: 
+  //https://github.com/cms-analysis/flashgg/blob/e2fac35487f23fe05b20160d7b51f34bd06b0660/ Taggers/python/globalVariables_cff.py
+  double rhoAll_;  
+  
  private :
 
 };

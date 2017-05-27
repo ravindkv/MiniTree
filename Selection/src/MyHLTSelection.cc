@@ -6,19 +6,19 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   hltPaths.clear();
 
   //  edm::InputTag hlt_ = configParamshlt_.getParameter<edm::InputTag>("source");
-
   std::vector<std::string> myTrigNames = configParamshlt_.getParameter<std::vector<std::string> >("bits");
 
   
   //  if (hlt_.label() != "none"){
   edm::Handle<edm::TriggerResults> hltresults;
   //iEvent.getByLabel(hlt_,hltresults);
-  iEvent.getByToken(hlt_,hltresults); // 76x
-  assert(hltresults.isValid());
+  iEvent.getByToken(hlt_, hltresults); // 76x
+  ////assert(hltresults.isValid());
   
   const edm::TriggerNames& TrigNames_ = iEvent.triggerNames(*hltresults);
   const int ntrigs = hltresults->size();
-  
+
+  //...........
   if(initTriggerHistos_){
     initTriggerHistos_ = false;
     dirs_.push_back( fs_->mkdir("trigger") );
@@ -38,6 +38,7 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
     std::string trigName=TrigNames_.triggerName(itr);
     if (!hltresults->accept(itr)) continue;
     myhistos_["trigger_bitsaccept"]->Fill(itr);
+    
     if(myTrigNames.size() > 0){
       if( find(myTrigNames.begin(), myTrigNames.end(), trigName) == myTrigNames.end() ) continue;
     }

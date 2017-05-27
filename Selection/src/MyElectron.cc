@@ -10,12 +10,12 @@ MyElectron::MyElectron():
   eleName(""),
   
   ///sel
-  sigmaIetaIeta(-999),
-  dEtaInSeed(-999),
-  dPhiIn(-999),
-  hadOverEm(-999),
-  iEminusiP(-999),
-  nInnerHits(-999),
+  sigmaIetaIeta(-9),
+  dEtaInSeed(-9),
+  dPhiIn(-9),
+  hadOverEm(-9),
+  iEminusiP(-9),
+  nInnerHits(-9),
   isPassConVeto(true),
 
   ///ids
@@ -23,13 +23,13 @@ MyElectron::MyElectron():
   isEB(-1),
   
   ///iso
-  ChHadIso(999.),  
-  PhotonIso(999.),   
-  NeuHadIso(999.),   
-  PileupIso(999.), 
-  relCombPFIsoEA(999.),
-  D0(999.),
-  Dz(999.),
+  ChHadIso(-9.),  
+  PhotonIso(-9.),   
+  NeuHadIso(-9.),   
+  PileupIso(-9.), 
+  relCombPFIsoEA(-9.),
+  D0(-9.),
+  Dz(-9.),
   trigger_ele_pt(0),
   quality(0)
 {
@@ -52,12 +52,12 @@ void MyElectron::Reset()
   vertex.SetCoordinates(0.0, 0.0, 0.0);
  
   ///sel
-  sigmaIetaIeta = -999.;
-  dEtaInSeed = -999.;
-  dPhiIn = -999.;
-  hadOverEm = -999.;
-  iEminusiP = -999.;
-  nInnerHits = -999.;
+  sigmaIetaIeta = -9.;
+  dEtaInSeed = -9.;
+  dPhiIn = -9.;
+  hadOverEm = -9.;
+  iEminusiP = -9.;
+  nInnerHits = -9.;
   isPassConVeto = true;
   
   ///ids
@@ -66,13 +66,13 @@ void MyElectron::Reset()
   eidWPs.clear();
   
   ///iso
-  ChHadIso = 999.;   
-  PhotonIso = 999.;    
-  NeuHadIso = 999.;    
-  PileupIso = 999.;  
-  relCombPFIsoEA = 999.; 
-  D0 = 999.;
-  Dz = 999.;
+  ChHadIso = -9.;   
+  PhotonIso = -9.;    
+  NeuHadIso = -9.;    
+  PileupIso = -9.;  
+  relCombPFIsoEA = -9.; 
+  D0 = -9.;
+  Dz = -9.;
   trigger_ele_pt = 0;
   quality = 0;
   }

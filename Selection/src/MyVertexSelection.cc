@@ -33,18 +33,26 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
     //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
     if(selVtx.size())bestPrimVertex_ = selVtx[0];
 
-    //iEvent.getByToken( bsSource, beamSpot_);  // new 76x
-	refPoint_ = bestPrimVertex_->position();
+    //fixedGridRhoAll: 
+    //https://github.com/cms-analysis/flashgg/blob/e2fac35487f23fe05b20160d7b51f34bd06b0660/Taggers/python/globalVariables_cff.py
+    edm::Handle<double>rhoAll_;
+    iEvent.getByToken(rhoSource, rhoAll_);
+    
+    //Beam Spot
+    /*
+    edm::Handle<reco::BeamSpot> beamSpot_;
+    iEvent.getByToken( bsSource, beamSpot_);  // new 76x
+	refPoint_ = beamSpot_->position();
+	const reco::BeamSpot &bs = *(beamSpot_.product());
+	reco::Vertex bsVtx( bs.position(), bs.covariance3D() );
+	refVertex_ = bsVtx;
+    */
+    refPoint_ = bestPrimVertex_->position();
 	refVertex_ = *bestPrimVertex_;
-	//refPoint_ = beamSpot_->position();
-	//const reco::BeamSpot &bs = *(beamSpot_.product());
-	//reco::Vertex bsVtx( bs.position(), bs.covariance3D() );
-	//refVertex_ = bsVtx;
-
     for(size_t ivtx = 0; ivtx < selVtx.size(); ivtx++)
       {
 	const reco::Vertex *vIt = selVtx[ivtx];
-	MyVertex newVertex = MyVertexConverter(*vIt);
+	MyVertex newVertex = MyVertexConverter(*vIt, *rhoAll_);
 	selVertices.push_back(newVertex);
       }
   }catch(std::exception &e){
@@ -55,7 +63,7 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
 }
 
 
-MyVertex MyEventSelection::MyVertexConverter(const reco::Vertex& iVertex)
+MyVertex MyEventSelection::MyVertexConverter(const reco::Vertex& iVertex, double rhoAll_)
 {
   MyVertex newVertex;
   newVertex.Reset();
@@ -66,8 +74,8 @@ MyVertex MyEventSelection::MyVertexConverter(const reco::Vertex& iVertex)
   newVertex.ndof = iVertex.ndof();
   newVertex.normalizedChi2 = iVertex.chi2()/iVertex.ndof();
   newVertex.rho = iVertex.position().Rho();
+  newVertex.rhoAll_ = rhoAll_;
   newVertex.XYZ.SetCoordinates(iVertex.x(), iVertex.y(), iVertex.z());
-
   return newVertex;
 }
 

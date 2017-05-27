@@ -81,11 +81,13 @@ def addSemiLepKinFitElectron(process, isData=False) :
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
     process.kinFitTtSemiLepEvent.leps = cms.InputTag("slimmedElectrons")
     process.kinFitTtSemiLepEvent.mets = cms.InputTag("slimmedMETs")
+
     process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
     process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
     process.kinFitTtSemiLepEvent.lepResolutions = elecResolution.functions
     process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
+
     if not isData :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble (
             1.052, 1.057, 1.096, 1.134, 1.288  )
@@ -101,8 +103,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
     #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 

@@ -65,6 +65,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   // vertex
   vtxSource = cc.consumes<reco::VertexCollection>(configParamsVertex_.getParameter<edm::InputTag>("vertexSource"));
   bsSource = cc.consumes<reco::BeamSpot>(configParamsVertex_.getParameter<edm::InputTag>("beamSpotSource"));
+  rhoSource = cc.consumes<double>( configParamsVertex_.getParameter<edm::InputTag>("rho"));
 
   // Muon
   Muonsources = cc.consumes<pat::MuonCollection>(configParamsMuons_.getParameter<edm::InputTag>("sources")); 
@@ -89,7 +90,8 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   // MC and PU
   PUInfoTag_ = cc.consumes<vector<PileupSummaryInfo> >(edm::InputTag("slimmedAddPileupInfo"));
   GenParticle_ = cc.consumes<reco::GenParticleCollection>(edm::InputTag("prunedGenParticles"));
-
+  externalLHEProducer_ = cc.consumes<LHEEventProduct>(edm::InputTag("externalLHEProducer"));
+ 
   std::string code = configParamsMC_.getParameter<std::string>("sampleCode");
   inputch = configParamsMC_.getParameter<std::string>("sampleChannel");
   if(code!=std::string("DATA")) { isData_=false; }
@@ -159,7 +161,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   bool passTrig = false;
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
-    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;}// cout <<"ele trig passed"<<endl;}
+    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;} //cout <<"ele trig passed"<<endl;}
     if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}// cout<<"mu trig passed"<<endl;}
   }
   ///Electrons
@@ -214,7 +216,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   int nJets = 0, nHighPtJets = 0;
   for(size_t ijet = 0; ijet < jets.size(); ijet++){
     std::string algo(jets[ijet].jetName);
-    if(isData_ && algo.find("ResCor") == std::string::npos) continue;
+    ///if(isData_ && algo.find("ResCor") == std::string::npos) continue;
     bool passKin = false, passId = false;
     int quality = jets[ijet].quality;
     if(quality & 0x1)passKin = true;

@@ -86,8 +86,8 @@ def addSemiLepKinFitMuon(process, isData=False) :
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
     #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 

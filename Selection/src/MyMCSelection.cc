@@ -85,7 +85,6 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
   SampleInfo mcInfo;
   
   int mcEvtType_ = MyEvent::OTHER;
-  
   if( inputDataSampleCode_ == MyEvent::TTBAR )
     { mcEvtType_ = assignTTEvent(iEvent,iSetup); }
   else if ( inputDataSampleCode_ == MyEvent::ZJETS) 
@@ -93,11 +92,8 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
   else if ( inputDataSampleCode_ == MyEvent::WJETS) 
     { mcEvtType_ = assignWJets(iEvent,iSetup);   }
   else mcEvtType_ = inputDataSampleCode_ ;
-
   mcInfo.mcEvtType = mcEvtType_;
   mcInfo.sampleName = configParamsMC_.getParameter<std::string>("sampleCode");
- 
- 
   //store GenPileup info
   double npuVertices_=0, nOOTpuVertices_=0;
   double nTruePuVertices_=0, nTrueOOTPuVertices_=0;
@@ -148,31 +144,14 @@ SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::
   myhistos_["trueoutoftimepu"]->Fill(nTrueOOTPuVertices_); 
   myhistos_["truetotalpu"]->Fill(nTruePuVertices_+nTrueOOTPuVertices_);
 
-/* // 76x crashed
-  //pu-reweight
-  const edm::EventBase* iEventB = dynamic_cast<const edm::EventBase*>(&iEvent);
-  double puweight = LumiWeights_.weight( (*iEventB) );
-  double puweightDefault = LumiWeightsDefault_.weight( (*iEventB) );
-  //double puweightOOT = LumiWeights_.weightOOT( (*iEventB) );
-  //double puweightDefaultOOT = LumiWeightsDefault_.weightOOT( (*iEventB) );
-  
-  std::vector<double>puW; puW.clear();
-  puW.push_back(puweight);
-  puW.push_back(puweightDefault);
-  //puW.push_back(puweightOOT);
-  //puW.push_back(puweightDefaultOOT);
-  mcInfo.puWeights = puW;
-*/
-
   //get parton multiplicity information for W+jets
   int hepNUP_ = -99;
   edm::Handle<LHEEventProduct > LHEHandle;
   const LHEEventProduct* LHE = 0;
-  iEvent.getByLabel("source",LHEHandle);
+  iEvent.getByToken(externalLHEProducer_, LHEHandle);
   if(LHEHandle.isValid()){
-    LHE = LHEHandle.product();
-    hepNUP_ = (LHE->hepeup()).NUP;
-    //cout << "hepNUP_ = "<<hepNUP_ << endl;
+   LHE = LHEHandle.product();
+   hepNUP_ = (LHE->hepeup()).NUP;
   }
   mcInfo.hepNUP = hepNUP_;
 

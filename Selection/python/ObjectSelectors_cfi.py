@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 #my base values for trigger bit selection -------------------
-BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
+#BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
+BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
                            #bits = cms.vstring('HLT_Mu9','HLT_Ele10_LW_L1R_v2','HLT_Jet30'),
                            bits = cms.vstring('HLT_AK4CaloJet30_v3','HLT_HcalPhiSym_v2','HLT_HcalPhiSym_v2'),
                            )
@@ -9,6 +10,7 @@ BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
 #my base values for vertex selection ---------------------------------
 BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVertices"),
                           maxZ = cms.double(24),
+                          rho =  cms.InputTag('fixedGridRhoAll'),
                           maxRho = cms.double(2.0),
                           minNDOF = cms.int32(4),
                           beamSpotSource = cms.InputTag("offlineBeamSpot"),

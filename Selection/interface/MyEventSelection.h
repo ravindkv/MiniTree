@@ -66,6 +66,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 //---------------- 13 TeV -------
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 // //https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleEffAreaPFIsoCut.  cc#L83-L94
 //#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorWithEventContentBase.h"
@@ -98,7 +99,7 @@ public:
   //user functions
   std::vector<std::string> getHLT(const edm::Event&, const edm::EventSetup&);
   std::vector<MyVertex> getVertices(const edm::Event&, const edm::EventSetup&);
-  MyVertex MyVertexConverter(const reco::Vertex&);
+  MyVertex MyVertexConverter(const reco::Vertex&, double rhoAll_);
   std::vector<MyJet> getJets(const edm::Event&, const edm::EventSetup&);
   MyJet MyJetConverter(const pat::Jet&, TString&);
   std::vector<MyMET> getMETs(const edm::Event&, const edm::EventSetup&);
@@ -146,8 +147,9 @@ private:
   //PVx
   //  edm::Handle<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
-  edm::Handle<reco::BeamSpot> beamSpot_; // defined here as used by electron selection
+  ///edm::Handle<reco::BeamSpot> beamSpot_; // defined here as used by electron selection
   edm::EDGetTokenT<reco::BeamSpot> bsSource; // new 76x
+  edm::EDGetTokenT<double> rhoSource; // new 76x
 
   //KFP
   //edm::EDGetTokenT <pat::ParticleCollection>ikfpSource;
@@ -192,6 +194,7 @@ private:
   // MC and PU
   edm::EDGetTokenT<vector<PileupSummaryInfo>> PUInfoTag_;
   edm::EDGetTokenT<reco::GenParticleCollection> GenParticle_;
+  edm::EDGetTokenT<LHEEventProduct> externalLHEProducer_;
 
   //JET id functors
   JetIDSelectionFunctor jetIDFunctor_;
