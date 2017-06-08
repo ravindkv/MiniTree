@@ -17,7 +17,12 @@ class SampleInfo
   std::vector<double>truepileup;
   ///std::vector<double>puWeights;
   ///std::vector<double>truepuWeights;
+  //Number of particles in an event
   int hepNUP;
+  //particle pdg id
+  std::vector<int>hepIDUP;
+  //particle status
+  std::vector<int>hepISTUP;
   std::vector<double>topPtWeights;
   
  private :

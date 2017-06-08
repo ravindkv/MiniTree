@@ -93,38 +93,42 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   externalLHEProducer_ = cc.consumes<LHEEventProduct>(edm::InputTag("externalLHEProducer"));
  
   std::string code = configParamsMC_.getParameter<std::string>("sampleCode");
+  cout<<"code = "<<code<<endl;
   inputch = configParamsMC_.getParameter<std::string>("sampleChannel");
   if(code!=std::string("DATA")) { isData_=false; }
   else{ isData_=true; inputDataSampleCode_ = MyEvent::DATA; }
-
-  if(code==std::string("TTBAR")){ inputDataSampleCode_ = MyEvent::TTBAR;  }
-  if(code==std::string("ZJETS")){ inputDataSampleCode_ = MyEvent::ZJETS;  }
-  if(code==std::string("WJETS")){ inputDataSampleCode_ = MyEvent::WJETS;  }
-  if(code==std::string("TOPS")) { inputDataSampleCode_ = MyEvent::TOPS;   }
-  if(code==std::string("TBARS")) { inputDataSampleCode_ = MyEvent::TBARS; }
-  if(code==std::string("TOPT")) { inputDataSampleCode_ = MyEvent::TOPT;   }
-  if(code==std::string("TBART")) { inputDataSampleCode_ = MyEvent::TBART; }
-  if(code==std::string("TOPW")) { inputDataSampleCode_ = MyEvent::TOPW;   }
-  if(code==std::string("TBARW")) { inputDataSampleCode_ = MyEvent::TBARW; }
-  if(code==std::string("QCD" )) { inputDataSampleCode_ = MyEvent::QCD;    }
-  if(code==std::string("QCD2030")) {inputDataSampleCode_ = MyEvent::QCD2030;}
-  if(code==std::string("QCD3080")) {inputDataSampleCode_ = MyEvent::QCD3080;}
-  if(code==std::string("QCD80170")) {inputDataSampleCode_ = MyEvent::QCD80170;}
-  if(code==std::string("QCD170250")) {inputDataSampleCode_ = MyEvent::QCD170250;}
-  if(code==std::string("WH")) { inputDataSampleCode_ = MyEvent::WH; }
-  if(code==std::string("HH")) { inputDataSampleCode_ = MyEvent::HH; }
-  if(code==std::string("")) { inputDataSampleCode_ = MyEvent::OTHER; }
-  if(code==std::string("W1JETS")) { inputDataSampleCode_ = MyEvent::W1JETS; }
-  if(code==std::string("W2JETS")) { inputDataSampleCode_ = MyEvent::W2JETS; }
-  if(code==std::string("W3JETS")) { inputDataSampleCode_ = MyEvent::W3JETS; }
-  if(code==std::string("W4JETS")) { inputDataSampleCode_ = MyEvent::W4JETS; }
-  if(code==std::string("Z1JETS")) { inputDataSampleCode_ = MyEvent::Z1JETS; }
-  if(code==std::string("Z2JETS")) { inputDataSampleCode_ = MyEvent::Z2JETS; }
-  if(code==std::string("Z3JETS")) { inputDataSampleCode_ = MyEvent::Z3JETS; }
-  if(code==std::string("Z4JETS")) { inputDataSampleCode_ = MyEvent::Z4JETS; }
-  if(code==std::string("WW"))   { inputDataSampleCode_ = MyEvent::WW;     }
-  if(code==std::string("WZ"))   { inputDataSampleCode_ = MyEvent::WZ;     }
-  if(code==std::string("ZZ"))   { inputDataSampleCode_ = MyEvent::ZZ;     }
+  if(code==std::string("DY1JetsToLL")) { inputDataSampleCode_   = MyEvent::DY1JetsToLL;}
+  if(code==std::string("DY2JetsToLL")) { inputDataSampleCode_   = MyEvent::DY2JetsToLL;}
+  if(code==std::string("DY3JetsToLL")) { inputDataSampleCode_   = MyEvent::DY3JetsToLL;}
+  if(code==std::string("DY4JetsToLL")) { inputDataSampleCode_   = MyEvent::DY4JetsToLL;}
+  if(code==std::string("DYJetsToLL")) { inputDataSampleCode_    = MyEvent::DYJetsToLL;}
+  if(code==std::string("HplusM100")) { inputDataSampleCode_     = MyEvent::HplusM100;}
+  if(code==std::string("HplusM120")) { inputDataSampleCode_     = MyEvent::HplusM120;}
+  if(code==std::string("HplusM140")) { inputDataSampleCode_     = MyEvent::HplusM140;}
+  if(code==std::string("HplusM150")) { inputDataSampleCode_     = MyEvent::HplusM150;}
+  if(code==std::string("HplusM160")) { inputDataSampleCode_     = MyEvent::HplusM160;}
+  if(code==std::string("HplusM80")) { inputDataSampleCode_      = MyEvent::HplusM80;}
+  if(code==std::string("HplusM90")) { inputDataSampleCode_      = MyEvent::HplusM90;}
+  if(code==std::string("QCD_Pt_15to20")) {inputDataSampleCode_  = MyEvent::QCD_Pt_15to20;} 
+  if(code==std::string("QCD_Pt_20to30")) {inputDataSampleCode_  = MyEvent::QCD_Pt_20to30;}
+  if(code==std::string("QCD_Pt_30to50")) {inputDataSampleCode_  = MyEvent::QCD_Pt_30to50;}
+  if(code==std::string("QCD_Pt_50to80")) {inputDataSampleCode_  = MyEvent::QCD_Pt_50to80;}
+  if(code==std::string("QCD_Pt_80to120")) {inputDataSampleCode_ = MyEvent::QCD_Pt_80to120;}
+  if(code==std::string("QCD_Pt_120to170")) {inputDataSampleCode_= MyEvent::QCD_Pt_120to170;}
+  if(code==std::string("QCD_Pt_170to300")) {inputDataSampleCode_= MyEvent::QCD_Pt_170to300;}
+  if(code==std::string("ST_s")) { inputDataSampleCode_          = MyEvent::ST_s;}
+  if(code==std::string("ST_t")) { inputDataSampleCode_          = MyEvent::ST_t;}
+  if(code==std::string("ST_tW")) { inputDataSampleCode_         = MyEvent::ST_tW;}
+  if(code==std::string("TTJets")){ inputDataSampleCode_         = MyEvent::TTJets;}
+  if(code==std::string("W1JetsToLNu")) { inputDataSampleCode_   = MyEvent::W1JetsToLNu;}
+  if(code==std::string("W2JetsToLNu")) { inputDataSampleCode_   = MyEvent::W2JetsToLNu;}
+  if(code==std::string("W3JetsToLNu")) { inputDataSampleCode_   = MyEvent::W3JetsToLNu;}
+  if(code==std::string("W4JetsToLNu")) { inputDataSampleCode_   = MyEvent::W4JetsToLNu;}
+  if(code==std::string("WJetsToLNu")) { inputDataSampleCode_    = MyEvent::WJetsToLNu;}
+  if(code==std::string("WW"))   { inputDataSampleCode_          = MyEvent::WW;}
+  if(code==std::string("WZ"))   { inputDataSampleCode_          = MyEvent::WZ;}
+  if(code==std::string("ZZ"))   { inputDataSampleCode_          = MyEvent::ZZ;}
+  if(code==std::string("")) { inputDataSampleCode_              = MyEvent::OTHER;}
 }
 
 MyEventSelection::~MyEventSelection()
@@ -262,20 +266,20 @@ void MyEventSelection::BookHistos()
   ///book histograms
   initTriggerHistos_ = true;
   
-  ///selection
+  //selection
   dirs_.push_back( fs_->mkdir("selection") );
   myhistos_["cutflow"] = dirs_[dirs_.size() - 1].make<TH1D>("cutflow", "cutflow", 10, 0., 10.);
-  myhistos2_["cutflowmctruth"] = dirs_[dirs_.size() - 1].make<TH2D>("cutflowmctruth", "cutflow", 10, 0., 10., 18, 0., 18.);
+  //myhistos2_["cutflowmctruth"] = dirs_[dirs_.size() - 1].make<TH2D>("cutflowmctruth", "cutflow", 10, 0., 10., 18, 0., 18.);
   TString steps[6] = {"reco","trigger","#geq 1 leptons","#geq 1 jet","#geq 1 jet (pT > 25)", "#geq 2 jets (pT > 25)"};
   TString ttch[18] = {"unk.", "full had","e+jets","#mu+jets","#tau+jets","ee","e#mu","e#tau","#mu#mu","#mu#tau","#tau#tau", "z+jets","z#tau#tau","w+jets","top-s", "top-t", "top-w","qcd"};
   const size_t nsteps = sizeof(steps)/sizeof(TString);
   for(uint istep=0; istep<nsteps; istep++ ){
-    myhistos2_["cutflowmctruth"]->GetXaxis()->SetBinLabel(istep+1, steps[istep]);
+    //myhistos2_["cutflowmctruth"]->GetXaxis()->SetBinLabel(istep+1, steps[istep]);
     myhistos_["cutflow"]->GetXaxis()->SetBinLabel(istep+1, steps[istep]);
   }
-  for(int ich=0;   ich<18;  ich++  ){
-    myhistos2_["cutflowmctruth"]->GetYaxis()->SetBinLabel(ich+1, ttch[ich]);
-  }
+  //for(int ich=0;   ich<18;  ich++  ){
+  //  myhistos2_["cutflowmctruth"]->GetYaxis()->SetBinLabel(ich+1, ttch[ich]);
+  //}
 
   myhistos_["SelJetPt"]  = dirs_[dirs_.size() - 1].make<TH1D>("SelJetPt", "jet Pt",200, 0, 400.);
   myhistos_["SelJetEta"]  = dirs_[dirs_.size() - 1].make<TH1D>("SelJetEta", "jet Eta;jet #eta;N_{events}",100, -5.0, 5.0);
@@ -289,12 +293,12 @@ void MyEventSelection::BookHistos()
 
   ///MC
   dirs_.push_back( fs_->mkdir("MCINFO") );
-  myhistos_["intimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("intimepu", "intime pileup", 101, -0.5, 100.5);
-  myhistos_["outoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("outoftimepu", "out of time pileup", 101, -0.5, 100.5);
-  myhistos_["totalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("totalpu", "total pileup", 101, -0.5, 100.5);
-  myhistos_["trueintimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueintimepu", "intime pileup", 600, 0., 60.); 
-  myhistos_["trueoutoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueoutoftimepu", "out of time pileup",600,0.,60.); 
-  myhistos_["truetotalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("truetotalpu", "total pileup", 600, 0., 60.);
+  myhistos_["intimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("intimepu", "intime pileup", 6000, 0, 1000);
+  myhistos_["outoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("outoftimepu", "out of time pileup", 6000, 0, 1000);
+  myhistos_["totalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("totalpu", "total pileup", 6000, 0, 1000);
+  myhistos_["trueintimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueintimepu", "intime pileup", 6000, 0., 1000.); 
+  myhistos_["trueoutoftimepu"] = dirs_[dirs_.size() - 1].make<TH1D>("trueoutoftimepu", "out of time pileup",6000,0.,1000.); 
+  myhistos_["truetotalpu"] = dirs_[dirs_.size() - 1].make<TH1D>("truetotalpu", "total pileup", 6000, 0., 1000.);
 
   ///Jets
   TString jetrawtag="Jets";
@@ -312,11 +316,11 @@ void MyEventSelection::BookHistos()
   //Make a new TDirectory
   dirs_.push_back( fs_->mkdir(eletag.c_str()) );
   myhistos_["pt_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pt_"+elerawtag, "Electron Pt", 200, 0., 500.);
-  myhistos_["eta_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+elerawtag, "Electron #eta", 60, -3.0, 3.0);
+  myhistos_["eta_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+elerawtag, "Electron #eta", 60, -5.0, 5.0);
   myhistos_["phi_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+elerawtag, "Electron #phi", 80, -4.05, 3.95);
-  myhistos_["relCombPFIsoEA_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("relCombPFIsoEA_"+elerawtag, "Electron rel pf iso", 100, 0, 5.);
-  myhistos_["cic_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("cic_id_"+elerawtag, "Ele CiC id", 25, 0.,  25.);
-  myhistos_["vbtf_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("vbtf_id_"+elerawtag,"Ele VBTF id", 25,   0., 25.);
+  myhistos_["relCombPFIsoEA_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("relCombPFIsoEA_"+elerawtag, "Electron rel pf iso", 100, 0, 20.);
+  myhistos_["cic_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("cic_id_"+elerawtag, "Ele CiC id", 100, 0.,  100.);
+  myhistos_["vbtf_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("vbtf_id_"+elerawtag,"Ele VBTF id", 100,   0., 100.);
 
   ///Muons
   TString murawtag="Muons";
@@ -324,15 +328,15 @@ void MyEventSelection::BookHistos()
   //Make a new TDirectory
   dirs_.push_back( fs_->mkdir(mutag.c_str()) );	  
   myhistos_["pt_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pt_"+murawtag, "Muon Pt", 200, 0., 500.);
-  myhistos_["eta_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+murawtag, "Muon #eta", 60, -3.0, 3.0);
+  myhistos_["eta_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+murawtag, "Muon #eta", 60, -5.0, 5.0);
   myhistos_["phi_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+murawtag, "Muon #phi", 80, -4.05, 3.95);
   
-  myhistos_["normChi2_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("normChi2_"+murawtag, "Muon track norm Chi2/dof", 200, 0, 40.);
-  myhistos_["nHits_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("nHits_"+murawtag, "Muon track Hits", 50, 0, 50.);
-  myhistos_["nMuonHits_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("nMuonHits_"+murawtag, "Muon track muon Hits", 50, 0, 50.);
+  myhistos_["normChi2_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("normChi2_"+murawtag, "Muon track norm Chi2/dof", 200, 0, 100.);
+  myhistos_["nHits_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("nHits_"+murawtag, "Muon track Hits", 500, 0, 500.);
+  myhistos_["nMuonHits_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("nMuonHits_"+murawtag, "Muon track muon Hits", 500, 0, 500.);
   myhistos_["D0_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("D0_"+murawtag, "Muon D0", 100, 0, 500.);
   myhistos_["Dz_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("Dz_"+murawtag, "Muon Dz", 100, 0, 500.);
-  myhistos_["pfRelIso_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pfRelIso_"+murawtag, "Muon pf reliso", 100, 0, 5.); 
+  myhistos_["pfRelIso_"+murawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pfRelIso_"+murawtag, "Muon pf reliso", 100, 0, 50.); 
 
   ///METs
   TString metrawtag="METs";
@@ -340,6 +344,6 @@ void MyEventSelection::BookHistos()
   //Make a new TDirectory
   dirs_.push_back( fs_->mkdir(mettag.c_str()) );
   myhistos_["pt_"+metrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("met_"+metrawtag, "MET", 200, 0., 500.);
-  myhistos_["sumet_"+metrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("sumet_"+metrawtag, "sum Et", 200, 0., 500.);
+  myhistos_["sumet_"+metrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("sumet_"+metrawtag, "sum Et", 3000, 0., 3000.);
   myhistos_["phi_"+metrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+metrawtag, "MET", 80, -4.05, 3.95);
 }

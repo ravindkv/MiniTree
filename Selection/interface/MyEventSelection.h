@@ -99,7 +99,8 @@ public:
   //user functions
   std::vector<std::string> getHLT(const edm::Event&, const edm::EventSetup&);
   std::vector<MyVertex> getVertices(const edm::Event&, const edm::EventSetup&);
-  MyVertex MyVertexConverter(const reco::Vertex&, double rhoAll_);
+ 
+  MyVertex MyVertexConverter(const reco::Vertex& iVertex, double rhoAll, int totVtx);
   std::vector<MyJet> getJets(const edm::Event&, const edm::EventSetup&);
   MyJet MyJetConverter(const pat::Jet&, TString&);
   std::vector<MyMET> getMETs(const edm::Event&, const edm::EventSetup&);
