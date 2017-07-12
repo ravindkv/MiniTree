@@ -25,6 +25,7 @@ class MyJet
   int parton_id;
   int parton_mother_id;
   int partonFlavour;
+  int hadronFlavour;
   Point3D vertex;
   
   ///ids 
@@ -46,7 +47,10 @@ class MyJet
   std::vector<double>SVflightDistance;
   std::vector<double>SVflightDistanceErr;
   std::vector<float>SVNChi2;
-
+  
+  //Jet resolution and scale factors
+  double scaleFactor;
+  double resolution;
   double triggerJet_pt;
   int quality;
 

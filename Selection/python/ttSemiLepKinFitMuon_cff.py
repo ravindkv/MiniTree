@@ -66,11 +66,17 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
 
     process.kinFitTtSemiLepEvent.jets=cms.InputTag('slimmedJets')
+    #---------------- new one -----------------
+    process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
+    process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
+    process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
+    #---------------------------------
+
+    '''
     if isData:
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsResCor")
     process.kinFitTtSemiLepEvent.leps=cms.InputTag('slimmedMuons')
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs')
-
     if not isData :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble (
             1.052, 1.057, 1.096, 1.134, 1.288  )
@@ -81,7 +87,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
         process.cleanPatJetsNominal.preselection = cms.string("pt>24 && abs(eta)<2.5")
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsNominal")
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
-
+    '''
     #set b-tagging in KineFit
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
@@ -146,7 +152,19 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
 
     process.kinFitSequence = cms.Sequence(process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
-    if isData :
+    #---------------- new one -----------------
+    process.kinFitSequence.remove(process.cleanPatJetsResCor)
+    process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
+            process.scaledJetEnergyNominal*process.selectedPatMuons*
+            process.selectedPatElectrons* process.selectedPatPhotons*
+            process.selectedPatTaus* process.selectedPatJets*
+            process.cleanPatMuons* process.cleanPatElectrons*
+            process.cleanPatPhotons*process.cleanPatTaus*
+            process.cleanPatJets*process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
+    #-------------------------------------------
+
+    '''
+    if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
                 process.scaledJetEnergyNominal*process.selectedPatMuons*
@@ -155,7 +173,6 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatMuons* process.cleanPatElectrons*
                 process.cleanPatPhotons*process.cleanPatTaus*
                 process.cleanPatJets*process.cleanPatJetsResCor* process.kinFitTtSemiLepEvent)
-
     if not isData :
         process.kinFitSequence.remove(process.cleanPatJetsResCor)
         process.kinFitSequence.replace(process.kinFitTtSemiLepEvent,
@@ -172,7 +189,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatJetsResnUp* process.kinFitTtSemiLepEventJERUp*
                 process.scaledJetEnergyResnDown* process.cleanPatJetsResnDown*
                 process.kinFitTtSemiLepEventJERDown)
-
+    '''
     #print "// jet input to cleanPatJetsResCor:", process.cleanPatJetsResCor.src," //"
     toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
 

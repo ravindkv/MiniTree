@@ -10,7 +10,7 @@ isData=False
 
 #............ MC...........
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
-#inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
+inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
 
 #inFile = "/store/mc/RunIISummer16MiniAODv2/ChargedHiggsToCS_M100_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/130000/0232D769-42FB-E611-A618-D4AE526DF090.root"
 
@@ -18,7 +18,7 @@ isData=False
 
 #inFile = "/store/mc/RunIISummer16MiniAODv2/DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/042B8895-F6BF-E611-8DE4-70106F4A9340.root"
 
-inFile = "/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/0EA60289-18C4-E611-8A8F-008CFA110AB4.root"
+#inFile = "/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/0EA60289-18C4-E611-8A8F-008CFA110AB4.root"
 #inFile="/store/mc/RunIISummer16MiniAODv2/W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/00450492-D4CB-E611-A0D1-0025904B5F96.root"
 
 #inFile="/store/mc/RunIISummer16MiniAODv2/W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0264D11E-24C0-E611-AFCB-24BE05CECB51.root"
@@ -28,7 +28,7 @@ inFile = "/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-ma
 #inFile = "/store/mc/RunIISummer16MiniAODv2/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/007FD85E-66B9-E611-AD58-0CC47A546E5E.root"
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(200)
+process.maxEvents.input = cms.untracked.int32(-1)
 
 #OUTPUT FILE
 import datetime
@@ -92,9 +92,9 @@ process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 if isData:
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("DATA")
 else:
-    #process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(samp_code)
+    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(samp_code)
     #for multi CRAB
-    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
+    #process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
@@ -104,6 +104,8 @@ process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')
+process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV6_MC_PtResolution_AK4PF.txt')
+process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV6_MC_SF_AK4PF.txt')
 
 #ANALYSIS SEQUENCE ------------------------------------------------------------
 #Run without the KinFit

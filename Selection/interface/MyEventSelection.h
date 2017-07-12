@@ -64,11 +64,11 @@
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+//jet resolution and scale factors
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "CondFormats/JetMETObjects/interface/JetResolutionObject.h"
 
-//---------------- 13 TeV -------
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
-// //https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleEffAreaPFIsoCut.  cc#L83-L94
-//#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorWithEventContentBase.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorBase.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
@@ -201,7 +201,10 @@ private:
   JetIDSelectionFunctor jetIDFunctor_;
   PFJetIDSelectionFunctor pfjetIDFunctor_;
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
-
+  //for pt resolution
+  std::string m_resolutions_file;
+  std::string m_scale_factors_file;
+  edm::EDGetTokenT<double> m_rho_token;
   edm::Service<TFileService> fs_;
   std::vector<TFileDirectory> dirs_;
   std::map<TString, TH1D*>myhistos_;

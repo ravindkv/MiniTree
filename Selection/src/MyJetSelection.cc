@@ -27,9 +27,19 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     TString tag(rawtag);
     
     edm::Handle<pat::JetCollection>ijets;
-    iEvent.getByToken( Jetsources, ijets); // 76x
+    iEvent.getByToken( Jetsources, ijets);  
+    //Jet resolution and scale factors
+    //https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Spring16_25nsV6_MC
+    //https://insight.io/github.com/cms-sw/cmssw/blob/master/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc
+    edm::Handle<double> rho;
+    iEvent.getByToken(m_rho_token, rho);
+    JME::JetResolution resolution;
+    JME::JetResolutionScaleFactor res_sf;
+    //cout<<"m_resolutions_file = "<<m_resolutions_file<<endl;
+    resolution = JME::JetResolution(m_resolutions_file);
+    res_sf = JME::JetResolutionScaleFactor(m_scale_factors_file);
+    
     if(ijets.isValid()){
-      
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
       std::string uncType("PF");
@@ -42,33 +52,35 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
       // instantiate the jec uncertainty object
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar); 
       
-      for(size_t iJet = 0; iJet < ijets->size(); iJet++)
-	{
-	  const pat::Jet jIt = ((*ijets)[iJet]);
-	  
-	  if(jIt.pt() < 15 || fabs(jIt.eta()) > maxEta)continue;
-	  
-	  MyJet newJet = MyJetConverter(jIt, rawtag);
-	  newJet.jetName = tag;
-	  
-	  //JEC uncertainty
-	  jecUnc->setJetEta(jIt.eta());
-	  jecUnc->setJetPt(jIt.pt());  
-	  float JECUncertainty = jecUnc->getUncertainty(true);
-	  newJet.JECUncertainty = JECUncertainty;
-	  
-	  //make selections
-	  bool passKin = true, passId = true;
-	  if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
-	  if(!(newJet.jetIDLoose)) passId = false;
-	  
-      int quality = 0;
-	  if(passKin)quality  = 1;
-	  if(passId)quality |= 1<<1;
-	  newJet.quality = quality;
-	  
-	  if(passKin && passId) selJets.push_back(newJet);
-    } // for loop
+      for(size_t iJet = 0; iJet < ijets->size(); iJet++){
+        const pat::Jet jIt = ((*ijets)[iJet]);
+        //Jet resolution and scale factors
+        JME::JetParameters parameters_5 = {{JME::Binning::JetPt, jIt.pt()}, {JME::Binning::JetEta, jIt.eta()}, {JME::Binning::Rho, *rho}};
+        float reso = resolution.getResolution(parameters_5);
+        float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
+        
+        if(jIt.pt() < 15 || fabs(jIt.eta()) > maxEta)continue;
+        MyJet newJet = MyJetConverter(jIt, rawtag);
+        newJet.jetName = tag;
+        newJet.scaleFactor = sf;
+        newJet.resolution = reso;
+
+        //JEC uncertainty
+        jecUnc->setJetEta(jIt.eta());
+        jecUnc->setJetPt(jIt.pt());  
+        float JECUncertainty = jecUnc->getUncertainty(true);
+        newJet.JECUncertainty = JECUncertainty;
+        //make selections
+        bool passKin = true, passId = true;
+        if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
+        if(!(newJet.jetIDLoose)) passId = false;
+        
+        int quality = 0;
+        if(passKin)quality  = 1;
+        if(passId)quality |= 1<<1;
+        newJet.quality = quality;
+        if(passKin && passId) selJets.push_back(newJet);
+      } // for loop
       delete jecUnc;
       fs_->cd();
 	}
@@ -103,8 +115,39 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
   myhistos_["pt_"+dirtag]->Fill(iJet.pt());
   myhistos_["eta_"+dirtag]->Fill(iJet.eta());
   myhistos_["phi_"+dirtag]->Fill(iJet.phi());
-
+  
   newJet.partonFlavour = double(iJet.partonFlavour());
+  newJet.hadronFlavour = double(iJet.hadronFlavour());
+  
+  //https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
+  //2D histos to calculate Btag efficiency
+  double partonFlavor = newJet.partonFlavour;
+  double csv = iJet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+  double csvL = 0.5426;
+  double csvM = 0.8484;
+  double csvT = 0.9535;
+  //b-quarks
+  if( abs(partonFlavor)==5 ){
+    myhistos2_["h2_BTaggingEff_Denom_b_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_bL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_bM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_bT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //c-quarks
+  else if( abs(partonFlavor)==4 ){
+    myhistos2_["h2_BTaggingEff_Denom_c_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_cL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_cM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_cT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //other quarks and gluon
+  else{
+    myhistos2_["h2_BTaggingEff_Denom_udsg_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_udsgL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_udsgM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_udsgT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+ 
   //vertex.fCoordinates.fXYZ are zero, in the MINIAOD
   newJet.vertex.SetCoordinates(iJet.vx(), iJet.vy(), iJet.vz());
   

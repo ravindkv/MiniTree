@@ -87,7 +87,12 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        puMVADiscriminant = cms.InputTag("puJetMva:fullDiscriminant"),
                        puMVAID = cms.InputTag("puJetMva:fullId"),
                        puMVADiscriminantResCor = cms.InputTag("puJetMvaResCor:fullDiscriminant"),
-                       puMVAIDResCor = cms.InputTag("puJetMvaResCor:fullId")
+                       puMVAIDResCor = cms.InputTag("puJetMvaResCor:fullId"),
+                       jet_rho = cms.InputTag('fixedGridRhoAll'),
+                       #resolutionsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer15_V0_MC_JER_AK4PFchs.txt'),
+                       #scaleFactorsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer12_V1_MC_JER_SF_AK5PFchs.txt')
+                       resolutionsFile = cms.string('PtResolution_AK4PF.txt'),
+                       scaleFactorsFile = cms.string('SF_AK4PF.txt')
                        )
 
 #my base values for met selection ------------------------------------------------

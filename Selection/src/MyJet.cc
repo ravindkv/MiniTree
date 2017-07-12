@@ -8,6 +8,7 @@ MyJet::MyJet():
   parton_id(0),
   parton_mother_id(0),
   partonFlavour(0),
+  hadronFlavour(0),
 
   ///ids
   neutralHadronEnergyFraction(-9.),
@@ -22,6 +23,8 @@ MyJet::MyJet():
   
   ///JEC
   JECUncertainty(-9.),
+  scaleFactor(0.0),
+  resolution(0.0),
   triggerJet_pt(-9.),
   quality(0)
 {
@@ -41,6 +44,7 @@ void MyJet::Reset()
   parton_id = 0;
   parton_mother_id = 0;
   partonFlavour = 0;
+  hadronFlavour = 0;
   vertex.SetCoordinates(-9.0,-9.0,-9.0);
 
   ///ids
@@ -63,6 +67,8 @@ void MyJet::Reset()
   SVflightDistanceErr.clear();
   SVNChi2.clear();
 
+  scaleFactor = 0.0;
+  resolution = 0.0;
   triggerJet_pt = 0.;
   quality = 0;
 
