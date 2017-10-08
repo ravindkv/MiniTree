@@ -75,7 +75,10 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   Elesources = cc.consumes<pat::ElectronCollection>(configParamsElectrons_.getParameter<edm::InputTag>("sources"));
   //EleConversion_ = cc.consumes<reco::ConversionCollection>(edm::InputTag("reducedEgamma"));
   eventrhoToken_ = cc.consumes<double>(configParamsElectrons_.getParameter<edm::InputTag>("rhoIso"));
+  beamSpotToken_ = cc.consumes<reco::BeamSpot>(configParamsElectrons_.getParameter<edm::InputTag>("beamSpot"));
   jetIDMapToken_ = cc.consumes<reco::JetIDValueMap>(edm::InputTag("ak5JetID"));
+  conversionsMiniAODToken_ = cc.consumes<reco::ConversionCollection>(configParamsElectrons_.getParameter<edm::InputTag>("conversionsMiniAOD"));
+ 
 
   // Jets
   Jetsources = cc.consumes<pat::JetCollection>(configParamsJets_.getParameter<edm::InputTag>("sources"));
@@ -123,6 +126,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   if(code==std::string("QCD_Pt_80to120")) {inputDataSampleCode_ = MyEvent::QCD_Pt_80to120;}
   if(code==std::string("QCD_Pt_120to170")) {inputDataSampleCode_= MyEvent::QCD_Pt_120to170;}
   if(code==std::string("QCD_Pt_170to300")) {inputDataSampleCode_= MyEvent::QCD_Pt_170to300;}
+  if(code==std::string("QCD_Pt_300to470")) {inputDataSampleCode_= MyEvent::QCD_Pt_300to470;}
   if(code==std::string("ST_s")) { inputDataSampleCode_          = MyEvent::ST_s;}
   if(code==std::string("ST_t")) { inputDataSampleCode_          = MyEvent::ST_t;}
   if(code==std::string("ST_tW")) { inputDataSampleCode_         = MyEvent::ST_tW;}
@@ -185,9 +189,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     bool passKin = false, passId = false, passIso = false;
     int quality = electrons[iele].quality;
     if(quality & 0x1)passKin = true;
-    if((quality >> 1) & 0x1)passId = true;
-    if((quality >> 2) & 0x1)passIso = true;
-    if(passKin && passId && passIso){
+    if((quality >> 1) & 0x1)passIso = true;
+    if(passKin && passIso){
     ///if(passKin && passId){
      myhistos_["SelElePt"]->Fill(electrons[iele].p4.Pt());
      myhistos_["SelEleEta"]->Fill(electrons[iele].p4.Eta());
@@ -312,10 +315,11 @@ void MyEventSelection::BookHistos()
   std::string jettag(jetrawtag);
   //Make a new TDirectory
   dirs_.push_back( fs_->mkdir(jettag.c_str()) );
-  myhistos_["pt_"+jetrawtag] =  dirs_[dirs_.size() - 1].make<TH1D>("pt_"+jetrawtag, "Jet Pt", 200, 0., 500.);
+  myhistos_["pt_"+jetrawtag]  =  dirs_[dirs_.size() - 1].make<TH1D>("pt_"+jetrawtag, "Jet Pt", 200, 0., 500.);
   myhistos_["eta_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+jetrawtag, "Jet #eta", 100, -5.0, 5.0);
   myhistos_["phi_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+jetrawtag, "Jet #phi", 80, -4.05, 3.95);
   myhistos_["emf_"+jetrawtag] = dirs_[dirs_.size() - 1].make<TH1D>("emf_"+jetrawtag, "Jet emf", 120, 0, 1.02);
+  myhistos_["JER_"+jetrawtag]  = dirs_[dirs_.size() - 1].make<TH1D>("JER_"+jetrawtag, "Jet resolution", 100, 0, 5);
   ////https://github.com/rappoccio/usercode/blob/Dev_53x/EDSHyFT/plugins/BTaggingEffAnalyzer.cc
   double ptNBins = 100;
   double ptMin = 0;
@@ -348,7 +352,7 @@ void MyEventSelection::BookHistos()
   myhistos_["pt_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("pt_"+elerawtag, "Electron Pt", 200, 0., 500.);
   myhistos_["eta_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("eta_"+elerawtag, "Electron #eta", 60, -5.0, 5.0);
   myhistos_["phi_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("phi_"+elerawtag, "Electron #phi", 80, -4.05, 3.95);
-  myhistos_["relCombPFIsoEA_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("relCombPFIsoEA_"+elerawtag, "Electron rel pf iso", 100, 0, 20.);
+  myhistos_["relCombPFIsoEA_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("relCombPFIsoEA_"+elerawtag, "Electron rel pf iso", 1000, 0, 20.);
   myhistos_["cic_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("cic_id_"+elerawtag, "Ele CiC id", 100, 0.,  100.);
   myhistos_["vbtf_id_"+elerawtag] = dirs_[dirs_.size() - 1].make<TH1D>("vbtf_id_"+elerawtag,"Ele VBTF id", 100,   0., 100.);
 

@@ -60,11 +60,11 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
         
         if(jIt.pt() < 15 || fabs(jIt.eta()) > maxEta)continue;
-        MyJet newJet = MyJetConverter(jIt, rawtag);
+        MyJet newJet = MyJetConverter(jIt, rawtag, reso);
         newJet.jetName = tag;
         newJet.scaleFactor = sf;
-        newJet.resolution = reso;
-
+        newJet.resolution = reso; 
+        
         //JEC uncertainty
         jecUnc->setJetEta(jIt.eta());
         jecUnc->setJetPt(jIt.pt());  
@@ -79,7 +79,8 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         if(passKin)quality  = 1;
         if(passId)quality |= 1<<1;
         newJet.quality = quality;
-        if(passKin && passId) selJets.push_back(newJet);
+        //if(passKin && passId) selJets.push_back(newJet);
+        if(passKin) selJets.push_back(newJet);
       } // for loop
       delete jecUnc;
       fs_->cd();
@@ -92,7 +93,7 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
 }
 
 
-MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
+MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, double JER)
 {
   MyJet newJet;
   newJet.Reset();
@@ -115,6 +116,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag)
   myhistos_["pt_"+dirtag]->Fill(iJet.pt());
   myhistos_["eta_"+dirtag]->Fill(iJet.eta());
   myhistos_["phi_"+dirtag]->Fill(iJet.phi());
+  myhistos_["JER_"+dirtag]->Fill(JER);
   
   newJet.partonFlavour = double(iJet.partonFlavour());
   newJet.hadronFlavour = double(iJet.hadronFlavour());

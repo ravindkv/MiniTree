@@ -63,6 +63,7 @@ class MyEvent
       QCD_Pt_80to120=24,
       QCD_Pt_120to170=25,
       QCD_Pt_170to300=26,
+      QCD_Pt_300to470=27,
       ST_s=31,
       ST_t=32,
       ST_tW=33,

@@ -8,7 +8,8 @@ MyElectron::MyElectron():
   gen_mother_id(0),
   //name(""),
   eleName(""),
-  
+  eleSCEta(0),
+
   ///sel
   sigmaIetaIeta(-9),
   dEtaInSeed(-9),
@@ -31,7 +32,9 @@ MyElectron::MyElectron():
   D0(-9.),
   Dz(-9.),
   trigger_ele_pt(0),
-  quality(0)
+  quality(0),
+  passEleID(true),
+  passConversionVeto(true)
 {
 }
 
@@ -49,6 +52,7 @@ void MyElectron::Reset()
  // name = "";
   eleName = "";
   p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
+  eleSCEta = 0;
   vertex.SetCoordinates(0.0, 0.0, 0.0);
  
   ///sel
@@ -75,4 +79,6 @@ void MyElectron::Reset()
   Dz = -9.;
   trigger_ele_pt = 0;
   quality = 0;
-  }
+  passEleID = true;
+  passConversionVeto = true;
+}

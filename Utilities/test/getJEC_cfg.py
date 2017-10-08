@@ -10,7 +10,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 # define your favorite global tag
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECDataMC
-process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+#process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1))
 process.source = cms.Source("EmptySource")
@@ -19,7 +20,7 @@ process.readAK4PFchs    = cms.EDAnalyzer('JetCorrectorDBReader',
         payloadName    = cms.untracked.string('AK4PFchs'),
         # this is used ONLY for the name of the printed txt files. You can use any name that you like,
         # but it is recommended to use the GT name that you retrieved the files from.
-        globalTag      = cms.untracked.string('80X_mcRun2_asymptotic_2016_miniAODv2_v1'),
+        globalTag      = cms.untracked.string('80X_mcRun2_asymptotic_2016_TrancheIV_v6'),
         printScreen    = cms.untracked.bool(False),
         createTextFile = cms.untracked.bool(True)
   )

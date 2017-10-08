@@ -1,14 +1,11 @@
 #include <fstream>
 void getTriggerList()
 {
- /*
-  //  TFile f1("Monitor_254_1_sdA.root");
-  //TFile f1("TTJets_ntuple_MuChannel.root");
-  TFile f1("MuRunCv1_MuData_20170428_Ntuple_9.root");
+  TFile f1("outFile_.root");
   TH1F* h1 = (TH1F*)f1.Get("myMiniTreeProducer/trigger/trigger_bitsrun");
   ofstream out;
-  //out.open("trigPathsMC.txt");
-  out.open("trigPathsData.txt");
+  out.open("trigPathsMC.txt");
+  //out.open("trigPathsData.txt");
   cout<<" file opned"<<endl;
   //  f1.ls(); 
   //  gSystem->Exit(0);
@@ -18,7 +15,7 @@ void getTriggerList()
     //cout<<h1->GetXaxis()->GetBinLabel(i)<<endl;
   }
   out.close();
-  */
+ /*
   std::vector<string> trigName;
   trigName.push_back("cms_");
   trigName.push_back("atlas2");
@@ -42,4 +39,5 @@ void getTriggerList()
   cout<<"trigName = "<<trigName[i]<<endl;
   }
   }
+  */
 }

@@ -27,14 +27,12 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
 {
 
   //Jets
-  //edm::EDGetTokenT <pat::JetCollection>jetToken;
-  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string(inputJets_.label())));
+  metToken = consumes <pat::METCollection> (edm::InputTag(std::string(inputMETs_.label())));
+  //jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  //metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
 
-  //Mets
-  //edm::EDGetTokenT <pat::METCollection>metToken;
-  metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
-
-  // define allowed types
+  //define allowed types
   allowedTypes_.push_back(std::string("abs"));
   allowedTypes_.push_back(std::string("rel"));
   allowedTypes_.push_back(std::string("jes:up"));
@@ -73,23 +71,17 @@ void
 JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
 {
   // access jets
-  //edm::Handle<std::vector<pat::Jet> > jets;
-  //event.getByLabel(inputJets_, jets);
   edm::Handle<pat::JetCollection>jets;
   event.getByToken(jetToken, jets);
   // access MET
-  //edm::Handle<std::vector<pat::MET> > mets;
-  //event.getByLabel(inputMETs_, mets);
   edm::Handle<pat::METCollection>mets;
   event.getByToken( metToken, mets);
   
   // create two new collections for jets and MET
-  //std::auto_ptr<std::vector<pat::Jet> > pJets(new std::vector<pat::Jet>);
-  //std::auto_ptr<std::vector<pat::MET> > pMETs(new std::vector<pat::MET>);
   std::auto_ptr<pat::JetCollection > pJets(new pat::JetCollection);
   std::auto_ptr<pat::METCollection> pMETs(new pat::METCollection);
 
-  // loop ans rescale jets
+  // loop and rescale jets
   double dPx = 0., dPy = 0., dSumEt = 0.;
   for(std::vector<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
     pat::Jet scaledJet = *jet;
@@ -99,15 +91,12 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     scaleJetEnergy( scaledJet, jerScaleFactor );
     
     if(scaleType_=="abs"){
-      //scaledJet.scaleEnergy( scaleFactor_ );
       scaleJetEnergy( scaledJet, scaleFactor_ );
       if (abs(scaledJet.partonFlavour()) == 5) { //---: 5 for b quark
-        //scaledJet.scaleEnergy( scaleFactorB_ );
-	scaleJetEnergy( scaledJet, scaleFactorB_ );
+	    scaleJetEnergy( scaledJet, scaleFactorB_ );
       }
     }
     if(scaleType_=="rel"){
-      //scaledJet.scaleEnergy( 1+(fabs(scaledJet.eta())*(scaleFactor_-1. )));    
       scaleJetEnergy( scaledJet, 1+(fabs(scaledJet.eta())*(scaleFactor_-1. )) );
     }    
     if(scaleType_.substr(0, scaleType_.find(':'))=="jes" || 
@@ -126,32 +115,36 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       // sum of squared shifts of jet energy to be applied
       float topShift2 = 0.;
       if(scaleType_.substr(0, scaleType_.find(':'))=="top"){
-	// add the recommended PU correction on top  
-	float pileUp = 0.352/jet->pt()/jet->pt();
-	// add bjet uncertainty on top
-	float bjet = 0.;
-	if(jet->partonFlavour() == 5 || jet->partonFlavour() == -5)
-	  bjet = ((50<jet->pt() && jet->pt()<200) && fabs(jet->eta())<2.0) ? 0.02 : 0.03;
-	// add flat uncertainty for release differences and calibration changes (configurable)
-	float sw = (1.-scaleFactor_);
-	// add top systematics to JES uncertainty
-	topShift2 += pileUp*pileUp + bjet*bjet + sw*sw;
-      }
-
-      // scale jet energy
-      if(scaleType_.substr(scaleType_.find(':')+1)=="up"){
-	// JetMET JES uncertainty
-	float jetMet = deltaJEC->getUncertainty(true);
-	//scaledJet.scaleEnergy( 1+std::sqrt(jetMet*jetMet + topShift2) );
-	scaleJetEnergy( scaledJet, 1+std::sqrt(jetMet*jetMet + topShift2) );
-      }
-      else if(scaleType_.substr(scaleType_.find(':')+1)=="down"){
-	// JetMET JES uncertainty
-	float jetMet = deltaJEC->getUncertainty(false);
-	//scaledJet.scaleEnergy( 1-std::sqrt(jetMet*jetMet + topShift2) );
-	scaleJetEnergy( scaledJet, 1-std::sqrt(jetMet*jetMet + topShift2) );
-      }
-
+        // add the recommended PU correction on top  
+        float pileUp = 0.352/jet->pt()/jet->pt();
+        // add bjet uncertainty on top
+        float bjet = 0.;
+        if(jet->partonFlavour() == 5 || jet->partonFlavour() == -5)
+          bjet = ((50<jet->pt() && jet->pt()<200) && fabs(jet->eta())<2.0) ? 0.02 : 0.03;
+        // add flat uncertainty for release differences and calibration changes (configurable)
+        float sw = (1.-scaleFactor_);
+        // add top systematics to JES uncertainty
+        topShift2 += pileUp*pileUp + bjet*bjet + sw*sw;
+        }
+        // scale jet energy
+        if(scaleType_.substr(scaleType_.find(':')+1)=="up"){
+          // JetMET JES uncertainty
+          /*
+          float jetMet = 0.0;
+          std::cout<<"jetMet = "<<jetMet<<std::endl;
+          jetMet = deltaJEC->getUncertainty(false);
+          std::cout<<"jetMet false = "<<jetMet<<std::endl;
+          jetMet = deltaJEC->getUncertainty(true);
+          std::cout<<"jetMet true = "<<jetMet<<std::endl;
+          */
+          float jetMet = deltaJEC->getUncertainty(true);
+          scaleJetEnergy( scaledJet, 1+std::sqrt(jetMet*jetMet + topShift2) );
+        }
+        else if(scaleType_.substr(scaleType_.find(':')+1)=="down"){
+          //JetMET JES uncertainty
+          float jetMet = deltaJEC->getUncertainty(false);
+          scaleJetEnergy( scaledJet, 1-std::sqrt(jetMet*jetMet + topShift2) );
+        }
       delete deltaJEC;
     }
     // Use AK5PF flavor uncertainty as estimator on the difference between uds- and b-jets
@@ -178,10 +171,8 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       delete param;
     }
     pJets->push_back( scaledJet );
-    
     // consider jet scale shift only if the raw jet pt and emf 
     // is above the thresholds given in the module definition
-
     
     if(jet->correctedJet("Uncorrected").pt() > jetPTThresholdForMET_
        && ((!jet->isPFJet() && jet->emEnergyFraction() < jetEMLimitForMET_) ||
@@ -190,7 +181,6 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       dPy    += scaledJet.py() - jet->py();
       dSumEt += scaledJet.et() - jet->et();
     }
-    
   }
   
   // scale MET accordingly
@@ -204,8 +194,11 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
 }
 
 double
-JetEnergyScale::resolutionFactor(const pat::Jet& jet)
-{
+JetEnergyScale::resolutionFactor(const pat::Jet& jet){
+
+  //--------------------------------//
+  // No JER for Data
+  //--------------------------------//
   if(!jet.genJet()) { return 1.; }
   // check if vectors are filled properly
   if((2*resolutionFactor_.size())!=resolutionRanges_.size()){
@@ -222,7 +215,7 @@ JetEnergyScale::resolutionFactor(const pat::Jet& jet)
       throw cms::Exception("invalidVectorFilling");
     }
   }
-  // calculate eta dependend JER factor
+  //calculate eta dependent JER factor
   double modifiedResolution = 1.;
   for(unsigned int numberOfJERvariation=0; numberOfJERvariation<resolutionFactor_.size(); ++numberOfJERvariation){
     int etaMin = 2*numberOfJERvariation;
@@ -245,9 +238,7 @@ JetEnergyScale::resolutionFactor(const pat::Jet& jet)
 void
 JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
 {
-    factor = 2.4;
-    jet.scaleEnergy( factor );
-
+  jet.scaleEnergy( factor );
   if(jet.isPFJet()){
     pat::PFSpecific specificPF = jet.pfSpecific();
     specificPF.mChargedHadronEnergy = factor * specificPF.mChargedHadronEnergy;

@@ -10,9 +10,12 @@ isData=False
 
 #............ MC...........
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
-inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
 
-#inFile = "/store/mc/RunIISummer16MiniAODv2/ChargedHiggsToCS_M100_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/130000/0232D769-42FB-E611-A618-D4AE526DF090.root"
+#MG TT Jets
+#inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/08BA365D-40E5-E611-955F-00266CF89498.root"
+
+#POWHEG TT Jets
+inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root"
 
 #inFile = "/store/mc/RunIISummer16MiniAODv2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/002F2CE1-38BB-E611-AF9F-0242AC130005.root"
 
@@ -28,7 +31,7 @@ inFile="/store/mc/RunIISummer16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-p
 #inFile = "/store/mc/RunIISummer16MiniAODv2/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/007FD85E-66B9-E611-AD58-0CC47A546E5E.root"
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(-1)
+process.maxEvents.input = cms.untracked.int32(10000)
 
 #OUTPUT FILE
 import datetime
@@ -44,18 +47,32 @@ procName='LOCALUSER'
 #trigMenu = 'HLT2' #https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 trigMenu = 'HLT'
 isFastsim = False
-#Trigger list : http://fwyzard.web.cern.ch/fwyzard/hlt/2016/summary
-mutriglist =  ['HLT_IsoMu27_v3',
+#Trigger POG: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopTrigger#Summary_for_2016_Run2016B_H_25_n
+#Trigger list: http://fwyzard.web.cern.ch/fwyzard/hlt/2016/summary
+mutriglist =  ['HLT_IsoMu24_v1',
+               'HLT_IsoMu24_v2',
+               'HLT_IsoMu24_v4',
+               'HLT_IsoMu27_v3',
                'HLT_IsoMu27_v4',
                'HLT_IsoMu27_v5',
                'HLT_IsoMu27_v7']
-egtriglist =  ['HLT_Ele27_eta2p1_WPLoose_Gsf_v2',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v3',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v4',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v5',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v6',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v7',
-               'HLT_Ele27_eta2p1_WPLoose_Gsf_v8']
+
+#https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopTrigger?sortcol=3;table=4;up=0#sorted_table
+egtriglist =  ['HLT_Ele27_WPTight_Gsf_v1',
+               'HLT_Ele27_WPTight_Gsf_v2',
+               'HLT_Ele27_WPTight_Gsf_v3',
+               'HLT_Ele27_WPTight_Gsf_v4',
+               'HLT_Ele27_WPTight_Gsf_v5',
+               'HLT_Ele27_WPTight_Gsf_v6',
+               'HLT_Ele27_WPTight_Gsf_v7',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v2',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v3',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v4',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v5',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v6',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v7',
+               'HLT_Ele32_eta2p1_WPTight_Gsf_v8']
+
 jettriglist = ['HLT_JetE30_NoBPTX_v2',
                'HLT_JetE30_NoBPTX_v3',
                'HLT_JetE30_NoBPTX_v4']
@@ -92,9 +109,9 @@ process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 if isData:
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("DATA")
 else:
-    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(samp_code)
+    #process.myMiniTreeProducer.MCTruth.sampleCode = cms.string(samp_code)
     #for multi CRAB
-    #process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
+    process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
@@ -113,17 +130,5 @@ process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV6_M
 #Run with the KinFit
 process.p  = cms.Path(process.kinFitSequence*process.allEventsFilter*process.basePreSel*process.myMiniTreeProducer)
 process.schedule = cms.Schedule(process.p)
-###process.met_extra = cms.Path(process.RecoMetSequence * process.patPfMetT0pcT1Txy)
-#process.ele_extra = cms.Path(process.mvaID + process.pfIsolationSequence)
-#process.ele_embed = cms.Path(process.EleEmbedSequence)
-'''
-if( addPF2PAT ):
-    process.pat_default = cms.Path( process.patSequence * process.patDefaultSequence * process.puJetIdSqeuence)
-else :
-    process.pat_default = cms.Path( process.patDefaultSequence * process.puJetIdSqeuence)
-'''
-#process.schedule = cms.Schedule(process.ele_extra, process.pat_default, process.met_extra, process.ele_embed, process.kineFit, process.p)
-#process.schedule = cms.Schedule(process.met_extra, process.kineFit, process.p)
-#process.schedule = cms.Schedule(process.met_extra, process.p) #important
 checkProcessSchedule(storeOutPath,True)
 

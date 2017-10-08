@@ -64,6 +64,7 @@
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+
 //jet resolution and scale factors
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include "CondFormats/JetMETObjects/interface/JetResolutionObject.h"
@@ -72,6 +73,18 @@
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorWithEventContentBase.h"
 #include "PhysicsTools/SelectorUtils/interface/CutApplicatorBase.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/PatCandidates/interface/VIDCutFlowResult.h"
+
+#include "DataFormats/EgammaCandidates/interface/ConversionFwd.h"
+#include "DataFormats/EgammaCandidates/interface/Conversion.h"
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+
+
 #include "MyEvent.h"
 
 #include "TH1.h"
@@ -102,7 +115,7 @@ public:
  
   MyVertex MyVertexConverter(const reco::Vertex& iVertex, double rhoAll, int totVtx);
   std::vector<MyJet> getJets(const edm::Event&, const edm::EventSetup&);
-  MyJet MyJetConverter(const pat::Jet&, TString&);
+  MyJet MyJetConverter(const pat::Jet&, TString&, double JER);
   std::vector<MyMET> getMETs(const edm::Event&, const edm::EventSetup&);
   MyMET MyMETConverter(const pat::MET&, TString&);
   std::vector<MyElectron> getElectrons(const edm::Event&, const edm::EventSetup&);
@@ -148,7 +161,6 @@ private:
   //PVx
   //  edm::Handle<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
-  ///edm::Handle<reco::BeamSpot> beamSpot_; // defined here as used by electron selection
   edm::EDGetTokenT<reco::BeamSpot> bsSource; // new 76x
   edm::EDGetTokenT<double> rhoSource; // new 76x
 
@@ -180,6 +192,9 @@ private:
   edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
   edm::EDGetTokenT<double> eventrhoToken_;
+  //https://github.com/ikrav/EgammaWork/blob/ntupler_and_VID_demos_8.0.3/ElectronNtupler/plugins/ElectronNtuplerVIDDemo.cc
+  edm::EDGetTokenT<reco::ConversionCollection> conversionsMiniAODToken_;
+  edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
 
   edm::EDGetTokenT<pat::JetCollection> Jetsources;
   edm::EDGetTokenT<pat::TriggerEvent> TrigEvent_;

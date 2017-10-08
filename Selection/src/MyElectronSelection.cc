@@ -13,72 +13,74 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   selElectrons.clear();
   
   try{
-    std::string id = configParamsElectrons_.getParameter<std::string>("id");
+    //std::string id = configParamsElectrons_.getParameter<std::string>("id");
     double maxRelCombPFIsoEA = configParamsElectrons_.getParameter<double>("maxRelCombPFIsoEA");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
-    double mvacut = configParamsElectrons_.getParameter<double>("mvacut");
     std::string triggerMatch = configParamsElectrons_.getParameter<std::string>("triggerMatch");  
     
-   //Compute the rho, for relCombPFIsoEAcorr
+    //Compute the rho, for relCombPFIsoEAcorr
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
     double rho_ = hRho.isValid() ? *hRho : 0;
-   /* 
+   
+    //Get the conversion collection
+    edm::Handle<reco::ConversionCollection> conversions;
+    iEvent.getByToken(conversionsMiniAODToken_, conversions);
+    
+    //Get the beam spot
+    edm::Handle<reco::BeamSpot> theBeamSpot;
+    iEvent.getByToken(beamSpotToken_,theBeamSpot);
+    
     //get triger match
-    edm::Handle< pat::TriggerEvent > triggerEvent;
-    iEvent.getByToken(TrigEvent_, triggerEvent );
-    */
+    //edm::Handle< pat::TriggerEvent > triggerEvent;
+    //iEvent.getByToken(TrigEvent_, triggerEvent );
+    
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
+    
     edm::Handle<pat::ElectronCollection>ieles;
     iEvent.getByToken(Elesources, ieles); 
     
     if(ieles.isValid()){
-      for(size_t iEle = 0; iEle < ieles->size(); iEle++)
-	{
-	  const pat::Electron eIt = ((*ieles)[iEle]);
-	  MyElectron newElectron = MyElectronConverter(eIt, rawtag);
-      newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
-      
-      //make selections
-      bool passKin = true, passId = true, passIso = true;
-	  if(newElectron.p4.Et() < minEt || 
-	     fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-      
-      
-     /* 
-      //trigger_ele_pt
-      std::string tagS(tag);
-      std::string labelMatcher = tagS+triggerMatch;
-      pat::helper::TriggerMatchHelper tmhelper;
-      const pat::TriggerObjectRef objRef(tmhelper.triggerMatchObject( ieles, iEle, labelMatcher, iEvent, *triggerEvent));
-      if(objRef.isAvailable()){
-        newElectron.trigger_ele_pt = objRef->pt();
-      }
-      */
-      
-      
-      //apply mva Id
-	  double mvaid = eIt.electronID(id);
-	  if(mvaid < mvacut) passId = false;
-	  //if(newElectron.nMissingHits != 0) passId = false;
-	  
-      //Rel comb PF iso with EA
-	  newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
-      if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
-	  
-      int quality = 0;
-	  if(passKin)quality  = 1;
-      if(passId)quality |= 1<<1;
-      if(passIso)quality |= 1<<2;
-	  newElectron.quality = quality;
-	  if(passKin)selElectrons.push_back(newElectron);
-      selElectrons.push_back(newElectron);
-    }//for loop
+      for(size_t iEle = 0; iEle < ieles->size(); iEle++){
+	    const pat::Electron eIt = ((*ieles)[iEle]);
+	    MyElectron newElectron = MyElectronConverter(eIt, rawtag);
+        newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
+        
+        //Make selections
+        bool passKin = true, passIso = true;
+	    if(newElectron.p4.Et() < minEt || 
+	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
+        
+        /* 
+        //trigger_ele_pt
+        std::string tagS(tag);
+        std::string labelMatcher = tagS+triggerMatch;
+        pat::helper::TriggerMatchHelper tmhelper;
+        const pat::TriggerObjectRef objRef(tmhelper.triggerMatchObject( ieles, iEle, labelMatcher, iEvent, *triggerEvent));
+        if(objRef.isAvailable()){
+          newElectron.trigger_ele_pt = objRef->pt();
+        }
+        */
+	    
+        //isPassConversion tool
+        bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
+        newElectron.passConversionVeto = passConvVeto ;
+
+        //Rel comb PF iso with EA
+	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
+        if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
+	    
+        int quality = 0;
+	    if(passKin)quality  = 1;
+        if(passIso)quality |= 1<<1;
+	    newElectron.quality = quality;
+	    if(passKin)selElectrons.push_back(newElectron);
+      }//for loop
     }
-    }catch(std::exception &e){
+  }catch(std::exception &e){
     std::cout << "[Electron Selection] : check selection " << e.what() << std::endl;
   }  
   return selElectrons;
@@ -97,7 +99,10 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
     if(gen->numberOfMothers() > 0)
       newElectron.gen_mother_id = gen->mother()->pdgId();
   }
+  reco::SuperClusterRef sc = iEle.superCluster();
+  double electronSCEta = sc->eta();
   newElectron.p4.SetCoordinates(iEle.px(), iEle.py(), iEle.pz(), iEle.energy());
+  newElectron.eleSCEta = electronSCEta;
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
   myhistos_["pt_"+dirtag]->Fill(iEle.pt());
   myhistos_["eta_"+dirtag]->Fill(iEle.eta());
@@ -130,7 +135,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
     std::string id_name = eids[id].first;
     double id_value = eids[id].second;
     eidWPs[id_name] = id_value;
-     
     if(id_name.find("MC") != std::string::npos){
       iid_cic++;
       if(int(id_value) & 0x1){
@@ -180,7 +184,7 @@ float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, double
   const float chad = pfIso.sumChargedHadronPt;
   const float nhad = pfIso.sumNeutralHadronEt;
   const float pho = pfIso.sumPhotonEt;
-  const float relCombPFIsoEAcorr = chad + std::max(0.0, nhad + pho - rho_* EffArea_);
+  const float relCombPFIsoEAcorr = (chad + std::max(0.0, nhad + pho - rho_* EffArea_))/iEle.pt();
   myhistos_["relCombPFIsoEA_"+dirtag]->Fill(relCombPFIsoEAcorr); 
   return relCombPFIsoEAcorr;
 }

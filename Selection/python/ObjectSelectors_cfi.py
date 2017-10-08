@@ -59,15 +59,17 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         triggerEvent = cms.InputTag("patTrigger"),
                         triggerMatch = cms.string("TrigMatch"),
 
-                        id = cms.string('cutBasedElectronID-Spring15-25ns-V1-standalone-loose'),
-                        #id = cms.string('cutBasedElectronID-Summer16-80X-V1-loose'),
                         maxRelCombPFIsoEA = cms.double(0.0994),
                         minEt = cms.double(10),
                         maxEta = cms.double(2.5),
                         mvacut = cms.double(0.30),
                         #rho = cms.InputTag("kt6PFJets", "rho")
 #https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_tools.py#L317
-                        rhoIso = cms.InputTag("fixedGridRhoFastjetAll")
+                        rhoIso = cms.InputTag("fixedGridRhoFastjetAll"),
+                        #https://github.com/ikrav/EgammaWork/blob/ntupler_and_VID_demos_8.0.3/ElectronNtupler/test/runElectrons_VID_CutBased_Summer16_HLTSafe_demo.py
+                        conversionsMiniAOD  = cms.InputTag('reducedEgamma:reducedConversions'),
+                        beamSpot = cms.InputTag('offlineBeamSpot'),
+                        eleIdVerbose = cms.bool(False)
                         )
 
 #my base values for jet selection -----------------------------------------------
@@ -78,7 +80,6 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        triggerEvent = cms.InputTag("hltTriggerSummaryAOD"),
                        #triggerEvent = cms.InputTag("patTriggerEvent"),
                        #triggerEvent = cms.InputTag("selectedPatTrigger"),
-
                        triggerMatch = cms.string("TrigMatch"),
                        useRawJets = cms.bool(False),
                        minPt = cms.double(17),
@@ -91,8 +92,10 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        jet_rho = cms.InputTag('fixedGridRhoAll'),
                        #resolutionsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer15_V0_MC_JER_AK4PFchs.txt'),
                        #scaleFactorsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer12_V1_MC_JER_SF_AK5PFchs.txt')
-                       resolutionsFile = cms.string('PtResolution_AK4PF.txt'),
-                       scaleFactorsFile = cms.string('SF_AK4PF.txt')
+                       #resolutionsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
+                       #scaleFactorsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_SF_AK4PF.txt")
+                       resolutionsFile = cms.string("Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
+                       scaleFactorsFile= cms.string("Spring16_25nsV6_MC_SF_AK4PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------
