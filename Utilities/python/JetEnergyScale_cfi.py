@@ -12,4 +12,6 @@ scaledJetEnergy = cms.EDProducer("JetEnergyScale",
     resolutionFactors    = cms.vdouble(1.0), # list the different JER factors here: (JER1, JER2)
     resolutionEtaRanges  = cms.vdouble(0, -1),  # list the |eta| ranges for the different JER factors here (etaMin1, etaMax1, etaMin2, etaMax2), etaMax=-1: means |eta|<infinity
     JECUncSrcFile        = cms.FileInPath("MiniTree/Utilities/data/80X_mcRun2_asymptotic_2016_TrancheIV_v6_Uncertainty_AK4PF.txt"),
+    resolutionsFile   = cms.FileInPath("MiniTree/Utilities/data/Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
+    scaleFactorsFile  = cms.FileInPath("MiniTree/Utilities/data/Spring16_25nsV10_MC_SF_AK4PF.txt")
 )

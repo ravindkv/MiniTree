@@ -21,18 +21,25 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
   scaleFactorB_        (cfg.getParameter<double>       ("scaleFactorB"        )),
   resolutionFactor_    (cfg.getParameter<std::vector<double> > ("resolutionFactors"   )),
   resolutionRanges_    (cfg.getParameter<std::vector<double> > ("resolutionEtaRanges" )),
-  JECUncSrcFile_       (cfg.getParameter<edm::FileInPath>("JECUncSrcFile") ),
   jetPTThresholdForMET_(cfg.getParameter<double>       ("jetPTThresholdForMET")),
-  jetEMLimitForMET_    (cfg.getParameter<double>       ("jetEMLimitForMET"    ))
+  jetEMLimitForMET_    (cfg.getParameter<double>       ("jetEMLimitForMET"    )),
+  //local .txt file
+  JECUncSrcFile_       (cfg.getParameter<edm::FileInPath>("JECUncSrcFile") ),
+  m_resolutions_file   (cfg.getParameter<edm::FileInPath>("resolutionsFile")),
+  m_scale_factors_file (cfg.getParameter<edm::FileInPath>("scaleFactorsFile"))
+//
 {
-
   //Jets
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string(inputJets_.label())));
   metToken = consumes <pat::METCollection> (edm::InputTag(std::string(inputMETs_.label())));
+  m_rho_token  = consumes<double>(edm::InputTag(std::string("fixedGridRhoAll")));
+
   //jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   //metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
 
+  //----------------------------------
   //define allowed types
+  //----------------------------------
   allowedTypes_.push_back(std::string("abs"));
   allowedTypes_.push_back(std::string("rel"));
   allowedTypes_.push_back(std::string("jes:up"));
@@ -52,9 +59,10 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
   produces<std::vector<pat::MET> >(outputMETs_); 
 }
 
-void
-JetEnergyScale::beginJob()
-{ 
+//----------------------------------
+//beginJob()
+//----------------------------------
+void JetEnergyScale::beginJob(){ 
   // check if scaleType is ok
   if(std::find(allowedTypes_.begin(), allowedTypes_.end(), scaleType_)==allowedTypes_.end()){
     edm::LogError msg("JetEnergyScale"); 
@@ -67,27 +75,40 @@ JetEnergyScale::beginJob()
   }		
 }
 
-void
-JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
-{
-  // access jets
+//----------------------------------
+//Run the EDAnalyser on every event
+//----------------------------------
+void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
+  // access jets, METs
   edm::Handle<pat::JetCollection>jets;
   event.getByToken(jetToken, jets);
-  // access MET
   edm::Handle<pat::METCollection>mets;
   event.getByToken( metToken, mets);
   
-  // create two new collections for jets and MET
+  //Get relative pt resolution of jets
+  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyResolution
+  edm::Handle<double> rho;
+  event.getByToken(m_rho_token, rho);
+  JME::JetResolution resolution;
+  JME::JetResolutionScaleFactor res_sf;
+  resolution = JME::JetResolution(m_resolutions_file.fullPath());
+  res_sf = JME::JetResolutionScaleFactor(m_scale_factors_file.fullPath());
+  
+  //create two new collections for jets and MET
   std::auto_ptr<pat::JetCollection > pJets(new pat::JetCollection);
   std::auto_ptr<pat::METCollection> pMETs(new pat::METCollection);
 
-  // loop and rescale jets
+  //loop and rescale jets
   double dPx = 0., dPy = 0., dSumEt = 0.;
   for(std::vector<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
     pat::Jet scaledJet = *jet;
-
-    // JER scaled for all possible methods
-    double jerScaleFactor = resolutionFactor(scaledJet);
+    //Jet resolution and scale factors
+    JME::JetParameters parameters_5 = {{JME::Binning::JetPt, scaledJet.pt()}, {JME::Binning::JetEta, scaledJet.eta()}, {JME::Binning::Rho, *rho}};
+    float rel_sig_pt = resolution.getResolution(parameters_5);
+    //float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, scaledJet.eta()}});
+    
+    //JER scaled for all possible methods
+    double jerScaleFactor = resolutionFactor(scaledJet, rel_sig_pt);
     scaleJetEnergy( scaledJet, jerScaleFactor );
     
     if(scaleType_=="abs"){
@@ -99,6 +120,10 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     if(scaleType_=="rel"){
       scaleJetEnergy( scaledJet, 1+(fabs(scaledJet.eta())*(scaleFactor_-1. )) );
     }    
+    //----------------------------------
+    //JES up/down 
+    //additional JES unc from Top group
+    //----------------------------------
     if(scaleType_.substr(0, scaleType_.find(':'))=="jes" || 
        scaleType_.substr(0, scaleType_.find(':'))=="top" ){
       // handle to the jet corrector parameters collection
@@ -111,8 +136,7 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
       JetCorrectionUncertainty* deltaJEC = new JetCorrectionUncertainty(param);
       deltaJEC->setJetEta(jet->eta()); deltaJEC->setJetPt(jet->pt()); 
 
-      // additional JES uncertainty from Top group
-      // sum of squared shifts of jet energy to be applied
+      //sum of squared shifts of jet energy to be applied
       float topShift2 = 0.;
       if(scaleType_.substr(0, scaleType_.find(':'))=="top"){
         // add the recommended PU correction on top  
@@ -147,8 +171,11 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
         }
       delete deltaJEC;
     }
-    // Use AK5PF flavor uncertainty as estimator on the difference between uds- and b-jets
-    // Maybe we could make this more generic later (if needed)
+    //----------------------------------
+    // Use AK5PF flavor uncertainty as 
+    // estimator on the difference 
+    // between uds- and b-jets
+    //----------------------------------
     if(scaleType_.substr(0, scaleType_.find(':'))=="flavor") {
       // get the uncertainty parameters from file, see
       // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECUncertaintySources
@@ -183,7 +210,9 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
     }
   }
   
+  //----------------------------------
   // scale MET accordingly
+  //----------------------------------
   pat::MET met = *(mets->begin());
   double scaledMETPx = met.px() - dPx;
   double scaledMETPy = met.py() - dPy;
@@ -194,11 +223,11 @@ JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup)
 }
 
 double
-JetEnergyScale::resolutionFactor(const pat::Jet& jet){
+JetEnergyScale::resolutionFactor(const pat::Jet& jet, double rel_sig_pt){
 
-  //--------------------------------//
+  //----------------------------------
   // No JER for Data
-  //--------------------------------//
+  //----------------------------------
   if(!jet.genJet()) { return 1.; }
   // check if vectors are filled properly
   if((2*resolutionFactor_.size())!=resolutionRanges_.size()){
@@ -215,28 +244,41 @@ JetEnergyScale::resolutionFactor(const pat::Jet& jet){
       throw cms::Exception("invalidVectorFilling");
     }
   }
-  //calculate eta dependent JER factor
-  double modifiedResolution = 1.;
-  for(unsigned int numberOfJERvariation=0; numberOfJERvariation<resolutionFactor_.size(); ++numberOfJERvariation){
-    int etaMin = 2*numberOfJERvariation;
+  //----------------------------------
+  //calculate eta dependent JER SF
+  //----------------------------------
+  double sf = 1.;
+  for(unsigned int n=0; n<resolutionFactor_.size(); ++n){
+    int etaMin = 2*n;
     int etaMax = etaMin+1;
     if(std::abs(jet.eta())>=resolutionRanges_[etaMin]&&(std::abs(jet.eta())<resolutionRanges_[etaMax]||resolutionRanges_[etaMax]==-1.)){
-      modifiedResolution*=resolutionFactor_[numberOfJERvariation];
+      sf*=resolutionFactor_[n];
       // take care of negative scale factors 
-      if(resolutionFactor_[numberOfJERvariation]<0){
+      if(resolutionFactor_[n]<0){
 	edm::LogError msg("JetEnergyResolution");
-	msg << "\n chosen scale factor " << resolutionFactor_[numberOfJERvariation] << " is not valid, must be positive.\n";
+	msg << "\n chosen scale factor " << resolutionFactor_[n] << " is not valid, must be positive.\n";
 	throw cms::Exception("negJERscaleFactors");
       }
     }
   }
-  // calculate pt smearing factor
-  double factor = 1. + (modifiedResolution-1.)*(jet.pt() - jet.genJet()->pt())/jet.pt();
+  //----------------------------------
+  //calculate pt smearing factor
+  //----------------------------------
+  double jet_pt = jet.pt();
+  double gen_pt = jet.genJet()->pt();
+  double deta = TMath::Abs(jet.eta() - jet.genJet()->eta());
+  double dphi = TMath::Abs(jet.phi() - jet.genJet()->phi());
+  if(dphi > M_PI) dphi = 2*M_PI - dphi;
+  double delR = sqrt(deta*deta + dphi*dphi);
+  double rCone = 0.4;
+  double factor = 1.0;
+  if(gen_pt> 0 && delR<rCone/2 && abs(jet_pt -gen_pt)<3*rel_sig_pt*jet_pt){
+    factor = 1. + (sf-1.)*(jet_pt - gen_pt)/jet_pt;
+  }
   return (factor<0 ? 0. : factor);
 }
 
-void
-JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
+void JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
 {
   jet.scaleEnergy( factor );
   if(jet.isPFJet()){
@@ -253,35 +295,6 @@ JetEnergyScale::scaleJetEnergy(pat::Jet& jet, double factor)
     specificPF.mNeutralEmEnergy     = factor * specificPF.mNeutralEmEnergy    ;
     jet.setPFSpecific(specificPF);
   }
-  else if(jet.isCaloJet() || jet.isJPTJet()){
-    pat::CaloSpecific specificCalo = jet.caloSpecific();
-    specificCalo.mMaxEInEmTowers         = factor * specificCalo.mMaxEInEmTowers        ;
-    specificCalo.mMaxEInHadTowers        = factor * specificCalo.mMaxEInHadTowers       ;
-    specificCalo.mHadEnergyInHO          = factor * specificCalo.mHadEnergyInHO         ;
-    specificCalo.mHadEnergyInHB          = factor * specificCalo.mHadEnergyInHB         ;
-    specificCalo.mHadEnergyInHF          = factor * specificCalo.mHadEnergyInHF         ;
-    specificCalo.mHadEnergyInHE          = factor * specificCalo.mHadEnergyInHE         ;
-    specificCalo.mEmEnergyInEB           = factor * specificCalo.mEmEnergyInEB          ;
-    specificCalo.mEmEnergyInEE           = factor * specificCalo.mEmEnergyInEE          ;
-    specificCalo.mEmEnergyInHF           = factor * specificCalo.mEmEnergyInHF          ;
-    specificCalo.mEnergyFractionHadronic = factor * specificCalo.mEnergyFractionHadronic;
-    specificCalo.mEnergyFractionEm       = factor * specificCalo.mEnergyFractionEm      ;
-    jet.setCaloSpecific(specificCalo);
-
-    if(jet.isJPTJet()){
-      pat::JPTSpecific specificJPT = jet.jptSpecific();
-      specificJPT.mChargedHadronEnergy          = factor * specificJPT.mChargedHadronEnergy         ;
-      specificJPT.mNeutralHadronEnergy          = factor * specificJPT.mNeutralHadronEnergy         ;
-      specificJPT.mChargedEmEnergy              = factor * specificJPT.mChargedEmEnergy             ;
-      specificJPT.mNeutralEmEnergy              = factor * specificJPT.mNeutralEmEnergy             ;
-      specificJPT.mSumPtOfChargedWithEff        = factor * specificJPT.mSumPtOfChargedWithEff       ;
-      specificJPT.mSumPtOfChargedWithoutEff     = factor * specificJPT.mSumPtOfChargedWithoutEff    ;
-      specificJPT.mSumEnergyOfChargedWithEff    = factor * specificJPT.mSumEnergyOfChargedWithEff   ;
-      specificJPT.mSumEnergyOfChargedWithoutEff = factor * specificJPT.mSumEnergyOfChargedWithoutEff;
-      jet.setJPTSpecific(specificJPT);
-    }
-  }
-  
 }
 
 //define this as a plug-in

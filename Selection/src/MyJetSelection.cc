@@ -29,7 +29,7 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     edm::Handle<pat::JetCollection>ijets;
     iEvent.getByToken( Jetsources, ijets);  
     //Jet resolution and scale factors
-    //https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Spring16_25nsV6_MC
+    //https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Spring16_25nsV10_MC
     //https://insight.io/github.com/cms-sw/cmssw/blob/master/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc
     edm::Handle<double> rho;
     iEvent.getByToken(m_rho_token, rho);

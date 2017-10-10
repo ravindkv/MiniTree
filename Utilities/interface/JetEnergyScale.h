@@ -12,6 +12,12 @@
 #include "FWCore/Utilities/interface/EDGetToken.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
+//jet resolution and scale factors
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "CondFormats/JetMETObjects/interface/JetResolutionObject.h"
+
+//
+//
 /**
    \class   JetEnergyScale JetEnergyScale.h "TopAnalysis/TopUtils/plugins/JetEnergyScale.h"
 
@@ -59,14 +65,14 @@ class JetEnergyScale : public edm::EDProducer {
   explicit JetEnergyScale(const edm::ParameterSet&);
   /// default destructor
   ~JetEnergyScale(){};
-  
+
  private:
   /// check settings
   virtual void beginJob();
   /// rescale jet energy and recalculated MET
   virtual void produce(edm::Event&, const edm::EventSetup&);
   /// rescale the resolution of the jet
-  double resolutionFactor(const pat::Jet&);
+  double resolutionFactor(const pat::Jet&, double rel_sig_pt);
   /// scale all energies of the jet
   void scaleJetEnergy(pat::Jet&, double);
 
@@ -91,8 +97,6 @@ class JetEnergyScale : public edm::EDProducer {
   std::vector<double> resolutionFactor_;
   /// valid |eta| ranges for the energy resolution scale factors
   std::vector<double> resolutionRanges_;
-  /// JECUncertaintySource File
-  edm::FileInPath JECUncSrcFile_;
   /// threshold on (raw!) jet pt for Type1 MET corrections 
   double jetPTThresholdForMET_;
   /// limit on the emf of the jet for Type1 MET corrections 
@@ -102,6 +106,13 @@ class JetEnergyScale : public edm::EDProducer {
 
   edm::EDGetTokenT <pat::JetCollection>jetToken;
   edm::EDGetTokenT <pat::METCollection>metToken;
+  
+  /// JECUncertaintySource File
+  edm::FileInPath JECUncSrcFile_;
+  //for jet-pt resolution
+  edm::FileInPath m_resolutions_file;
+  edm::FileInPath m_scale_factors_file;
+  edm::EDGetTokenT<double> m_rho_token;
 };
 
 #endif

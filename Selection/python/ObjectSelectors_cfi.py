@@ -94,8 +94,8 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        #scaleFactorsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer12_V1_MC_JER_SF_AK5PFchs.txt')
                        #resolutionsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
                        #scaleFactorsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_SF_AK4PF.txt")
-                       resolutionsFile = cms.string("Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
-                       scaleFactorsFile= cms.string("Spring16_25nsV6_MC_SF_AK4PF.txt")
+                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
+                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK4PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------

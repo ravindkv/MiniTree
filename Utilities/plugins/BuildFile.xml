@@ -16,6 +16,7 @@
 <use   name="GeneratorInterface/LHEInterface"/>
 <use   name="SimDataFormats/GeneratorProducts"/>
 <use   name="JetMETCorrections/Objects"/>
+<use   name="JetMETCorrections/Modules"/>
 <use   name="CondFormats/JetMETObjects"/>
 <use   name="lhapdf"/>
 <use   name="boost"/>

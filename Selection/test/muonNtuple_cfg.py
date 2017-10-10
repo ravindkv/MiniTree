@@ -31,7 +31,7 @@ inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia
 #inFile = "/store/mc/RunIISummer16MiniAODv2/QCD_Pt-20to30_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/007FD85E-66B9-E611-AD58-0CC47A546E5E.root"
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(10000)
+process.maxEvents.input = cms.untracked.int32(100)
 
 #OUTPUT FILE
 import datetime
@@ -121,8 +121,8 @@ process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV6_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV6_MC_SF_AK4PF.txt')
+process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
+process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
 
 #ANALYSIS SEQUENCE ------------------------------------------------------------
 #Run without the KinFit

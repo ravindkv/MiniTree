@@ -53,10 +53,10 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEvent.leps=cms.InputTag('cleanPatMuons')
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs') # no cleanPatMET available
 
-    process.cleanPatJetsNominal = process.cleanPatJets.clone()
     if not isData :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionEtaBinning = cms.vdouble(0., 0.5, 0.8, 1.1, 1.3, 1.7, 1.9, 2.1, 2.3, 2.5, 2.8, 3.0, 3.2, -1)
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble(1.109, 1.138, 1.114, 1.123, 1.084, 1.082, 1.140, 1.067, 1.177, 1.364, 1.857, 1.328, 1.16)
+        process.cleanPatJetsNominal = process.cleanPatJets.clone()
         process.cleanPatJetsNominal.src = cms.InputTag("scaledJetEnergyNominal:cleanPatJets")
         process.cleanPatJetsNominal.preselection = cms.string("pt>27 && abs(eta)<2.5")
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsNominal")
@@ -124,25 +124,33 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")
 
     #Put them in a sequence
-    process.kinFitSequence = cms.Sequence(process.cleanPatMuons*
-            process.cleanPatElectrons*
-            process.cleanPatPhotons*
-            process.cleanPatTaus*
-            process.cleanPatJets*
-            process.scaledJetEnergyNominal *
-            process.cleanPatJetsNominal *
-            process.kinFitTtSemiLepEvent *
-            process.scaledJetEnergyUp *
-            process.cleanPatJetsJESUp *
-            process.kinFitTtSemiLepEventJESUp *
-            process.scaledJetEnergyDown *
-            process.cleanPatJetsJESDown *
-            process.kinFitTtSemiLepEventJESDown *
-            process.scaledJetEnergyResnUp *
-            process.cleanPatJetsResnUp *
-            process.kinFitTtSemiLepEventJERUp *
-            process.scaledJetEnergyResnDown *
-            process.cleanPatJetsResnDown *
-            process.kinFitTtSemiLepEventJERDown)
+    if isData:
+        process.kinFitSequence = cms.Sequence(process.cleanPatMuons*
+                process.cleanPatElectrons*
+                process.cleanPatPhotons*
+                process.cleanPatTaus*
+                process.cleanPatJets*
+                process.kinFitTtSemiLepEvent)
+    if not isData:
+        process.kinFitSequence = cms.Sequence(process.cleanPatMuons*
+                process.cleanPatElectrons*
+                process.cleanPatPhotons*
+                process.cleanPatTaus*
+                process.cleanPatJets*
+                process.scaledJetEnergyNominal *
+                process.cleanPatJetsNominal *
+                process.kinFitTtSemiLepEvent *
+                process.scaledJetEnergyUp *
+                process.cleanPatJetsJESUp *
+                process.kinFitTtSemiLepEventJESUp *
+                process.scaledJetEnergyDown *
+                process.cleanPatJetsJESDown *
+                process.kinFitTtSemiLepEventJESDown *
+                process.scaledJetEnergyResnUp *
+                process.cleanPatJetsResnUp *
+                process.kinFitTtSemiLepEventJERUp *
+                process.scaledJetEnergyResnDown *
+                process.cleanPatJetsResnDown *
+                process.kinFitTtSemiLepEventJERDown)
     toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
 

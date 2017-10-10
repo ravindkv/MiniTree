@@ -118,8 +118,8 @@ process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('electron')
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV6_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV6_MC_SF_AK4PF.txt')
+process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
+process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
 
 #ANALYSIS SEQUENCE ------------------------------------------------------------
 #Run without the KinFit
