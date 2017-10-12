@@ -16,10 +16,10 @@ def addSemiLepKinFitMuon(process, isData=False) :
                                                     " && isGlobalMuon && isPFMuon" +
                                                     " && globalTrack.isNonnull "+
                                                     " && globalTrack.normalizedChi2 < 3"+
-                                                    " && combinedQuality.chi2LocalPosition < 12"
-                                                    " && combinedQuality.trkKink < 20"
-                                                    " && innerTrack.isNonnull"
-                                                    " && innerTrack.validFraction >0.8"
+                                                    " && combinedQuality.chi2LocalPosition < 12"+
+                                                    " && combinedQuality.trkKink < 20"+
+                                                    " && innerTrack.isNonnull"+
+                                                    " && innerTrack.validFraction >0.8"+
                                                     " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.40")
 
     #these inputs are required for cleanPatJets
@@ -65,8 +65,8 @@ def addSemiLepKinFitMuon(process, isData=False) :
     #set b-tagging in KineFit
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
+    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
+    process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
     #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)

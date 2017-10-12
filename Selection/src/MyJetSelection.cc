@@ -43,9 +43,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
       std::string uncType("PF");
-      if(rawtag.Contains("JPT") ) uncType="JPT";
-      else if(rawtag.Contains("Calo") ) uncType="Calo";
-      else if(rawtag.Contains("TRK") ) uncType="TRK";
       iSetup.get<JetCorrectionsRecord>().get("AK5"+uncType,JetCorParColl);
       // get the uncertainty parameters from the collection
       JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
@@ -59,7 +56,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         float reso = resolution.getResolution(parameters_5);
         float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
         
-        if(jIt.pt() < 15 || fabs(jIt.eta()) > maxEta)continue;
         MyJet newJet = MyJetConverter(jIt, rawtag, reso);
         newJet.jetName = tag;
         newJet.scaleFactor = sf;
@@ -88,7 +84,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   }catch(std::exception &e){
     std::cout << "[Jet Selection] : check selection " << e.what() << std::endl;
   }
-  
   return selJets;
 }
 

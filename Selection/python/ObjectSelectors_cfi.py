@@ -3,8 +3,8 @@ import FWCore.ParameterSet.Config as cms
 #my base values for trigger bit selection -------------------
 #BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
 BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
-                           #bits = cms.vstring('HLT_Mu9','HLT_Ele10_LW_L1R_v2','HLT_Jet30'),
-                           bits = cms.vstring('HLT_AK4CaloJet30_v3','HLT_HcalPhiSym_v2','HLT_HcalPhiSym_v2'),
+                           bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf','HLT_JetE30_NoBPTX'),
+                           myTrig = cms.string('HLT_IsoMu24')
                            )
 
 #my base values for vertex selection ---------------------------------
@@ -34,23 +34,15 @@ BaseTrackSet = cms.PSet( source = cms.InputTag("generalTracks"),
                          )
 
 
-
 #my base values for muon selection ---------------------------------------
 BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
                           #triggerEvent = cms.InputTag("patTriggerEvent"),
                           triggerEvent = cms.InputTag("patTrigger"),
                           triggerMatch = cms.string("TrigMatch"),
-
-                          minPt = cms.double(10),
-                          maxEta = cms.double(2.4),
-                          minMuonHits = cms.int32(0),
-                          minMatchStations = cms.int32(1),
-                          minPixelHits = cms.int32(0),
-                          minTrackerLayers = cms.int32(5),
-                          maxRelIso = cms.double(0.25),
+                          minPt = cms.double(25),
+                          maxEta = cms.double(2.5),
+                          maxRelIso = cms.double(0.50),
                           )
-
-
 
 # base values for electron selection ----------------------------------------------
 BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
@@ -59,8 +51,8 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         triggerEvent = cms.InputTag("patTrigger"),
                         triggerMatch = cms.string("TrigMatch"),
 
-                        maxRelCombPFIsoEA = cms.double(0.0994),
-                        minEt = cms.double(10),
+                        maxRelCombPFIsoEA = cms.double(0.4),
+                        minEt = cms.double(25),
                         maxEta = cms.double(2.5),
                         mvacut = cms.double(0.30),
                         #rho = cms.InputTag("kt6PFJets", "rho")
@@ -82,7 +74,7 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        #triggerEvent = cms.InputTag("selectedPatTrigger"),
                        triggerMatch = cms.string("TrigMatch"),
                        useRawJets = cms.bool(False),
-                       minPt = cms.double(17),
+                       minPt = cms.double(25),
                        maxEta = cms.double(2.5),
                        minDeltaRtoLepton = cms.double(0.4),
                        puMVADiscriminant = cms.InputTag("puJetMva:fullDiscriminant"),

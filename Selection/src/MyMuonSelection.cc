@@ -13,29 +13,18 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
   selMuons.clear();
   
   try{
-  
-    ///basic
+    //passKin
     double maxEta = configParamsMuons_.getParameter<double>("maxEta");
     double minPt = configParamsMuons_.getParameter<double>("minPt");
-    
-    ///id
-    int minMatchStations = configParamsMuons_.getParameter<int>("minMatchStations");
-    int minMuonHits = configParamsMuons_.getParameter<int>("minMuonHits");
-    int minPixelHits = configParamsMuons_.getParameter<int>("minPixelHits");
-    int minTrackerLayers = configParamsMuons_.getParameter<int>("minTrackerLayers");
+    //passIso
     double maxRelIso = configParamsMuons_.getParameter<double>("maxRelIso");
-
     TString rawtag="Muons";
     //std::string tag(rawtag);
     TString tag(rawtag);
-    
     edm::Handle<pat::MuonCollection>imuons;
     iEvent.getByToken( Muonsources, imuons); // 76x
-    
     if(imuons.isValid()){
-      
-      for(size_t iMuon = 0; iMuon < imuons->size(); iMuon++)
-	{
+      for(size_t iMuon = 0; iMuon < imuons->size(); iMuon++){
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
@@ -43,10 +32,6 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  bool passKin = true, passId = true, passIso = true;
 	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
       //id
-	  if(newMuon.nMuonHits <= minMuonHits)passId = false;
-	  if(newMuon.nMatchedStations < minMatchStations)passId = false;
-	  if(newMuon.nPixelHits <= minPixelHits) passId = false;
-	  if(newMuon.nTrackerLayers < minTrackerLayers)passId = false;
 	  bool isGlobal=false;
 	  if(mIt.isGlobalMuon() && mIt.isTrackerMuon())isGlobal=true;
 	  if(!isGlobal)passId = false;
@@ -57,13 +42,12 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  if(passId)quality |= 1<<1;// quality =  0000 0000 0000 0001 | 0000 0000 0000 0010 = 3
 	  if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
 	  newMuon.quality = quality;
-	  if(passKin) selMuons.push_back(newMuon);
-	}
+	  if(passKin && passId && passIso) selMuons.push_back(newMuon);
+	  }
     }
   }catch(std::exception &e){
     std::cout << "[Muon Selection] : check selection " << e.what() << std::endl;
   }
-  
   return selMuons;
 }
   

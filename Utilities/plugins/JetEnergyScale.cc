@@ -105,8 +105,8 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
     //Jet resolution and scale factors
     JME::JetParameters parameters_5 = {{JME::Binning::JetPt, scaledJet.pt()}, {JME::Binning::JetEta, scaledJet.eta()}, {JME::Binning::Rho, *rho}};
     float rel_sig_pt = resolution.getResolution(parameters_5);
-    //float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, scaledJet.eta()}});
-    
+    ///float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, scaledJet.eta()}});
+
     //JER scaled for all possible methods
     double jerScaleFactor = resolutionFactor(scaledJet, rel_sig_pt);
     scaleJetEnergy( scaledJet, jerScaleFactor );
@@ -150,25 +150,17 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
         // add top systematics to JES uncertainty
         topShift2 += pileUp*pileUp + bjet*bjet + sw*sw;
         }
-        // scale jet energy
-        if(scaleType_.substr(scaleType_.find(':')+1)=="up"){
-          // JetMET JES uncertainty
-          /*
-          float jetMet = 0.0;
-          std::cout<<"jetMet = "<<jetMet<<std::endl;
-          jetMet = deltaJEC->getUncertainty(false);
-          std::cout<<"jetMet false = "<<jetMet<<std::endl;
-          jetMet = deltaJEC->getUncertainty(true);
-          std::cout<<"jetMet true = "<<jetMet<<std::endl;
-          */
-          float jetMet = deltaJEC->getUncertainty(true);
-          scaleJetEnergy( scaledJet, 1+std::sqrt(jetMet*jetMet + topShift2) );
-        }
-        else if(scaleType_.substr(scaleType_.find(':')+1)=="down"){
-          //JetMET JES uncertainty
-          float jetMet = deltaJEC->getUncertainty(false);
-          scaleJetEnergy( scaledJet, 1-std::sqrt(jetMet*jetMet + topShift2) );
-        }
+      // scale jet energy
+      if(scaleType_.substr(scaleType_.find(':')+1)=="up"){
+        // JetMET JES uncertainty
+        float jetMet = deltaJEC->getUncertainty(true); //true = UP
+        scaleJetEnergy( scaledJet, 1+std::sqrt(jetMet*jetMet + topShift2) );
+      }
+      else if(scaleType_.substr(scaleType_.find(':')+1)=="down"){
+        //JetMET JES uncertainty
+        float jetMet = deltaJEC->getUncertainty(false); //false = DOWN
+        scaleJetEnergy( scaledJet, 1-std::sqrt(jetMet*jetMet + topShift2) );
+      }
       delete deltaJEC;
     }
     //----------------------------------
@@ -222,8 +214,7 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
   event.put(pMETs, outputMETs_);
 }
 
-double
-JetEnergyScale::resolutionFactor(const pat::Jet& jet, double rel_sig_pt){
+double JetEnergyScale::resolutionFactor(const pat::Jet& jet, double rel_sig_pt){
 
   //----------------------------------
   // No JER for Data
