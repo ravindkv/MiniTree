@@ -143,7 +143,6 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
             //std::cout<<" probOfFit =  "<<newKfp.probOfFit<<endl;
             //std::cout<<endl;
               }
-        
           selKFParticles.push_back(newKfp);
         }
     fs_->cd();

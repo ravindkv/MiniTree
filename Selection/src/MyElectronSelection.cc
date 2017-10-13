@@ -50,7 +50,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
         
         //Make selections
-        bool passKin = true, passId, passIso = true;
+        bool passKin = true, passId = true, passIso = true;
 	    if(newElectron.p4.Et() < minEt || 
 	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
         
@@ -73,10 +73,11 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         //Rel comb PF iso with EA
 	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
         if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
-	    
+        
         int quality = 0;
 	    if(passKin)quality  = 1;
-        if(passIso)quality |= 1<<1;
+        if(passId)quality |= 1<<1;
+        if(passIso)quality |= 1<<2;
 	    newElectron.quality = quality;
 	    if(passKin && passId && passIso)selElectrons.push_back(newElectron);
       }//for loop

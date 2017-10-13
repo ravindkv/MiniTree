@@ -14,7 +14,7 @@ isData=False
 inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root"
 
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(2000)
+process.maxEvents.input = cms.untracked.int32(-1)
 
 #OUTPUT FILE
 import datetime
@@ -68,13 +68,13 @@ else:
     #for multi CRAB
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
 process.myMiniTreeProducer.MCTruth.producePDFweights = cms.bool(producePDFweights)
-process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)
+process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
 #process.myMiniTreeProducer.Trigger.bits = cms.vstring()
 #process.myMiniTreeProducer.Trigger.bits = mutriglist
 #process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 #process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
-process.myMiniTreeProducer.Trigger.myTrig = "HLT_IsoMu24"
+process.myMiniTreeProducer.Trigger.myTrig = "HLT_IsoMu2"
 
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')

@@ -177,7 +177,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
     if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;} //cout <<"ele trig passed"<<endl;}
-    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}// cout<<"mu trig passed"<<endl;}
+    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}  //cout<<"mu trig passed"<<endl;}
   }
   ///Electrons
   int nIsoMuon = 0, nIsoElectron = 0;
@@ -189,9 +189,9 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
     bool passKin = false, passId = false, passIso = false;
     int quality = electrons[iele].quality;
     if(quality & 0x1)passKin = true;
-    if((quality >> 1) & 0x1)passIso = true;
-    if(passKin && passIso){
-    ///if(passKin && passId){
+    if((quality >> 1) & 0x1)passId = true;
+    if((quality >> 2) & 0x1)passIso = true;
+    if(passKin && passId && passIso){
      myhistos_["SelElePt"]->Fill(electrons[iele].p4.Pt());
      myhistos_["SelEleEta"]->Fill(electrons[iele].p4.Eta());
       nIsoElectron++;
