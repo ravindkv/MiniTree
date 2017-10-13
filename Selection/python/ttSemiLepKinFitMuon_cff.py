@@ -44,11 +44,13 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
     process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
+    '''
     process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
     process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
     process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
     process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
+    '''
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJets")
     process.kinFitTtSemiLepEvent.leps=cms.InputTag('cleanPatMuons')
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs') # no cleanPatMET available
@@ -139,7 +141,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatJets*
                 process.scaledJetEnergyNominal *
                 process.cleanPatJetsNominal *
-                process.kinFitTtSemiLepEvent *
+                process.kinFitTtSemiLepEvent*
                 process.scaledJetEnergyUp *
                 process.cleanPatJetsJESUp *
                 process.kinFitTtSemiLepEventJESUp *
@@ -151,6 +153,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.kinFitTtSemiLepEventJERUp *
                 process.scaledJetEnergyResnDown *
                 process.cleanPatJetsResnDown *
-                process.kinFitTtSemiLepEventJERDown)
+                process.kinFitTtSemiLepEventJERDown
+                )
     toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
 

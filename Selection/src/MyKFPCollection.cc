@@ -76,7 +76,6 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
     }catch(std::exception &e){   
       std::cout<<" KineFitter product for JER Down is not available"<<std::endl;   
     }
-    
     for(std::vector<edm::InputTag>::iterator sit = sources.begin(); sit != sources.end(); sit++){
       TString rawtag=sit->instance();
       std::string tag(rawtag);
@@ -162,7 +161,7 @@ MyKineFitParticle MyEventSelection::MyKineFitPartConverter(const pat::Particle& 
   MyKineFitParticle newKFP;
   newKFP.Reset();
   newKFP.p4.SetCoordinates(ikfp.px(), ikfp.py(), ikfp.pz(), ikfp.energy());
-  //newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
+  newKFP.vertex.SetCoordinates(ikfp.vx(), ikfp.vy(), ikfp.vz());
   //newKFP.part_id = ikfp.pdgId();
   //newKFP.part_id = ikfp.pid();
   //newKFP.part_mother_id = ikfp.motherID(); 

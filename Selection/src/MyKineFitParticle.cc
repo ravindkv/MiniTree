@@ -20,7 +20,7 @@ MyKineFitParticle::~MyKineFitParticle()
 void MyKineFitParticle::Reset()
 {
   p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
-  //vertex.SetCoordinates(-999.0,-999.0,-999.0);
+  vertex.SetCoordinates(-999.0,-999.0,-999.0);
 
   partName = "";
   //part_id = 0;

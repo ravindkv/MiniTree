@@ -17,7 +17,7 @@ class MyKineFitParticle
   void   Reset();
   
   MyLorentzVector p4;         // 4 vector
-  //Point3D vertex;
+  Point3D vertex;
   std::string partName;
   //int part_id;
   //int part_mother_id;
