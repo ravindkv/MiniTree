@@ -79,7 +79,8 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
         if(passId)quality |= 1<<1;
         if(passIso)quality |= 1<<2;
 	    newElectron.quality = quality;
-	    if(passKin && passId && passIso)selElectrons.push_back(newElectron);
+	    //if(passKin && passId && passIso)selElectrons.push_back(newElectron);
+	    if(passKin)selElectrons.push_back(newElectron);
       }//for loop
     }
   }catch(std::exception &e){

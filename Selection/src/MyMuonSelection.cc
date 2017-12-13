@@ -42,7 +42,8 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  if(passId)quality |= 1<<1;// quality =  0000 0000 0000 0001 | 0000 0000 0000 0010 = 3
 	  if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
 	  newMuon.quality = quality;
-	  if(passKin && passId && passIso) selMuons.push_back(newMuon);
+	  //if(passKin && passId && passIso) selMuons.push_back(newMuon);
+	  if(passKin) selMuons.push_back(newMuon);
 	  }
     }
   }catch(std::exception &e){

@@ -87,7 +87,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   return selJets;
 }
 
-
 MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, double JER)
 {
   MyJet newJet;

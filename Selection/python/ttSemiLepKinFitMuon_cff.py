@@ -12,7 +12,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #apply selections on muon(medium muon ID)
     process.cleanPatMuons.src = cms.InputTag("slimmedMuons")
-    process.cleanPatMuons.preselection = cms.string("pt>27 && abs(eta)<2.5"+
+    process.cleanPatMuons.preselection = cms.string("pt>25 && abs(eta)<2.1"+
                                                     " && isGlobalMuon && isPFMuon" +
                                                     " && globalTrack.isNonnull "+
                                                     " && globalTrack.normalizedChi2 < 3"+
@@ -29,7 +29,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #clean jets from muons
     process.cleanPatJets.src = cms.InputTag("slimmedJets")
-    process.cleanPatJets.preselection = cms.string("pt>27 && abs(eta)<2.5")
+    process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
@@ -60,7 +60,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
         process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble(1.109, 1.138, 1.114, 1.123, 1.084, 1.082, 1.140, 1.067, 1.177, 1.364, 1.857, 1.328, 1.16)
         process.cleanPatJetsNominal = process.cleanPatJets.clone()
         process.cleanPatJetsNominal.src = cms.InputTag("scaledJetEnergyNominal:cleanPatJets")
-        process.cleanPatJetsNominal.preselection = cms.string("pt>27 && abs(eta)<2.5")
+        process.cleanPatJetsNominal.preselection = cms.string("pt>20 && abs(eta)<2.5")
         process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJetsNominal")
         process.kinFitTtSemiLepEvent.mets = cms.InputTag("scaledJetEnergyNominal:slimmedMETs")
 
@@ -81,7 +81,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.scaledJetEnergyUp.scaleType = "jes:up"
     process.cleanPatJetsJESUp = process.cleanPatJets.clone()
     process.cleanPatJetsJESUp.src = cms.InputTag("scaledJetEnergyUp:cleanPatJets")
-    process.cleanPatJetsJESUp.preselection = cms.string("pt>27 && abs(eta)<2.5")
+    process.cleanPatJetsJESUp.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.kinFitTtSemiLepEventJESUp = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJESUp.jets = cms.InputTag("cleanPatJetsJESUp")
     process.kinFitTtSemiLepEventJESUp.mets = cms.InputTag("scaledJetEnergyUp:slimmedMETs")
@@ -93,7 +93,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.scaledJetEnergyDown.scaleType = "jes:down"
     process.cleanPatJetsJESDown = process.cleanPatJets.clone()
     process.cleanPatJetsJESDown.src = cms.InputTag("scaledJetEnergyDown:cleanPatJets")
-    process.cleanPatJetsJESDown.preselection = cms.string("pt>27 && abs(eta)<2.5")
+    process.cleanPatJetsJESDown.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.kinFitTtSemiLepEventJESDown = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJESDown.jets = cms.InputTag("cleanPatJetsJESDown")
     process.kinFitTtSemiLepEventJESDown.mets = cms.InputTag("scaledJetEnergyDown:slimmedMETs")
@@ -107,7 +107,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.scaledJetEnergyResnUp.resolutionFactors = cms.vdouble(1.109+0.008 , 1.138+0.013, 1.114+0.013, 1.123+0.024, 1.084+0.011, 1.082+0.035, 1.140+0.047, 1.067+0.053, 1.177+0.041, 1.364+0.039, 1.857+0.071, 1.328+0.022, 1.16+0.029)
     process.cleanPatJetsResnUp = process.cleanPatJets.clone()
     process.cleanPatJetsResnUp.src = cms.InputTag("scaledJetEnergyResnUp:cleanPatJets")
-    process.cleanPatJetsResnUp.preselection = cms.string("pt>27 && abs(eta)<2.5")
+    process.cleanPatJetsResnUp.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.kinFitTtSemiLepEventJERUp = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJERUp.jets = cms.InputTag("cleanPatJetsResnUp")
     process.kinFitTtSemiLepEventJERUp.mets = cms.InputTag("scaledJetEnergyResnUp:slimmedMETs")
@@ -120,7 +120,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     process.scaledJetEnergyResnDown.resolutionFactors = cms.vdouble(1.109-0.008 , 1.138-0.013, 1.114-0.013, 1.123-0.024, 1.084-0.011, 1.082-0.035, 1.140-0.047, 1.067-0.053, 1.177-0.041, 1.364-0.039, 1.857-0.071, 1.328-0.022, 1.16-0.029)
     process.cleanPatJetsResnDown = process.cleanPatJets.clone()
     process.cleanPatJetsResnDown.src = cms.InputTag("scaledJetEnergyResnDown:cleanPatJets")
-    process.cleanPatJetsResnDown.preselection = cms.string("pt>27 && abs(eta)<2.5")
+    process.cleanPatJetsResnDown.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.kinFitTtSemiLepEventJERDown = process.kinFitTtSemiLepEvent.clone()
     process.kinFitTtSemiLepEventJERDown.jets = cms.InputTag("cleanPatJetsResnDown")
     process.kinFitTtSemiLepEventJERDown.mets = cms.InputTag("scaledJetEnergyResnDown:slimmedMETs")

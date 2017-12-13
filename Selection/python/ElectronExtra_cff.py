@@ -1,7 +1,30 @@
 import FWCore.ParameterSet.Config as cms
 import copy
-from CommonTools.ParticleFlow.pfParticleSelection_cff import *
+##from CommonTools.ParticleFlow.pfParticleSelection_cff import *
 
+def configureElectronCutIdIso(process) :
+
+    ################### vertex sequence ####################
+
+    process.selectedPrimaryVertices = cms.EDFilter(
+        "VertexSelector",
+        src = cms.InputTag('offlineSlimmedPrimaryVertices'),
+        cut = cms.string("isValid & ndof >= 4 & z > -24 & z < +24 & position.Rho < 2."),
+        filter = cms.bool(False)
+        )
+
+    ########Embed elctrons with variable to cut on############
+    process.selectedPatElectronsUserEmbedded = cms.EDProducer(
+        "ElectronsUserEmbedded",
+        electronTag = cms.InputTag("slimmedElectrons"),
+        vertexTag   = cms.InputTag("selectedPrimaryVertices"),
+        rho = cms.InputTag("fixedGridRhoFastjetAll"),
+        #rho = cms.InputTag("kt6PFJets", "rho"),
+        beamSpot = cms.InputTag('offlineBeamSpot'),
+        conversionsMiniAOD  = cms.InputTag('reducedEgamma:reducedConversions')
+        )
+    process.EleEmbedSequence = cms.Sequence(process.selectedPrimaryVertices * process.selectedPatElectronsUserEmbedded)
+'''
 def configureElectronMVAIdIso(process) :
     process.load('EgammaAnalysis.ElectronTools.electronIdMVAProducer_cfi')
     process.mvaID = cms.Sequence(  process.mvaTrigV0 + process.mvaTrigNoIPV0 + process.mvaNonTrigV0 )
@@ -85,7 +108,7 @@ def configureElectronMVAIdIso(process) :
 
     process.selectedPrimaryVertices = cms.EDFilter(
         "VertexSelector",
-        src = cms.InputTag('offlinePrimaryVertices'),
+        src = cms.InputTag('offlineSlimmedPrimaryVertices'),
         cut = cms.string("isValid & ndof >= 4 & z > -24 & z < +24 & position.Rho < 2."),
         filter = cms.bool(False)
         )
@@ -99,9 +122,10 @@ def configureElectronMVAIdIso(process) :
     ########Embed elctrons with variable to cut on############
     process.selectedPatElectronsUserEmbedded = cms.EDProducer(
         "ElectronsUserEmbedded",
-        electronTag = cms.InputTag("selectedPatElectrons"),
+        electronTag = cms.InputTag("slimmedElectrons"),
         vertexTag   = cms.InputTag("selectedPrimaryVertices"),
-        rho = cms.InputTag("kt6PFJets", "rho")
+        rho = cms.InputTag("fixedGridRhoFastjetAll")
+        #rho = cms.InputTag("kt6PFJets", "rho")
         )
     process.EleEmbedSequence = cms.Sequence(process.selectedPrimaryVertices * process.selectedPatElectronsUserEmbedded)
-
+'''
