@@ -11,49 +11,24 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
 
     #apply selections on electron
-    '''
-    simpleCutsVeto = "(" + \
-                     " (isEB && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.010 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.80 && "+ \
-                     "          userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.007 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.15)"   + \
-                     " || "  + \
-                     " (isEE && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.030 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')<0.70 && "+ \
-                     "          userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values') <0.010)"   + \
-                     ")"
-    eleIdCutMedium = "((abs(superCluster.eta) <= 1.479 &&
-    full5x5_sigmaIetaIeta <0.0115 &&
-    abs(e->dEtaInSeed)      < 0.00749 &&
-    deltaPhiSuperClusterTrackAtVtx <0.228 &&
-    hadronicOverEm < 0.356 &&
-    abs(1.0 - eSuperClusterOverP)*1/ecalEnergy < 0.299 &&
-    e->nInnerHits           <= 2
-    passConversionVeto
-
-    userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')>0.94)" + \
-               " (abs(superCluster.eta) > 0.8 && abs(superCluster.eta) < 1.479 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')>0.85)" + \
-               " || "  + \
-               " (abs(superCluster.eta) > 1.479 && userFloat('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')>0.92)" + \
-               ")"
     process.cleanPatElectronsUser = process.cleanPatElectrons.clone()
-    process.cleanPatElectronsUser.preselection = cms.string("pt>30 && abs(eta)<2.5 && "+
-                                                            simpleCutsVeto +
-                                                            " && " +
-                                                            eleIdCut +
-                                                            " && abs(userFloat('dxyWrtPV'))<0.045 && abs(userFloat('dzWrtPV'))<0.2"+
-                                                            " && userFloat('nHits')==0 && userInt('antiConv')>0.5" +
-                                                            " && userFloat('PFRelIso04')<0.30"
-                                                            )
-    '''
+    #process.cleanPatElectronsUser.src = cms.InputTag("slimmedElectrons")
+    process.cleanPatElectronsUser.src = cms.InputTag("selectedPatElectronsUserEmbedded")
+    process.cleanPatElectronsUser.preselection = cms.string("pt>25 && abs(eta)<2.5 && abs(userFloat('dxyWrtPV'))<0.05 && abs(userFloat('dzWrtPV'))<0.2 && userInt('cutBasedID')>0 && userFloat('PFRelIso04')<0.30")
+
     #these inputs are required for cleanPatJets
     process.cleanPatMuons.src = cms.InputTag("slimmedMuons")
     process.cleanPatPhotons.src = cms.InputTag("slimmedPhotons")
+    process.cleanPatPhotons.checkOverlaps.electrons.src = cms.InputTag("cleanPatElectronsUser")
     process.cleanPatTaus.src = cms.InputTag("slimmedTaus")
+    process.cleanPatTaus.checkOverlaps.electrons.src = cms.InputTag("cleanPatElectronsUser")
 
-
-
-    #clean jets from muons
+    #clean jets from leptons
     process.cleanPatJets.src = cms.InputTag("slimmedJets")
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
-    process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
+    process.cleanPatJets.checkOverlaps.electrons.src  = cms.InputTag("cleanPatElectronsUser")
+    process.cleanPatJets.checkOverlaps.tkIsoElectrons.src  = cms.InputTag("cleanPatElectronsUser")
+    process.cleanPatJets.checkOverlaps.electrons.requireNoOverlaps  = cms.bool(True)
 
     #smear the JetEnergy for JER in case of MC, don't use this scaled collection for Data
     process.scaledJetEnergyNominal = scaledJetEnergy.clone()
@@ -75,7 +50,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
     '''
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJets")
-    process.kinFitTtSemiLepEvent.leps=cms.InputTag('cleanPatMuons')
+    process.kinFitTtSemiLepEvent.leps=cms.InputTag('cleanPatElectronsUser')
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs') # no cleanPatMET available
 
     if not isData :
@@ -151,14 +126,14 @@ def addSemiLepKinFitElectron(process, isData=False) :
     #Put them in a sequence
     if isData:
         process.kinFitSequence = cms.Sequence(process.cleanPatMuons*
-                process.cleanPatElectrons*
+                process.cleanPatElectronsUser*
                 process.cleanPatPhotons*
                 process.cleanPatTaus*
                 process.cleanPatJets*
                 process.kinFitTtSemiLepEvent)
     if not isData:
         process.kinFitSequence = cms.Sequence(process.cleanPatMuons*
-                process.cleanPatElectrons*
+                process.cleanPatElectronsUser*
                 process.cleanPatPhotons*
                 process.cleanPatTaus*
                 process.cleanPatJets*

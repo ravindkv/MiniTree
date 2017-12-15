@@ -107,6 +107,7 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.p4.SetCoordinates(iEle.px(), iEle.py(), iEle.pz(), iEle.energy());
   newElectron.eleSCEta = electronSCEta;
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
+  
   myhistos_["pt_"+dirtag]->Fill(iEle.pt());
   myhistos_["eta_"+dirtag]->Fill(iEle.eta());
   myhistos_["phi_"+dirtag]->Fill(iEle.phi());

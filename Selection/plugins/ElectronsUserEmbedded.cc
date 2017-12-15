@@ -46,21 +46,22 @@ using namespace reco;
 
 class ElectronsUserEmbedded : public edm::EDProducer{
 
-
 public: 
-
   explicit ElectronsUserEmbedded(const edm::ParameterSet&);
   virtual ~ElectronsUserEmbedded() {};
 
 private:
-
   virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
   //declare token
   edm::EDGetTokenT<pat::ElectronCollection> eleToken_;
-  edm::EDGetTokenT<double> rhoToken_;
+  //edm::EDGetToken electronsMiniAODToken_;
+  edm::EDGetTokenT<float> rhoToken_;
   edm::EDGetTokenT<reco::VertexCollection> vertexToken_;
   edm::EDGetTokenT<reco::ConversionCollection> convToken_;
   edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
+  //ID decisions objects
+  //https://github.com/ikrav/EgammaWork/blob/ntupler_and_VID_demos_8.0.3/ElectronNtupler/plugins/ElectronNtuplerVIDDemo.cc
+  //edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapToken_;
   //bool isMC_;
 };
 
@@ -70,29 +71,36 @@ ElectronsUserEmbedded::ElectronsUserEmbedded(const edm::ParameterSet & iConfig){
   edm::ConsumesCollector&& cc = consumesCollector();
   //define token
   eleToken_ = cc.consumes<pat::ElectronCollection>(iConfig.getParameter<edm::InputTag>("electronTag"));
+  //electronsMiniAODToken_ = cc.consumes<edm::View<reco::GsfElectron>>(iConfig.getParameter<edm::InputTag>("electronTag"));
   vertexToken_   = cc.consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertexTag"));
-  rhoToken_ = cc.consumes<double>(iConfig.getParameter<edm::InputTag>("rho"));
+  rhoToken_ = cc.consumes<float>(iConfig.getParameter<edm::InputTag>("rho"));
   beamSpotToken_ = cc.consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
   convToken_ = cc.consumes<reco::ConversionCollection>(iConfig.getParameter<edm::InputTag>("conversionsMiniAOD"));
+  //eleIdMapToken_ = cc.consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("eleIdMap"));
   produces<pat::ElectronCollection>("");
 }
 
 void ElectronsUserEmbedded::produce(edm::Event & iEvent, const edm::EventSetup & iSetup){
-
+  //------------------------------------
+  //get various objects 
+  //------------------------------------
   //get electrons
   edm::Handle<pat::ElectronCollection>electronsHandle;
   iEvent.getByToken(eleToken_, electronsHandle); 
   const pat::ElectronCollection* electrons = electronsHandle.product();
-  /* 
+  //edm::Handle<edm::View<reco::GsfElectron> > electrons;
+  //iEvent.getByToken(electronsMiniAODToken_, electrons); 
+  //const reco::GsfElectron* electrons = electronsHandle.product();
+  
   //get vertices
   edm::Handle<reco::VertexCollection> vertexHandle;
   iEvent.getByToken(vertexToken_,vertexHandle);
   const reco::VertexCollection* vertexes = vertexHandle.product();
-  */
+  
   //Compute the rho, for relCombPFIsoEAcorr
-  edm::Handle<double> hRho;
+  edm::Handle<float> hRho;
   iEvent.getByToken(rhoToken_, hRho);
-  double rho_ = hRho.isValid() ? *hRho : 0;
+  float rho_ = hRho.isValid() ? *hRho : 0;
   
   //Get the conversion collection
   edm::Handle<reco::ConversionCollection> hConversions;
@@ -102,64 +110,118 @@ void ElectronsUserEmbedded::produce(edm::Event & iEvent, const edm::EventSetup &
   edm::Handle<reco::BeamSpot> bsHandle;
   iEvent.getByToken(beamSpotToken_,bsHandle);
   const reco::BeamSpot &thebs = *bsHandle.product();
+  
+  //get cutBased id
+  //edm::Handle<edm::ValueMap<bool> > ele_id_decisions;
+  //iEvent.getByToken(eleIdMapToken_ ,ele_id_decisions);
 
+  //------------------------------------
+  //loop over electrons
+  //------------------------------------
   std::auto_ptr< pat::ElectronCollection > electronsUserEmbeddedColl( new pat::ElectronCollection() ) ;
+  //std::auto_ptr<reco::GsfElectron> electronsUserEmbeddedColl( new reco::GsfElectron) ;
   for(size_t iEle = 0; iEle < electrons->size(); iEle++){
-    pat::Electron aElectron( (*electrons)[iEle] );
-    float dPhi  = aElectron.deltaPhiSuperClusterTrackAtVtx();
-    float dEta  = aElectron.deltaEtaSuperClusterTrackAtVtx();
-    float sihih = aElectron.sigmaIetaIeta();
-    float HoE   = aElectron.hadronicOverEm();
+    pat::Electron ele( (*electrons)[iEle] );
+    //for (size_t i = 0; i < electrons->size(); ++i){
+    //const auto ele = electrons->ptrAt(i);
+    //int isPassEleId  = int((*ele_id_decisions)[ele]);
+    //ele->addUserFloat("cutBasedId_M",isPassEleId);
 
-    cout<<"phi = "<<dPhi<<endl;
-    cout<<"eta =  = "<<dEta<<endl;
-    cout<<"HoE =  = "<<HoE<<endl;
+    //------------------------------------
+    //get cut based ID manually
+    ////https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
+    //------------------------------------
+    reco::SuperClusterRef sc = ele.superCluster();
+    //electron super cluster eta, etc
+    float eleSCEta = sc->eta();
+    float sigmaIetaIeta = ele.full5x5_sigmaIetaIeta();
+    float dEtaInSeed = ele.superCluster().isNonnull() && ele.superCluster()->seed().isNonnull() ?ele.deltaEtaSuperClusterTrackAtVtx() - ele.superCluster()->eta() + ele.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
+    float dPhiIn = ele.deltaPhiSuperClusterTrackAtVtx();
+    float hadOverEm = ele.hadronicOverEm();
+  
+    //abs(1/E-1/p) 
+    const float ecal_energy_inverse = 1.0/ele.ecalEnergy();
+    const float eSCoverP = ele.eSuperClusterOverP();
+    float iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
     
-    cout<<"AAAAA2"<<endl;
-    //aElectron.addUserFloat("nHits",nHits);
-    aElectron.addUserFloat("dPhi",fabs(dPhi));
-    aElectron.addUserFloat("dEta",fabs(dEta));
-    aElectron.addUserFloat("sihih",sihih);
-    aElectron.addUserFloat("HoE",HoE);
-    int passConvVeto = int(!ConversionTools::hasMatchedConversion(aElectron, hConversions, thebs.position()));
-    aElectron.addUserInt("antiConv",passConvVeto);
+    //expected missing inner hits
+    constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
+    int nInnerHits = ele.gsfTrack()->hitPattern().numberOfHits(missingHitType);
     
-    double dxyWrtPV =  -99.;
-    double dzWrtPV  =  -99.;
-    /*
-    cout<<"AAAAA3"<<endl;
-    if(vertexes->size()!=0 && (aElectron.gsfTrack()).isNonnull() ){
-      dxyWrtPV = (aElectron.gsfTrack())->dxy( (*vertexes)[0].position() ) ;
-      dzWrtPV  = (aElectron.gsfTrack())->dz(  (*vertexes)[0].position() ) ;
+    //pass conversion veto
+    bool isPassConVeto = !ConversionTools::hasMatchedConversion(ele, hConversions, thebs.position());
+    
+    //Rel. comb. PF iso with EA corr   
+    float EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, ele.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
+    const reco::GsfElectron::PflowIsolationVariables& pfIso = ele.pfIsolationVariables();
+    const float chad = pfIso.sumChargedHadronPt;
+    const float nhad = pfIso.sumNeutralHadronEt;
+    const float pho = pfIso.sumPhotonEt;
+    float default_iso = 0.0;
+    const float relCombPFIsoEAcorr = (chad + std::max(default_iso, nhad + pho - rho_* EffArea_))/ele.pt();
+    ele.addUserFloat("PFRelIso04", relCombPFIsoEAcorr);
+    
+    //distance w.r.t primary vertex
+    float dxyWrtPV =  -99.;
+    float dzWrtPV  =  -99.;
+    if(vertexes->size()!=0 && (ele.gsfTrack()).isNonnull() ){
+      dxyWrtPV = (ele.gsfTrack())->dxy( (*vertexes)[0].position() ) ;
+      dzWrtPV  = (ele.gsfTrack())->dz(  (*vertexes)[0].position() ) ;
     }
-    else if (vertexes->size()!=0 && (aElectron.track()).isNonnull() ){
-      dxyWrtPV = (aElectron.track())->dxy( (*vertexes)[0].position() ) ;
-      dzWrtPV  = (aElectron.track())->dz(  (*vertexes)[0].position() ) ;
+    else if (vertexes->size()!=0 && (ele.track()).isNonnull() ){
+      dxyWrtPV = (ele.track())->dxy( (*vertexes)[0].position() ) ;
+      dzWrtPV  = (ele.track())->dz(  (*vertexes)[0].position() ) ;
+    }
+    ele.addUserFloat("dxyWrtPV",dxyWrtPV);
+    ele.addUserFloat("dzWrtPV",dzWrtPV);
+    
+    //get medium ID
+    bool passID = false;
+    //barrel
+    if(abs(eleSCEta) <= 1.479
+       && sigmaIetaIeta        < 0.00998
+       && abs(dEtaInSeed)      < 0.00311
+       && abs(dPhiIn)          < 0.103
+       && hadOverEm            < 0.253
+       ///&& ele.relCombPFIsoEA    < 0.0695        
+       && abs(iEminusiP)       < 0.134
+       && nInnerHits           <= 1
+       && isPassConVeto
+      )passID = true;
+
+    //endcap
+    if(abs(eleSCEta) > 1.479
+       && sigmaIetaIeta        < 0.0298
+       && abs(dEtaInSeed)      < 0.00609
+       && abs(dPhiIn)          < 0.045
+       && hadOverEm            < 0.0878
+       ///&& ele.relCombPFIsoEA    < 0.0821        
+       && abs(iEminusiP)       < 0.13
+       && nInnerHits           <= 1
+       && isPassConVeto
+       )passID = true;
+    ele.addUserInt("cutBasedID", int(passID));
+    /*
+    if(int(passID)>0){
+    cout<<"--------------------------"<<endl;
+    cout<<"sigmaIetaIeta = "<<sigmaIetaIeta<<endl;
+    cout<<"dEtaInSeed = "<<dEtaInSeed<<endl;
+    cout<<"dPhiIn = "<<dPhiIn<<endl;
+    cout<<"hadOverEm = "<<hadOverEm<<endl;
+    cout<<"iEminusiP = "<<iEminusiP<<endl;
+    cout<<"nInnerHits = "<<nInnerHits<<endl;
+    cout<<"conVeto = "<<isPassConVeto<<endl;
+    cout<<"relIso = "<<relCombPFIsoEAcorr<<endl;
+    cout<<"cutBasedID = "<<int(passID)<<endl;
     }
     */
-    cout<<"AAAAA4"<<endl;
-    aElectron.addUserFloat("dxyWrtPV",dxyWrtPV);
-    aElectron.addUserFloat("dzWrtPV",dzWrtPV);
-    
-    aElectron.addUserFloat("mvaIdTrig"   ,aElectron.electronID("mvaTrigV0"));
-    aElectron.addUserFloat("mvaIdNonTrig",aElectron.electronID("mvaNonTrigV0"));
-    aElectron.addUserFloat("mvaIdTrigNoIP",aElectron.electronID("mvaTrigNoIPV0"));
-
-    //isolation with custom configuration
-    /*
-    double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, aElectron.superCluster()->eta(),ElectronEffectiveArea::kEleEAData2012);
-    double pfRelIso04 = (aElectron.userIsolation(pat::PfChargedHadronIso) + std::max(0., ((aElectron.userIsolation(pat::PfGammaIso)+aElectron.userIsolation(pat::PfNeutralHadronIso))-(rho_*EffArea_))))/aElectron.pt();
-    
-    aElectron.addUserFloat("PFRelIso04", pfRelIso04);
-    */
-    electronsUserEmbeddedColl->push_back(aElectron);
-    cout<<"AAAAA5"<<endl;
+    //push selected electrons
+    electronsUserEmbeddedColl->push_back(ele);
   }    
-
+  //put selected electrons back in to the event
   iEvent.put( electronsUserEmbeddedColl );
   return;
 }
-
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(ElectronsUserEmbedded);

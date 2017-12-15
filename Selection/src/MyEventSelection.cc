@@ -150,7 +150,7 @@ MyEventSelection::~MyEventSelection()
 void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
 {
 
-  es.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
+  ///es.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
   event_.eventNb = e.id().event();
   event_.lumiblock = e.luminosityBlock();
   event_.isData = isData_;
@@ -176,8 +176,8 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   bool passTrig = false;
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
-    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;} //cout <<"ele trig passed"<<endl;}
-    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}  //cout<<"mu trig passed"<<endl;}
+    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;}//cout <<"ele trig passed"<<endl;}
+    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}//cout<<"mu trig passed"<<endl;}
   }
   ///Electrons
   int nIsoMuon = 0, nIsoElectron = 0;
