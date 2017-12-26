@@ -2,7 +2,7 @@
 
 #### Set the CMSSSW release ####
 
-* cmsrel CMSSW_8_0_25
+* cmsrel CMSSW_8_0_28
 * cd CMSSW_8_0_25/src/
 * cmsenv
 
@@ -15,5 +15,5 @@
 * cd MiniTree 
 * scram b -j20
 * cd Selection/test
-* cmsRun muons_miniAOD_to_ntuple_13TeV_cfg.py
+* cmsRun muonNtuple_cfg.py
 
