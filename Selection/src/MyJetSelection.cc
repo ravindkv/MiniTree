@@ -172,6 +172,8 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   discr["pfCombinedMVAV2BJetTags"] = iJet.bDiscriminator("pfCombinedMVAV2BJetTags");
   discr["pfCombinedCvsLJetTags"] = iJet.bDiscriminator("pfCombinedCvsLJetTags");   
   discr["pfCombinedCvsBJetTags"] = iJet.bDiscriminator("pfCombinedCvsBJetTags");
+  discr["DeepCSVb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probb");
+  discr["DeepCSVbb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probbb");
   newJet.bDiscriminator = discr;
   //JECs
   std::map<std::string, double>jetCorrections; jetCorrections.clear();
