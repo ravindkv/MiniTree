@@ -22,7 +22,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     //Compute the rho, for relCombPFIsoEAcorr
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
-    double rho_ = hRho.isValid() ? *hRho : 0;
+    const float rho_ = hRho.isValid() ? *hRho : 0;
    
     //Get the conversion collection
     edm::Handle<reco::ConversionCollection> conversions;
@@ -181,14 +181,24 @@ std::vector<double> MyEventSelection::defaultPFElectronIsolation (const pat::Ele
 }
 
 //Rel. comb. PF iso with EA corr
-float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag)
+float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, const float rho_, TString& dirtag)
 {
-  double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, iEle.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
+  //double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, iEle.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
+  //https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt
+  const float SCEta = iEle.superCluster()->eta(); 
+  float EffectiveArea = 0.0;
+  if (fabs(SCEta) >= 0.0 && fabs(SCEta) < 1.0 ) EffectiveArea = 0.1703;
+  if (fabs(SCEta) >= 1.0 && fabs(SCEta) < 1.479)EffectiveArea = 0.1715;
+  if (fabs(SCEta) >= 1.479 && fabs(SCEta) < 2.0)EffectiveArea = 0.1213;
+  if (fabs(SCEta) >= 2.0 && fabs(SCEta) < 2.2 ) EffectiveArea = 0.1230;
+  if (fabs(SCEta) >= 2.2 && fabs(SCEta) < 2.3 ) EffectiveArea = 0.1635;
+  if (fabs(SCEta) >= 2.3 && fabs(SCEta) < 2.4 ) EffectiveArea = 0.1937;
+  if (fabs(SCEta) >= 2.4 ) EffectiveArea = 0.2393;
   const reco::GsfElectron::PflowIsolationVariables& pfIso = iEle.pfIsolationVariables();
   const float chad = pfIso.sumChargedHadronPt;
   const float nhad = pfIso.sumNeutralHadronEt;
   const float pho = pfIso.sumPhotonEt;
-  const float relCombPFIsoEAcorr = (chad + std::max(0.0, nhad + pho - rho_* EffArea_))/iEle.pt();
+  const float relCombPFIsoEAcorr = (chad + std::max(0.0f, nhad + pho - rho_* EffectiveArea))/iEle.pt();
   myhistos_["relCombPFIsoEA_"+dirtag]->Fill(relCombPFIsoEAcorr); 
   return relCombPFIsoEAcorr;
 }

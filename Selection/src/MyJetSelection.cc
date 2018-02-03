@@ -124,26 +124,56 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   double csvT = 0.9535;
   //b-quarks
   if( abs(partonFlavor)==5 ){
-    myhistos2_["h2_BTaggingEff_Denom_b_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_bL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_bM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_bT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    myhistos2_["h2_BTagEff_Denom_b_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_bL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_bM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_bT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
   }
   //c-quarks
   else if( abs(partonFlavor)==4 ){
-    myhistos2_["h2_BTaggingEff_Denom_c_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_cL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_cM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_cT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    myhistos2_["h2_BTagEff_Denom_c_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_cL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_cM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_cT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
   }
   //other quarks and gluon
   else{
-    myhistos2_["h2_BTaggingEff_Denom_udsg_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvL ) myhistos2_["h2_BTaggingEff_Num_udsgL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvM ) myhistos2_["h2_BTaggingEff_Num_udsgM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
-    if( csv >= csvT ) myhistos2_["h2_BTaggingEff_Num_udsgT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    myhistos2_["h2_BTagEff_Denom_udsg_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvL ) myhistos2_["h2_BTagEff_Num_udsgL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvM ) myhistos2_["h2_BTagEff_Num_udsgM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( csv > csvT ) myhistos2_["h2_BTagEff_Num_udsgT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
   }
  
+  //2D histos to calculate Ctag efficiency
+  double dCvsL = iJet.bDiscriminator("pfCombinedCvsLJetTags");
+  double dCvsB = iJet.bDiscriminator("pfCombinedCvsBJetTags");
+  double dCvsL_L = -0.48;
+  double dCvsB_L = -0.17;
+  double dCvsL_M = -0.1;
+  double dCvsB_M =  0.08;
+  double dCvsL_T =  0.69;
+  double dCvsB_T = -0.45;
+  //b-quarks
+  if( abs(partonFlavor)==5 ){
+    myhistos2_["h2_CTagEff_Denom_b_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_L && dCvsB > dCvsB_L) myhistos2_["h2_CTagEff_Num_bL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_M && dCvsB > dCvsB_M) myhistos2_["h2_CTagEff_Num_bM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_T && dCvsB > dCvsB_T) myhistos2_["h2_CTagEff_Num_bT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //c-quarks
+  else if( abs(partonFlavor)==4 ){
+    myhistos2_["h2_CTagEff_Denom_c_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_L && dCvsB > dCvsB_L) myhistos2_["h2_CTagEff_Num_cL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_M && dCvsB > dCvsB_M) myhistos2_["h2_CTagEff_Num_cM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_T && dCvsB > dCvsB_T) myhistos2_["h2_CTagEff_Num_cT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
+  //other quarks and gluon
+  else{
+    myhistos2_["h2_CTagEff_Denom_udsg_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_L && dCvsB > dCvsB_L) myhistos2_["h2_CTagEff_Num_udsgL_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_M && dCvsB > dCvsB_M) myhistos2_["h2_CTagEff_Num_udsgM_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+    if( dCvsL > dCvsL_T && dCvsB > dCvsB_T) myhistos2_["h2_CTagEff_Num_udsgT_"+dirtag]->Fill(iJet.pt(), iJet.eta());
+  }
   //vertex.fCoordinates.fXYZ are zero, in the MINIAOD
   newJet.vertex.SetCoordinates(iJet.vx(), iJet.vy(), iJet.vz());
   
@@ -172,8 +202,14 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   discr["pfCombinedMVAV2BJetTags"] = iJet.bDiscriminator("pfCombinedMVAV2BJetTags");
   discr["pfCombinedCvsLJetTags"] = iJet.bDiscriminator("pfCombinedCvsLJetTags");   
   discr["pfCombinedCvsBJetTags"] = iJet.bDiscriminator("pfCombinedCvsBJetTags");
+  /*
   discr["DeepCSVb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probb");
   discr["DeepCSVbb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probbb");
+  std::cout<<"-----------------------"<<endl;
+  std::cout<<discr["pfCombinedCvsBJetTags"]<<endl;
+  std::cout<<discr["DeepCSVb"]<<endl;
+  std::cout<<discr["DeepCSVbb"]<<endl;
+  */
   newJet.bDiscriminator = discr;
   //JECs
   std::map<std::string, double>jetCorrections; jetCorrections.clear();

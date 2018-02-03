@@ -138,7 +138,7 @@ public:
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
   std::vector<double> defaultPFElectronIsolation(const pat::Electron&);
-  float relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag);
+  float relCombPFIsoWithEAcorr(const pat::Electron& iEle, const float rho_, TString& dirtag);
 
   int assignDYchannel(const edm::Event&, const edm::EventSetup&);
   int assignWJets(const edm::Event&, const edm::EventSetup&);
