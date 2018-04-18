@@ -12,9 +12,8 @@ isData=False
 #inFile = ["file:FEDED4C8-573B-E611-9ED6-0025904CF102.root"]
 #POWHEG TT Jets
 inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root"
-
 process.source.fileNames = [inFile]
-process.maxEvents.input = cms.untracked.int32(-1)
+process.maxEvents.input = cms.untracked.int32(2000)
 
 #OUTPUT FILE
 import datetime
@@ -74,7 +73,7 @@ process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trig
 #process.myMiniTreeProducer.Trigger.bits = mutriglist
 #process.myMiniTreeProducer.Trigger.bits.extend( egtriglist )
 #process.myMiniTreeProducer.Trigger.bits.extend( jettriglist )
-process.myMiniTreeProducer.Trigger.myTrig = "HLT_IsoMu2"
+process.myMiniTreeProducer.Trigger.myTrig = "HLT_IsoMu"
 
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')
