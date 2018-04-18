@@ -42,13 +42,14 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
     process.kinFitTtSemiLepEvent.constraints = cms.vuint32(3, 4)
     process.kinFitTtSemiLepEvent.maxNJets = cms.int32(-1)
-    '''
+
+    #object resolutions
     process.kinFitTtSemiLepEvent.udscResolutions = udscResolutionPF.functions
     process.kinFitTtSemiLepEvent.bResolutions = bjetResolutionPF.functions
-    process.kinFitTtSemiLepEvent.lepResolutions = muonResolution.functions
+    process.kinFitTtSemiLepEvent.lepResolutions = elecResolution.functions
     process.kinFitTtSemiLepEvent.metResolutions = metResolutionPF.functions
     process.kinFitTtSemiLepEvent.metResolutions[0].eta = "9999"
-    '''
+
     process.kinFitTtSemiLepEvent.jets = cms.InputTag("cleanPatJets")
     process.kinFitTtSemiLepEvent.leps=cms.InputTag('cleanPatElectronsUser')
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs') # no cleanPatMET available
