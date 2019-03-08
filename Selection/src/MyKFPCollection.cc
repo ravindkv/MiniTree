@@ -136,6 +136,14 @@ std::vector<MyKineFitParticle> MyEventSelection::getKineFitParticles(const edm::
             newKfp.statusOfFit = status_->size()>0 ? (*status_)[0] : 0;
             newKfp.probOfFit = prob_->size() > 0 ? (*prob_)[0] : 0;
             newKfp.njetsOfFit = *njets_;
+            /*
+            std::cout<<"---------------------------------"<<std::endl;
+            std::cout<<"chi2_->size() = "<<chi2_->size()<<std::endl;
+            std::cout<<"(*chi2_)[0]   = "<<(*chi2_)[iKfp]<<std::endl;
+            std::cout<<"(*status_)[iKfp] = "<<(*status_)[iKfp]<<std::endl;
+            std::cout<<"(*prob_)[iKfp] = "<<(*prob_)[iKfp]<<std::endl;
+            std::cout<<"njets_ = "<<*njets_<<std::endl;
+            */
             //std::cout<<" Number of jets =  "<<*njets_<<endl;
             //std::cout<<" chi2 =  "<<newKfp.chi2OfFit<<endl;
             //std::cout<<" status of fit =  "<<newKfp.statusOfFit<<endl;

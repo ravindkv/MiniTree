@@ -12,13 +12,11 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #apply selections on muon(medium muon ID)
     process.cleanPatMuons.src = cms.InputTag("slimmedMuons")
-    process.cleanPatMuons.preselection = cms.string("pt>25 && abs(eta)<2.1"+
+    process.cleanPatMuons.preselection = cms.string("pt>26 && abs(eta)<2.4"+
                                                     " && isGlobalMuon && isPFMuon" +
-                                                    " && globalTrack.isNonnull "+
                                                     " && globalTrack.normalizedChi2 < 3"+
                                                     " && combinedQuality.chi2LocalPosition < 12"+
                                                     " && combinedQuality.trkKink < 20"+
-                                                    " && innerTrack.isNonnull"+
                                                     " && innerTrack.validFraction >0.8"+
                                                     " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.40")
 

@@ -1,10 +1,10 @@
 import FWCore.ParameterSet.Config as cms
 
 #my base values for trigger bit selection -------------------
-#BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
-BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT2"),
-                           bits = cms.vstring('HLT_IsoMu24','HLT_Ele27_WPTight_Gsf','HLT_JetE30_NoBPTX'),
-                           myTrig = cms.string('HLT_IsoMu24')
+BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
+                           trigBits = cms.vstring('HLT_IsoMu24'),
+                           sourceFilter = cms.InputTag("TriggerResults"),
+                           metFilterBits = cms.vstring('Flag_goodVertices')
                            )
 
 #my base values for vertex selection ---------------------------------
@@ -40,7 +40,7 @@ BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
                           triggerEvent = cms.InputTag("patTrigger"),
                           triggerMatch = cms.string("TrigMatch"),
                           minPt = cms.double(10),
-                          maxEta = cms.double(2.4),
+                          maxEta = cms.double(3.0),
                           maxRelIso = cms.double(0.50),
                           )
 
@@ -52,7 +52,7 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         triggerMatch = cms.string("TrigMatch"),
                         maxRelCombPFIsoEA = cms.double(0.4),
                         minEt = cms.double(10),
-                        maxEta = cms.double(2.5),
+                        maxEta = cms.double(3.0),
                         mvacut = cms.double(0.30),
                         #rho = cms.InputTag("kt6PFJets", "rho")
 #https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/python/Identification/cutBasedElectronID_tools.py#L317
@@ -74,7 +74,7 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        triggerMatch = cms.string("TrigMatch"),
                        useRawJets = cms.bool(False),
                        minPt = cms.double(17),
-                       maxEta = cms.double(2.5),
+                       maxEta = cms.double(4.0),
                        minDeltaRtoLepton = cms.double(0.4),
                        puMVADiscriminant = cms.InputTag("puJetMva:fullDiscriminant"),
                        puMVAID = cms.InputTag("puJetMva:fullId"),

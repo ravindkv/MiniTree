@@ -201,6 +201,7 @@ private:
   edm::EDGetTokenT<reco::JetIDValueMap> jetIDMapToken_;
   edm::EDGetTokenT<pat::METCollection> Metsources;
   edm::EDGetTokenT<edm::TriggerResults>  hlt_;
+  edm::EDGetTokenT<edm::TriggerResults>  hltFilter_;
 
   const reco::Vertex *bestPrimVertex_;
   reco::Vertex refVertex_;

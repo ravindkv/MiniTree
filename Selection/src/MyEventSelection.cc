@@ -96,6 +96,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
 
   // Trigger
   hlt_ = cc.consumes<edm::TriggerResults>(configParamshlt_.getParameter<edm::InputTag>("source"));
+  hltFilter_ = cc.consumes<edm::TriggerResults>(configParamshlt_.getParameter<edm::InputTag>("sourceFilter"));
 
   // MC and PU
   PUInfoTag_ = cc.consumes<vector<PileupSummaryInfo> >(edm::InputTag("slimmedAddPileupInfo"));
