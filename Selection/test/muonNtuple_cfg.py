@@ -10,7 +10,7 @@ from MiniTree.Selection.LocalSources_cff import toPrint
 #------------------------------------------------------
 # User flags
 #------------------------------------------------------
-isData=False
+isData=True
 applyResJEC=False
 storeOutPath=False
 filterHBHEnoise = False
@@ -20,14 +20,12 @@ isAOD = False
 #------------------------------------------------------
 # Input root files and number of events
 #------------------------------------------------------
-process.maxEvents.input = cms.untracked.int32(1000)
+process.maxEvents.input = cms.untracked.int32(-1)
 # Data
-#inFile = "/store/data/Run2016H/SingleElectron/MINIAOD/03Feb2017_ver3-v1/110000/02973E99-69EC-E611-9913-5065F381A2F1.root"
+#process.source.fileNames = cms.untracked.vstring("/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver2-v2/110000/202F4074-FDF2-E611-BE63-0025905A606A.root")
 #MC
-inFile = cms.untracked.vstring("file:0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
-#inFile = "/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root"
-process.source.fileNames = inFile
-#process.source.fileNames = [inFile]
+process.source.fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
+#process.source.fileNames = cms.untracked.vstring("file:0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
 
 #------------------------------------------------------
 # Output file
@@ -72,7 +70,9 @@ process.myMiniTreeProducer.Trigger.trigBits = cms.vstring("HLT_IsoMu24","HLT_Iso
 )
 
 #------------------------------------------------------
-# apply MET filters via trigger selection
+# apply MET filters via trigger selection.
+# BadPFMuonFilter and BadChargedCandidateFilter are
+# run on fly through addMETFilters (process)
 #------------------------------------------------------
 addMETFilters(process)
 process.myMiniTreeProducer.Trigger.sourceFilter = cms.InputTag('TriggerResults')
@@ -80,16 +80,10 @@ process.myMiniTreeProducer.Trigger.metFilterBits = cms.vstring("Flag_goodVertice
 "Flag_globalSuperTightHalo2016Filter",
 "Flag_HBHENoiseFilter",
 "Flag_HBHENoiseIsoFilter",
-"Flag_EcalDeadCellTriggerPrimitiveFilter",
-"Flag_BadPFMuonFilter",
-"Flag_BadChargedCandidateFilter",
-"Flag_ecalBadCalibFilter",
-"Flag_CSCTightHalo2015Filter",
-"Flag_globalSuperTightHalo2016Filter",
-"Flag_globalSuperTightHalo2016Filter"
+"Flag_EcalDeadCellTriggerPrimitiveFilter"
 )
 if(isData):
-    process.myMiniTreeProducer.Trigger.metFilterBits.extend("Flag_eeBadScFilter")
+    process.myMiniTreeProducer.Trigger.metFilterBits.extend(["Flag_eeBadScFilter"])
 
 #------------------------------------------------------
 # KinFit and jet energy/pT reso
@@ -100,7 +94,7 @@ process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_M
 process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
 
 #------------------------------------------------------
-# Events to be stored in the ntuples after which cut
+# Events to be stored in the ntuple after which cut
 # 1 = after trigger
 # 2 = one lepton selection
 # 3 = met selection etc
@@ -111,7 +105,7 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 # Add ED Filters, Producers, Analysers in the cms Path
 #------------------------------------------------------
 process.p  = cms.Path(process.metFilterSequence*
-        process.kinFitSequence*
+        #process.kinFitSequence*
         process.allEventsFilter*
         process.basePreSel*
         process.myMiniTreeProducer)

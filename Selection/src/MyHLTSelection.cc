@@ -7,22 +7,30 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   std::vector<std::string> myTrigBits = configParamshlt_.getParameter<std::vector<std::string> >("trigBits");
   std::vector<std::string> metFilterBits = configParamshlt_.getParameter<std::vector<std::string> >("metFilterBits");
 
+  //--------------------------------------
   // MET filters
+  //--------------------------------------
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#2016_data
   edm::Handle<edm::TriggerResults> hltResFilter;
-  iEvent.getByToken(hltFilter_, hltResFilter); // 76x
-  ////assert(hltResFilter.isValid());
+  iEvent.getByToken(hltFilter_, hltResFilter); 
   const edm::TriggerNames& allFilterNames = iEvent.triggerNames(*hltResFilter);
-  bool filterMET = false;
+  std::vector<int> filterMET;
   for(unsigned int i = 0; i<metFilterBits.size(); i++){
-    string filterName = metFilterBits[i];
-    if(allFilterNames.triggerIndex(filterName) < hltResFilter->size()){
-      filterMET=hltResFilter->accept(allFilterNames.triggerIndex(filterName));
+    if(allFilterNames.triggerIndex(metFilterBits[i]) < hltResFilter->size()){
+    int foundFilter = hltResFilter->accept(allFilterNames.triggerIndex(metFilterBits[i]));
+    filterMET.push_back(foundFilter);
     }
   }
+  bool isFilterMET = true;
+  for(unsigned int f = 0; f <filterMET.size(); f++){
+    if (filterMET[f]==0) isFilterMET=false;
+  }
+
+  //--------------------------------------
   // HLT selection
+  //--------------------------------------
   edm::Handle<edm::TriggerResults> hltresults;
-  iEvent.getByToken(hlt_, hltresults); // 76x
+  iEvent.getByToken(hlt_, hltresults); 
   ////assert(hltresults.isValid());
   const edm::TriggerNames& TrigNames_ = iEvent.triggerNames(*hltresults);
   const int ntrigs = hltresults->size();
@@ -34,7 +42,7 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
     for(unsigned int i = 0; i<myTrigBits.size(); i++){
       if(trigName.find(myTrigBits[i]) != string::npos) passTrig = true;
     }
-    if(passTrig && filterMET) hltPaths.push_back(trigName);
+    if(passTrig && isFilterMET) hltPaths.push_back(trigName);
   }
   return hltPaths;
 }
