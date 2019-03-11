@@ -10,7 +10,7 @@ BaseTriggerSet = cms.PSet( source = cms.InputTag("TriggerResults::HLT"),
 #my base values for vertex selection ---------------------------------
 BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVertices"),
                           maxZ = cms.double(24),
-                          rho =  cms.InputTag('fixedGridRhoAll'),
+                          rho =  cms.InputTag('fixedGridRhoFastjetAll'),
                           maxRho = cms.double(2.0),
                           minNDOF = cms.int32(4),
                           beamSpotSource = cms.InputTag("offlineBeamSpot"),
@@ -64,7 +64,8 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         )
 
 #my base values for jet selection -----------------------------------------------
-BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
+BaseJetsSet = cms.PSet(#sources = cms.InputTag("updatedPatJetsUpdatedJEC"),
+                       sources = cms.InputTag("slimmedJets"),
                        CaloJetId = cms.PSet( version = cms.string("PURE09"), quality = cms.string("LOOSE") ),
                        PFJetId = cms.PSet( version = cms.string("FIRSTDATA"), quality = cms.string("LOOSE") ),
                        dedxSource = cms.InputTag("dedxHarmonic2"),
@@ -80,13 +81,9 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        puMVAID = cms.InputTag("puJetMva:fullId"),
                        puMVADiscriminantResCor = cms.InputTag("puJetMvaResCor:fullDiscriminant"),
                        puMVAIDResCor = cms.InputTag("puJetMvaResCor:fullId"),
-                       jet_rho = cms.InputTag('fixedGridRhoAll'),
-                       #resolutionsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer15_V0_MC_JER_AK4PFchs.txt'),
-                       #scaleFactorsFile = cms.FileInPath('CondFormats/JetMETObjects/data/Summer12_V1_MC_JER_SF_AK5PFchs.txt')
-                       #resolutionsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_PtResolution_AK4PF.txt"),
-                       #scaleFactorsFile = cms.FileInPath("MiniTree/Selection/test/Spring16_25nsV6_MC_SF_AK4PF.txt")
-                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
-                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK4PF.txt")
+                       jet_rho = cms.InputTag('fixedGridRhoFastjetAll'),
+                       resolutionsFile = cms.string("Summer16_25nsV1_MC_PtResolution_AK4PF.txt"),
+                       scaleFactorsFile= cms.string("Summer16_25nsV1_MC_SF_AK4PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------

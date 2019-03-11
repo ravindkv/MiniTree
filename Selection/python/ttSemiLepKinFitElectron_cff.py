@@ -24,7 +24,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.cleanPatTaus.checkOverlaps.electrons.src = cms.InputTag("cleanPatElectronsUser")
 
     #clean jets from leptons
-    process.cleanPatJets.src = cms.InputTag("slimmedJets")
+    process.cleanPatJets.src = cms.InputTag("updatedPatJetsUpdatedJEC")
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.electrons.src  = cms.InputTag("cleanPatElectronsUser")
     process.cleanPatJets.checkOverlaps.tkIsoElectrons.src  = cms.InputTag("cleanPatElectronsUser")
@@ -35,8 +35,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.scaledJetEnergyNominal.inputJets = "cleanPatJets"
     process.scaledJetEnergyNominal.inputMETs = "slimmedMETs"
     process.scaledJetEnergyNominal.scaleType = "jer"
-    process.scaledJetEnergyNominal.resolutionEtaRanges = cms.vdouble(0., 0.5, 0.5, 0.8, 0.8, 1.1, 1.1, 1.3, 1.3, 1.7, 1.7, 1.9, 1.9, 2.1, 2.1, 2.3, 2.3, 2.5, 2.5, 2.8, 2.8, 3.0, 3.0, 3.2, 3.2, -1)
-    process.scaledJetEnergyNominal.resolutionFactors = cms.vdouble(1.109, 1.138, 1.114, 1.123, 1.084, 1.082, 1.140, 1.067, 1.177, 1.364, 1.857, 1.328, 1.16)
+    process.scaledJetEnergyNominal.resolutionEtaRanges = cms.vdouble(etaRanges)
+    process.scaledJetEnergyNominal.resolutionFactors = cms.vdouble(jerSF)
 
     #change constraints on kineFit
     process.kinFitTtSemiLepEvent.mTop = cms.double(172.5)
@@ -55,8 +55,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.kinFitTtSemiLepEvent.mets=cms.InputTag('slimmedMETs') # no cleanPatMET available
 
     if not isData :
-        process.kinFitTtSemiLepEvent.jetEnergyResolutionEtaBinning = cms.vdouble(0., 0.5, 0.8, 1.1, 1.3, 1.7, 1.9, 2.1, 2.3, 2.5, 2.8, 3.0, 3.2, -1)
-        process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble(1.109, 1.138, 1.114, 1.123, 1.084, 1.082, 1.140, 1.067, 1.177, 1.364, 1.857, 1.328, 1.16)
+        process.kinFitTtSemiLepEvent.jetEnergyResolutionEtaBinning = cms.vdouble(etaValues)
+        process.kinFitTtSemiLepEvent.jetEnergyResolutionScaleFactors = cms.vdouble(jerSF)
         process.cleanPatJetsNominal = process.cleanPatJets.clone()
         process.cleanPatJetsNominal.src = cms.InputTag("scaledJetEnergyNominal:cleanPatJets")
         process.cleanPatJetsNominal.preselection = cms.string("pt>20 && abs(eta)<2.5")
@@ -103,7 +103,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.scaledJetEnergyResnUp.inputJets = "cleanPatJets"
     process.scaledJetEnergyResnUp.inputMETs = "slimmedMETs"
     process.scaledJetEnergyResnUp.scaleType = "jer"
-    process.scaledJetEnergyResnUp.resolutionFactors = cms.vdouble(1.109+0.008 , 1.138+0.013, 1.114+0.013, 1.123+0.024, 1.084+0.011, 1.082+0.035, 1.140+0.047, 1.067+0.053, 1.177+0.041, 1.364+0.039, 1.857+0.071, 1.328+0.022, 1.16+0.029)
+    process.scaledJetEnergyResnUp.resolutionFactors = cms.vdouble(jerSFUp)
     process.cleanPatJetsResnUp = process.cleanPatJets.clone()
     process.cleanPatJetsResnUp.src = cms.InputTag("scaledJetEnergyResnUp:cleanPatJets")
     process.cleanPatJetsResnUp.preselection = cms.string("pt>20 && abs(eta)<2.5")
@@ -116,7 +116,7 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.scaledJetEnergyResnDown.inputJets = "cleanPatJets"
     process.scaledJetEnergyResnDown.inputMETs = "slimmedMETs"
     process.scaledJetEnergyResnDown.scaleType = "jer"
-    process.scaledJetEnergyResnDown.resolutionFactors = cms.vdouble(1.109-0.008 , 1.138-0.013, 1.114-0.013, 1.123-0.024, 1.084-0.011, 1.082-0.035, 1.140-0.047, 1.067-0.053, 1.177-0.041, 1.364-0.039, 1.857-0.071, 1.328-0.022, 1.16-0.029)
+    process.scaledJetEnergyResnDown.resolutionFactors = cms.vdouble(jerSFDown)
     process.cleanPatJetsResnDown = process.cleanPatJets.clone()
     process.cleanPatJetsResnDown.src = cms.InputTag("scaledJetEnergyResnDown:cleanPatJets")
     process.cleanPatJetsResnDown.preselection = cms.string("pt>20 && abs(eta)<2.5")
