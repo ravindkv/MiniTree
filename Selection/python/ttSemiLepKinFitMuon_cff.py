@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from TopQuarkAnalysis.TopObjectResolutions.stringResolutions_etEtaPhi_Fall11_cff import *
 from MiniTree.Utilities.JetEnergyScale_cfi import *
-from MiniTree.Selection.LocalSources_cff import toPrint
+from MiniTree.Selection.JetMETExtra_cff import toPrint
 
 def addSemiLepKinFitMuon(process, isData=False) :
 
@@ -155,5 +155,5 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatJetsResnDown *
                 process.kinFitTtSemiLepEventJERDown
                 )
-    toPrint("jets used in Kinematic fit", process.kinFitTtSemiLepEvent.jets)
+    toPrint("jets used in Kinematic fit", process.cleanPatJets.src)
 

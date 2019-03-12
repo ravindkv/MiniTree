@@ -1,6 +1,19 @@
 import FWCore.ParameterSet.Config as cms
 
 #----------------------------------------------------------
+#NICE WAY TO PRINT STRINGS
+#----------------------------------------------------------
+def toPrint(string, value):
+    length = (len(string)+len(str(value))+2)
+    line = "-"*length
+    print ""
+    print "* "+ line +                    " *"
+    print "| "+ " "*length +              " |"
+    print "| "+ string+ ": "+ str(value)+ " |"
+    print "| "+ " "*length +              " |"
+    print "* "+ line +                    " *"
+
+#----------------------------------------------------------
 # MET filters
 #----------------------------------------------------------
 # https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/PhysicsTools/PatAlgos/python/slimming/metFilterPaths_cff.py
@@ -28,8 +41,9 @@ def addMETFilters(process):
 #----------------------------------------------------------
 from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
 def addCorrJetL1L2L3(process, isData):
-    myLevels = cms.vstring('L1FastJet','L2Relative','L3Absolute')
-    if(isData): myLevels.extend(['L2L3Residual'])
+    levels = ['L1FastJet','L2Relative','L3Absolute']
+    if(isData): levels.append('L2L3Residual')
+    myLevels = cms.vstring(levels)
     updateJetCollection(
             process,
             jetSource = cms.InputTag('slimmedJets'),
@@ -37,6 +51,7 @@ def addCorrJetL1L2L3(process, isData):
             jetCorrections = ('AK4PFchs', myLevels, 'None'),
             )
     process.corrJetsProducerSequence = cms.Sequence(process.patJetCorrFactorsUpdatedJEC *process.updatedPatJetsUpdatedJEC)
-    print myLevels
+    toPrint("Jet Energy Corrections:", levels)
 # Note: Once this producer is run, the jet collection will be accessed by
 # "updatedPatJetsUpdatedJEC" string, instead of "slimmedJets".
+

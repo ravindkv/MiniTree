@@ -2,6 +2,11 @@ import FWCore.ParameterSet.Config as cms
 
 from MiniTree.Selection.ObjectSelectors_cfi import *
 
+# all event filter
+allEventsFilter = cms.EDFilter(
+    "AllEventsFilter"
+    )
+
 # base configuration ----------------------------------------
 myMiniTreeProducer = cms.EDAnalyzer("MiniTreeProducer",
                                     MCTruth = BaseMCTruthSet,
@@ -16,3 +21,4 @@ myMiniTreeProducer = cms.EDAnalyzer("MiniTreeProducer",
                                     rhoCorSrc = cms.InputTag("kt6PFJetsForIso","rho"),
                                     minEventQualityToStore = cms.int32(0)
                                     )
+
