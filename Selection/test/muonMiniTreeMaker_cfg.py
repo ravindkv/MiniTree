@@ -10,16 +10,15 @@ process = cms.Process('MiniTree')
 #------------------------------------------------------
 # Import other attributes and functions
 #------------------------------------------------------
-from MiniTree.JetMETExtra_cff import *
-from MiniTree.ElectronExtra_cff import *
-from MiniTree.ttSemiLepKinFitMuon_cff import *
+from MiniTree.Selection.JetMETExtra_cff import *
+from MiniTree.Selection.ElectronExtra_cff import *
+from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 
 
 #------------------------------------------------------
 # User flags
 #------------------------------------------------------
 isData=False
-applyResJEC=False
 
 #------------------------------------------------------
 # Input root files and number of events
@@ -53,7 +52,7 @@ if isData:
 #------------------------------------------------------
 # Inputs for MiniTree EDAnalyser
 #------------------------------------------------------
-process.load('MiniTree.selection_cfi')
+process.load('MiniTree.Selection.EventSelectors_cfi')
 # sample type
 process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 process.myMiniTreeProducer.MCTruth.sampleChannel = cms.string('muon')

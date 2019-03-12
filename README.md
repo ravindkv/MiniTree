@@ -3,7 +3,7 @@
 #### Set the CMSSSW release ####
 
 * cmsrel CMSSW_8_0_28
-* cd CMSSW_8_0_25/src/
+* cd CMSSW_8_0_28/src/
 * cmsenv
 
 #### Download the MiniTree package ####
@@ -12,8 +12,8 @@
 
 #### Compile and Run the codes ####
 
-* cd MiniTree 
-* scram b -j20
-* cd Selection/test
-* cmsRun muonNtuple_cfg.py
+* cd MiniTree/Selection/ 
+* scram b -j 20
+* cd test
+* cmsRun muonMiniTreeMaker_cfg.py
 
