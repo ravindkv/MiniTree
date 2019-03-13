@@ -4,8 +4,9 @@ import FWCore.ParameterSet.Config as cms
 # The process object
 #------------------------------------------------------
 process = cms.Process('MiniTree')
-#process.load("FWCore.MessageLogger.MessageLogger_cfi")
-#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
+process.load("FWCore.MessageLogger.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #------------------------------------------------------
 # Import other attributes and functions
@@ -28,7 +29,7 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
     fileNames = cms.untracked.vstring('file:0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 
 #------------------------------------------------------
 # Output file
@@ -40,7 +41,7 @@ process.TFileService.fileName = cms.string("outFile_.root")
 
 
 #------------------------------------------------------
-# Process name and GT
+# Global tags
 #------------------------------------------------------
 trigMenu = 'HLT'
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
@@ -109,10 +110,10 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 #------------------------------------------------------
 # Add ED Filters, Producers, Analysers in the cms Path
 #------------------------------------------------------
-process.p  = cms.Path(process.metFilterSequence*
+process.p  = cms.Path(process.allEventsFilter*
+        process.metFilterSequence*
         process.corrJetsProducerSequence*
         process.kinFitSequence*
-        process.allEventsFilter*
         process.myMiniTreeProducer)
 process.schedule = cms.Schedule(process.p)
 

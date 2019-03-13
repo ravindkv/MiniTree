@@ -11,12 +11,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
   using namespace std; 
   std::vector<MyJet> selJets; 
   selJets.clear();
-  
-  jetIDFunctor_ = JetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("CaloJetId") );
-  pfjetIDFunctor_ = PFJetIDSelectionFunctor(configParamsJets_.getParameter<edm::ParameterSet>("PFJetId") );
-  // jet ID handle
-  iEvent.getByToken( jetIDMapToken_, hJetIDMap ); // 76x
-  
   try{
     //config parameters
     double minPt = configParamsJets_.getParameter<double>("minPt");
@@ -67,15 +61,11 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         float JECUncertainty = jecUnc->getUncertainty(true);
         newJet.JECUncertainty = JECUncertainty;
         //make selections
-        bool passKin = true, passId = true;
+        bool passKin = true;
         if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
-        if(!(newJet.jetIDLoose)) passId = false;
-        
         int quality = 0;
         if(passKin)quality  = 1;
-        if(passId)quality |= 1<<1;
         newJet.quality = quality;
-        //if(passKin && passId) selJets.push_back(newJet);
         if(passKin) selJets.push_back(newJet);
       } // for loop
       delete jecUnc;
@@ -91,7 +81,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
 {
   MyJet newJet;
   newJet.Reset();
-
   ///basic
   const reco::GenJet *genJet = iJet.genJet();
   if(genJet){
@@ -190,10 +179,6 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
       newJet.neutralMultiplicity = iJet.neutralMultiplicity();
       myhistos_["emf_"+dirtag]->Fill(iJet.chargedEmEnergyFraction() + iJet.neutralEmEnergyFraction());
     }
-  pat::strbitset jetid = jetIDFunctor_.getBitTemplate();
-  pat::strbitset pfjetid = pfjetIDFunctor_.getBitTemplate();
-  pfjetid.set(false);
-  newJet.jetIDLoose = pfjetIDFunctor_( iJet, pfjetid );
 
   ///btag, JEC & SV
   //btag : https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
@@ -202,15 +187,8 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   discr["pfCombinedMVAV2BJetTags"] = iJet.bDiscriminator("pfCombinedMVAV2BJetTags");
   discr["pfCombinedCvsLJetTags"] = iJet.bDiscriminator("pfCombinedCvsLJetTags");   
   discr["pfCombinedCvsBJetTags"] = iJet.bDiscriminator("pfCombinedCvsBJetTags");
-  /*
-  discr["DeepCSVb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probb");
-  discr["DeepCSVbb"] = iJet.bDiscriminator("pfDeepCSVJetTags:probbb");
-  std::cout<<"-----------------------"<<endl;
-  std::cout<<discr["pfCombinedCvsBJetTags"]<<endl;
-  std::cout<<discr["DeepCSVb"]<<endl;
-  std::cout<<discr["DeepCSVbb"]<<endl;
-  */
   newJet.bDiscriminator = discr;
+
   //JECs
   std::map<std::string, double>jetCorrections; jetCorrections.clear();
   const std::vector<std::string> jeclevels = iJet.availableJECLevels();
@@ -223,21 +201,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
     else{ jetCorrections[levelName] = iJet.jecFactor(levelName); }
   }
   newJet.JECs = jetCorrections;
-  newJet.JECUncertainty = 1.0;  //default, get it later from CondDB.
-  //SV
-  //http://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_8_0_25/doc/html/dd/dc2/PatBasicFWLiteJetAnalyzer_8cc_source.html
-  const reco::SecondaryVertexTagInfo *svTagInfo = iJet.tagInfoSecondaryVertex("secondaryVertex");
-  if(svTagInfo !=0){
-    for(size_t iv = 0; iv < svTagInfo->nVertices(); iv++){
-      const reco::Vertex& sv = svTagInfo->secondaryVertex(iv);
-      if(!(sv.isFake())){
-	newJet.SVP4.push_back(sv.p4());
-	newJet.SVflightDistance.push_back(svTagInfo->flightDistance(iv).value());
-	newJet.SVflightDistanceErr.push_back(svTagInfo->flightDistance(iv).error());
-	newJet.SVNChi2.push_back(sv.normalizedChi2());
-      }
-    }
-  }
+
   //jet id
   return newJet;
 }

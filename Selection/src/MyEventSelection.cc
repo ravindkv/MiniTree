@@ -69,14 +69,12 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
 
   // Muon
   Muonsources = cc.consumes<pat::MuonCollection>(configParamsMuons_.getParameter<edm::InputTag>("sources")); 
-  TrigEvent_ = cc.consumes<pat::TriggerEvent>(configParamsJets_.getParameter<edm::InputTag>("triggerEvent"));
 
   // Elctrons
   Elesources = cc.consumes<pat::ElectronCollection>(configParamsElectrons_.getParameter<edm::InputTag>("sources"));
   //EleConversion_ = cc.consumes<reco::ConversionCollection>(edm::InputTag("reducedEgamma"));
   eventrhoToken_ = cc.consumes<double>(configParamsElectrons_.getParameter<edm::InputTag>("rhoIso"));
   beamSpotToken_ = cc.consumes<reco::BeamSpot>(configParamsElectrons_.getParameter<edm::InputTag>("beamSpot"));
-  jetIDMapToken_ = cc.consumes<reco::JetIDValueMap>(edm::InputTag("ak5JetID"));
   conversionsMiniAODToken_ = cc.consumes<reco::ConversionCollection>(configParamsElectrons_.getParameter<edm::InputTag>("conversionsMiniAOD"));
  
 
@@ -86,10 +84,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   //local .txt file
   m_resolutions_file = configParamsJets_.getParameter<std::string>("resolutionsFile");
   m_scale_factors_file = configParamsJets_.getParameter<std::string>("scaleFactorsFile");
-  //.txt files from Central repo
-  //m_resolutions_file = configParamsJets_.getParameter<edm::FileInPath>("resolutionsFile").fullPath();
-  //m_scale_factors_file = configParamsJets_.getParameter<edm::FileInPath>("scaleFactorsFile").fullPath();
-  //TrigEvent_ = cc.consumes<pat::TriggerObjectStandAloneCollection>(configParamsJets_.getParameter<edm::InputTag>("triggerEvent"));
 
   // Mets
   Metsources = cc.consumes<pat::METCollection>(configParamsMETs_.getParameter<edm::InputTag>("sources"));

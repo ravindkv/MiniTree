@@ -17,7 +17,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     double maxRelCombPFIsoEA = configParamsElectrons_.getParameter<double>("maxRelCombPFIsoEA");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
-    std::string triggerMatch = configParamsElectrons_.getParameter<std::string>("triggerMatch");  
     
     //Compute the rho, for relCombPFIsoEAcorr
     edm::Handle<double> hRho;
@@ -31,10 +30,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     //Get the beam spot
     edm::Handle<reco::BeamSpot> theBeamSpot;
     iEvent.getByToken(beamSpotToken_,theBeamSpot);
-    
-    //get triger match
-    //edm::Handle< pat::TriggerEvent > triggerEvent;
-    //iEvent.getByToken(TrigEvent_, triggerEvent );
     
     //get electrons
     TString rawtag="Electrons";
@@ -54,17 +49,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
 	    if(newElectron.p4.Et() < minEt || 
 	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
         
-        /* 
-        //trigger_ele_pt
-        std::string tagS(tag);
-        std::string labelMatcher = tagS+triggerMatch;
-        pat::helper::TriggerMatchHelper tmhelper;
-        const pat::TriggerObjectRef objRef(tmhelper.triggerMatchObject( ieles, iEle, labelMatcher, iEvent, *triggerEvent));
-        if(objRef.isAvailable()){
-          newElectron.trigger_ele_pt = objRef->pt();
-        }
-        */
-	    
         //isPassConversion tool
         bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
         newElectron.passConversionVeto = passConvVeto ;
@@ -128,34 +112,9 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
-  
-  ///ids
+  /// other
   newElectron.isEE = iEle.isEB();
   newElectron.isEB = iEle.isEE();
-  std::map<std::string, float> eidWPs; eidWPs.clear();
-  const std::vector<pat::Electron::IdPair> & eids = iEle.electronIDs();
-  int iid_cic = 0, iid_vbtf=0;
-  for(size_t id = 0; id < eids.size(); id++){
-    std::string id_name = eids[id].first;
-    double id_value = eids[id].second;
-    eidWPs[id_name] = id_value;
-    if(id_name.find("MC") != std::string::npos){
-      iid_cic++;
-      if(int(id_value) & 0x1){
-        myhistos_["cic_id_"+dirtag]->Fill(iid_cic);
-      }
-      //myhistos_["cic_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_cic+1, id_name.c_str());
-    }
-    else{
-      iid_vbtf++;
-      if(int(id_value) & 0x1){
-        myhistos_["vbtf_id_"+dirtag]->Fill(iid_vbtf);
-      }
-      //myhistos_["vbtf_id_"+dirtag]->GetXaxis()->SetBinLabel(iid_vbtf+1, id_name.c_str());
-   }
-  }
-  newElectron.eidWPs = eidWPs;
-
   ///iso
   std::vector<double> pfiso = defaultPFElectronIsolation(iEle);
   newElectron.ChHadIso = pfiso[0]; 

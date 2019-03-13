@@ -67,7 +67,6 @@ void MyElectron::Reset()
   ///ids
   isEE = -1;
   isEB = -1;
-  eidWPs.clear();
   
   ///iso
   ChHadIso = -9.;   

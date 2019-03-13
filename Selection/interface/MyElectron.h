@@ -42,7 +42,6 @@ class MyElectron
   ///ids
   int    isEE;
   int    isEB;
-  std::map<std::string, float>eidWPs;
   
   ///iso
   double ChHadIso; 

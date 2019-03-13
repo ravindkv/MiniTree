@@ -124,10 +124,6 @@ public:
   std::vector<MyKineFitParticle> getKineFitParticles (const edm::Event&, const edm::EventSetup&);
   MyKineFitParticle MyKineFitPartConverter(const pat::Particle&, TString&);
  
-  MyTrack myTrackConverter(const reco::TransientTrack&);
-  MyTrack myTrackConverter(const reco::Track&);
-  MyTrack myTrackConverter(const reco::PFCandidate&);
-
   std::vector<MyMCParticle> getMCParticles(const edm::Event&);
   int findMother(std::vector<MyMCParticle>,const reco::Candidate*);
   MyMET mcMET;
@@ -196,8 +192,6 @@ private:
   edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
 
   edm::EDGetTokenT<pat::JetCollection> Jetsources;
-  edm::EDGetTokenT<pat::TriggerEvent> TrigEvent_;
-  edm::EDGetTokenT<reco::JetIDValueMap> jetIDMapToken_;
   edm::EDGetTokenT<pat::METCollection> Metsources;
   edm::EDGetTokenT<edm::TriggerResults>  hlt_;
   edm::EDGetTokenT<edm::TriggerResults>  hltFilter_;
@@ -213,8 +207,6 @@ private:
   edm::EDGetTokenT<LHEEventProduct> externalLHEProducer_;
 
   //JET id functors
-  JetIDSelectionFunctor jetIDFunctor_;
-  PFJetIDSelectionFunctor pfjetIDFunctor_;
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
   //for pt resolution
   std::string m_resolutions_file;

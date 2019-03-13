@@ -4,8 +4,9 @@ import FWCore.ParameterSet.Config as cms
 # The process object
 #------------------------------------------------------
 process = cms.Process('MiniTree')
-#process.load("FWCore.MessageLogger.MessageLogger_cfi")
-#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
+process.load("FWCore.MessageLogger.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 
 #------------------------------------------------------
@@ -43,7 +44,7 @@ process.TFileService.fileName = cms.string("outFile_.root")
 
 
 #------------------------------------------------------
-# Process name and GT
+# Global tags
 #------------------------------------------------------
 trigMenu = 'HLT'
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
@@ -112,10 +113,10 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 #------------------------------------------------------
 # Add ED Filters, Producers, Analysers in the cms Path
 #------------------------------------------------------
-process.p  = cms.Path(process.metFilterSequence*
+process.p  = cms.Path(process.allEventsFilter*
+        process.metFilterSequence*
         process.corrJetsProducerSequence*
         process.EleEmbedSequence*
         process.kinFitSequence*
-        process.allEventsFilter*
         process.myMiniTreeProducer)
 process.schedule = cms.Schedule(process.p)

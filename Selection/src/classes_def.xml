@@ -5,7 +5,6 @@
 
 <class name="MyEvent"/>
 <class name="MyVertex"/>
-<class name="MyTrack"/>
 <class name="MyJet"/>
 <class name="MyMET"/>
 <class name="MyElectron"/>
@@ -15,7 +14,6 @@
 <class name="MyKineFitParticle"/>
 
 <class name="std::vector<MyVertex>"/>
-<class name="std::vector<MyTrack>"/>
 <class name="std::vector<MyJet>"/>
 <class name="std::vector<MyMET>"/>
 <class name="std::vector<MyElectron>"/>
