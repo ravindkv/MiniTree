@@ -37,8 +37,8 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   for (int itr=0; itr<ntrigs; itr++){
     if(!hltresults->wasrun(itr) )continue;
     if (!hltresults->accept(itr)) continue;
-    bool passTrig = false;
     std::string trigName=TrigNames_.triggerName(itr);
+    bool passTrig = false;
     for(unsigned int i = 0; i<myTrigBits.size(); i++){
       if(trigName.find(myTrigBits[i]) != string::npos) passTrig = true;
     }

@@ -22,7 +22,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
     //std::string tag(rawtag);
     TString tag(rawtag);
     edm::Handle<pat::MuonCollection>imuons;
-    iEvent.getByToken( Muonsources, imuons); // 76x
+    iEvent.getByToken( Muonsources, imuons);
     if(imuons.isValid()){
       for(size_t iMuon = 0; iMuon < imuons->size(); iMuon++){
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
@@ -46,6 +46,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  if(passKin) selMuons.push_back(newMuon);
 	  }
     }
+    //----------------------------------------
   }catch(std::exception &e){
     std::cout << "[Muon Selection] : check selection " << e.what() << std::endl;
   }

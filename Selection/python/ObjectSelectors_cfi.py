@@ -12,9 +12,7 @@ BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVert
                           maxZ = cms.double(24),
                           rho =  cms.InputTag('fixedGridRhoFastjetAll'),
                           maxRho = cms.double(2.0),
-                          minNDOF = cms.int32(4),
-                          beamSpotSource = cms.InputTag("offlineBeamSpot"),
-                          useBeamSpot = cms.bool(True)
+                          minNDOF = cms.int32(4)
                           )
 
 #my base values for muon selection ---------------------------------------

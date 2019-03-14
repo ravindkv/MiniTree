@@ -107,12 +107,10 @@ void MiniTreeProducer::analyzeEvent(const edm::Event& e, const edm::EventSetup& 
 // Operations --
 //--------------
 void MiniTreeProducer::book(const edm::ParameterSet& ps) {
-
   //book tree
    int bufsize = 256000;
    int split   = 1;
    tree_->Branch("MyEvent", "MyEvent", &pMyevt_data, bufsize, split);
-
   //pMyevt->BookHistos(tfs_);
   pMyevt->BookHistos();
 }

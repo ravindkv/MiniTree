@@ -28,32 +28,20 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
       if( isReal && z < maxZ && rho < maxRho && ndof >= minNDOF )
       selVtx.push_back(vIt);
     }
-    //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
-    if(selVtx.size())bestPrimVertex_ = selVtx[0];
 
     //fixedGridRhoAll: 
     //https://github.com/cms-analysis/flashgg/blob/e2fac35487f23fe05b20160d7b51f34bd06b0660/Taggers/python/globalVariables_cff.py
     edm::Handle<double>rhoAll;
     iEvent.getByToken(rhoSource, rhoAll);
     
-    //Beam Spot
-    /*
-    edm::Handle<reco::BeamSpot> beamSpot_;
-    iEvent.getByToken( bsSource, beamSpot_);  // new 76x
-	refPoint_ = beamSpot_->position();
-	const reco::BeamSpot &bs = *(beamSpot_.product());
-	reco::Vertex bsVtx( bs.position(), bs.covariance3D() );
-	refVertex_ = bsVtx;
-    */
-    refPoint_ = bestPrimVertex_->position();
-	refVertex_ = *bestPrimVertex_;
-    ///for(size_t ivtx = 0; ivtx < selVtx.size(); ivtx++){
-	  ///const reco::Vertex *vIt = selVtx[ivtx];
-	  const reco::Vertex *vIt = selVtx[0];
+    //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
+	const reco::Vertex *vIt;
+    if(selVtx.size()!=0){
+      vIt = selVtx[0];
       int totVtx = selVtx.size();
 	  MyVertex newVertex = MyVertexConverter(*vIt, *rhoAll, totVtx);
 	  selVertices.push_back(newVertex);
-   /// }
+    }
   }catch(std::exception &e){
     std::cout << "[Vertex Selection] : check selection " << e.what() << std::endl;
   }
@@ -66,7 +54,6 @@ MyVertex MyEventSelection::MyVertexConverter(const reco::Vertex& iVertex, double
 {
   MyVertex newVertex;
   newVertex.Reset(); 
-
   newVertex.chi2 = iVertex.chi2();
   newVertex.totVtx = totVtx;
   newVertex.normalizedChi2 = iVertex.chi2()/iVertex.ndof();

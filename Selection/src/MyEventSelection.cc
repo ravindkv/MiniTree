@@ -64,7 +64,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   
   // vertex
   vtxSource = cc.consumes<reco::VertexCollection>(configParamsVertex_.getParameter<edm::InputTag>("vertexSource"));
-  bsSource = cc.consumes<reco::BeamSpot>(configParamsVertex_.getParameter<edm::InputTag>("beamSpotSource"));
   rhoSource = cc.consumes<double>( configParamsVertex_.getParameter<edm::InputTag>("rho"));
 
   // Muon
@@ -157,7 +156,6 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   event_.Electrons = getElectrons(e, es);
   event_.Jets = getJets(e, es);
   event_.mets = getMETs(e, es);
-  //std::cout<<"pass met "<<event_.mets.size()<<std::endl;
   
   if(!isData_){
     event_.mcParticles = getMCParticles(e);
@@ -226,11 +224,10 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   for(size_t ijet = 0; ijet < jets.size(); ijet++){
     std::string algo(jets[ijet].jetName);
     ///if(isData_ && algo.find("ResCor") == std::string::npos) continue;
-    bool passKin = false, passId = false;
+    bool passKin = false; 
     int quality = jets[ijet].quality;
     if(quality & 0x1)passKin = true;
-    if((quality >> 1) & 0x1)passId = true;
-    if(passKin && passId){
+    if(passKin){
       myhistos_["SelJetPt"]->Fill(jets[ijet].p4.Pt());
       myhistos_["SelJetEta"]->Fill(jets[ijet].p4.Eta());
       nJets++;

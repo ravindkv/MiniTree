@@ -156,7 +156,6 @@ private:
   //PVx
   //  edm::Handle<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
-  edm::EDGetTokenT<reco::BeamSpot> bsSource; // new 76x
   edm::EDGetTokenT<double> rhoSource; // new 76x
 
   //KFP
