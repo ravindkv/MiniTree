@@ -18,13 +18,11 @@ BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVert
 #my base values for muon selection ---------------------------------------
 BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
                           minPt = cms.double(10),
-                          maxEta = cms.double(3.0),
-                          maxRelIso = cms.double(0.50),
+                          maxEta = cms.double(3.0)
                           )
 
 # base values for electron selection ------------------------------------
 BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
-                        maxRelCombPFIsoEA = cms.double(0.4),
                         minEt = cms.double(10),
                         maxEta = cms.double(3.0),
                         rhoIso = cms.InputTag("fixedGridRhoFastjetAll"),

@@ -23,8 +23,7 @@ MyJet::MyJet():
   ///JEC
   JECUncertainty(-9.),
   scaleFactor(0.0),
-  resolution(0.0),
-  quality(0)
+  resolution(0.0)
 {
 }
 
@@ -62,6 +61,4 @@ void MyJet::Reset()
 
   scaleFactor = 0.0;
   resolution = 0.0;
-  quality = 0;
-
 }

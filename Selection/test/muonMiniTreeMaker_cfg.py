@@ -19,18 +19,17 @@ from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 #------------------------------------------------------
 # User flags
 #------------------------------------------------------
-isData=True
+isData=False
 
 #------------------------------------------------------
 # Input root files and number of events
 #------------------------------------------------------
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver2-v2/110000/202F4074-FDF2-E611-BE63-0025905A606A.root')
-    #fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
-    #fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/ZZ_TuneCUETP8M1_13TeV-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/72CBC88A-A9D7-E611-B1D0-008CFA1980B8.root")
+    #fileNames = cms.untracked.vstring('/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver2-v2/110000/202F4074-FDF2-E611-BE63-0025905A606A.root')
+    fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
     #fileNames = cms.untracked.vstring('file:0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 
 #------------------------------------------------------
 # Output file
@@ -101,9 +100,7 @@ process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Summer16_25nsV1_M
 
 #------------------------------------------------------
 # Events to be stored in the ntuple after which cut
-# 1 = after trigger
-# 2 = one lepton selection
-# 3 = met selection etc
+# 1 = after trigger selection
 #------------------------------------------------------
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 

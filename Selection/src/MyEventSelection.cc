@@ -169,95 +169,51 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   bool passTrig = false;
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
-    if(trigs[itrig].find("Ele") != std::string::npos){passTrig = true;}//cout <<"ele trig passed"<<endl;}
-    if(trigs[itrig].find("Mu") != std::string::npos){passTrig = true;}//cout<<"mu trig passed"<<endl;}
+    if(trigs[itrig].find("Ele") != std::string::npos) passTrig = true;
+    if(trigs[itrig].find("Mu") != std::string::npos) passTrig = true;
   }
-  ///Electrons
-  int nIsoMuon = 0, nIsoElectron = 0;
-  std::vector<MyElectron> electrons = event_.Electrons;
-  for(size_t iele = 0; iele < electrons.size(); iele++){
-    //std::string algo = electrons[iele].eleName;
-    std::string algo(electrons[iele].eleName);
-    //if(algo.find("PFlow") == std::string::npos) continue;
-    bool passKin = false, passId = false, passIso = false;
-    int quality = electrons[iele].quality;
-    if(quality & 0x1)passKin = true;
-    if((quality >> 1) & 0x1)passId = true;
-    if((quality >> 2) & 0x1)passIso = true;
-    if(passKin && passId && passIso){
-     myhistos_["SelElePt"]->Fill(electrons[iele].p4.Pt());
-     myhistos_["SelEleEta"]->Fill(electrons[iele].p4.Eta());
-      nIsoElectron++;
-    }
-  }
-  myhistos_["SelEleMultiplicity"]->Fill(nIsoElectron);
-  
-  ///Muons
-  std::vector<MyMuon> muons = event_.Muons;
-  for(size_t imu = 0; imu < muons.size(); imu++){
-    //std::string algo = muons[imu].muName;
-    std::string algo(muons[imu].muName);
-    //if(algo.find("PFlow") == std::string::npos) continue;
-    bool passKin = false, passId = false, passIso = false;
-    int quality = muons[imu].quality;
-    if(quality & 0x1)passKin = true;
-    if((quality >> 1) & 0x1)passId = true;
-    if((quality >> 2) & 0x1)passIso = true;
-    if(passKin && passId && passIso){
-    ///if(passKin && passId){
-      myhistos_["SelMuPt"]->Fill(muons[imu].p4.Pt());
-      myhistos_["SelMuEta"]->Fill(muons[imu].p4.Eta());
-      nIsoMuon++;
-    }
-  }
-  myhistos_["SelMuMultiplicity"]->Fill(nIsoMuon);
-
-  int nIsoLepton = 0;
-  //  int nIsoLepton = nIsoMuon + nIsoElectron;
-  if(inputch==std::string("electron")){ nIsoLepton = nIsoElectron;/* std::cout << "elctron found" << std::endl;*/}
-  //  int nIsoLepton = nIsoElectron;
-  if(inputch==std::string("muon")){ nIsoLepton = nIsoMuon; /*std::cout << "muon found" << std::endl;*/}
-
-  ///Jets
-  std::vector<MyJet> jets = event_.Jets;
-  int nJets = 0, nHighPtJets = 0;
-  for(size_t ijet = 0; ijet < jets.size(); ijet++){
-    std::string algo(jets[ijet].jetName);
-    ///if(isData_ && algo.find("ResCor") == std::string::npos) continue;
-    bool passKin = false; 
-    int quality = jets[ijet].quality;
-    if(quality & 0x1)passKin = true;
-    if(passKin){
-      myhistos_["SelJetPt"]->Fill(jets[ijet].p4.Pt());
-      myhistos_["SelJetEta"]->Fill(jets[ijet].p4.Eta());
-      nJets++;
-      if(jets[ijet].p4.Pt() > 30)nHighPtJets++;
-    }
-  }
-  myhistos_["SelJetMultiplicity"]->Fill(nJets);
-
   int EventQuality = 0;
-  if(passTrig){
-    EventQuality++;
-    if(nIsoLepton > 0){
-      EventQuality++;
-      if(nJets > 2){
-	EventQuality++;
-	if(nHighPtJets > 0){
-	  EventQuality++;
-	  if(nHighPtJets > 1){
-	    EventQuality++;
-	  }
-	}
-      }
-    }
-  }
+  if(passTrig)EventQuality++;
 
   for(int istep = 0; istep <= EventQuality; istep++){
     myhistos_["cutflow"]->Fill(istep);
   }
-
   event_.eventQuality = EventQuality;
+
+  //store some histogram for sanity checks
+  if(passTrig){
+    int nIsoMuon = 0, nIsoElectron = 0;
+    ///Electrons
+    std::vector<MyElectron> electrons = event_.Electrons;
+    for(size_t iele = 0; iele < electrons.size(); iele++){
+      std::string algo(electrons[iele].eleName);
+      myhistos_["SelElePt"]->Fill(electrons[iele].p4.Pt());
+      myhistos_["SelEleEta"]->Fill(electrons[iele].p4.Eta());
+      nIsoElectron++;
+    }
+    myhistos_["SelEleMultiplicity"]->Fill(nIsoElectron);
+    
+    ///Muons
+    std::vector<MyMuon> muons = event_.Muons;
+    for(size_t imu = 0; imu < muons.size(); imu++){
+      std::string algo(muons[imu].muName);
+      myhistos_["SelMuPt"]->Fill(muons[imu].p4.Pt());
+      myhistos_["SelMuEta"]->Fill(muons[imu].p4.Eta());
+      nIsoMuon++;
+    }
+    myhistos_["SelMuMultiplicity"]->Fill(nIsoMuon);
+
+    ///Jets
+    std::vector<MyJet> jets = event_.Jets;
+    int nJets = 0;
+    for(size_t ijet = 0; ijet < jets.size(); ijet++){
+      std::string algo(jets[ijet].jetName);
+      myhistos_["SelJetPt"]->Fill(jets[ijet].p4.Pt());
+      myhistos_["SelJetEta"]->Fill(jets[ijet].p4.Eta());
+      nJets++;
+    }
+    myhistos_["SelJetMultiplicity"]->Fill(nJets);
+  }
   fs_->cd();
 }
 

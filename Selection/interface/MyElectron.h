@@ -52,7 +52,6 @@ class MyElectron
   double D0;
   double Dz;
   double trigger_ele_pt;
-  int quality;
 
   //conversion and IDs
   bool passEleID;

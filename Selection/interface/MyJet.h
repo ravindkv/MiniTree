@@ -46,7 +46,6 @@ class MyJet
   //Jet resolution and scale factors
   double scaleFactor;
   double resolution;
-  int quality;
 
  private :
 

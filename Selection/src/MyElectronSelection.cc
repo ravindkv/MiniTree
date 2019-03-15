@@ -14,7 +14,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   
   try{
     //std::string id = configParamsElectrons_.getParameter<std::string>("id");
-    double maxRelCombPFIsoEA = configParamsElectrons_.getParameter<double>("maxRelCombPFIsoEA");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
     
@@ -43,27 +42,15 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
 	    const pat::Electron eIt = ((*ieles)[iEle]);
 	    MyElectron newElectron = MyElectronConverter(eIt, rawtag);
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
-        
         //Make selections
-        bool passKin = true, passId = true, passIso = true;
+        bool passKin = true;
 	    if(newElectron.p4.Et() < minEt || 
 	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
-        
         //isPassConversion tool
         bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
         newElectron.passConversionVeto = passConvVeto ;
-        if(!passConvVeto) passId = false;
-
         //Rel comb PF iso with EA
 	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
-        if(newElectron.relCombPFIsoEA > maxRelCombPFIsoEA) passIso = false;
-        
-        int quality = 0;
-	    if(passKin)quality  = 1;
-        if(passId)quality |= 1<<1;
-        if(passIso)quality |= 1<<2;
-	    newElectron.quality = quality;
-	    //if(passKin && passId && passIso)selElectrons.push_back(newElectron);
 	    if(passKin)selElectrons.push_back(newElectron);
       }//for loop
     }

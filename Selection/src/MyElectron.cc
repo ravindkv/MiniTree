@@ -32,7 +32,6 @@ MyElectron::MyElectron():
   D0(-9.),
   Dz(-9.),
   trigger_ele_pt(0),
-  quality(0),
   passEleID(true),
   passConversionVeto(true)
 {
@@ -77,7 +76,6 @@ void MyElectron::Reset()
   D0 = -9.;
   Dz = -9.;
   trigger_ele_pt = 0;
-  quality = 0;
   passEleID = true;
   passConversionVeto = true;
 }

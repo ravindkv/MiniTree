@@ -11,13 +11,9 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
   
   std::vector<MyMuon> selMuons; 
   selMuons.clear();
-  
   try{
-    //passKin
     double maxEta = configParamsMuons_.getParameter<double>("maxEta");
     double minPt = configParamsMuons_.getParameter<double>("minPt");
-    //passIso
-    double maxRelIso = configParamsMuons_.getParameter<double>("maxRelIso");
     TString rawtag="Muons";
     //std::string tag(rawtag);
     TString tag(rawtag);
@@ -29,24 +25,11 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
 	  //make selections
-	  bool passKin = true, passId = true, passIso = true;
+	  bool passKin = true;
 	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
-      //id
-	  bool isGlobal=false;
-	  if(mIt.isGlobalMuon() && mIt.isTrackerMuon())isGlobal=true;
-	  if(!isGlobal)passId = false;
-      //iso
-	  if(newMuon.pfRelIso > maxRelIso)passIso = false;
-      int quality = 0;
-	  if(passKin)quality  = 1; // quality = 0000 0000 0000 0001 = 1
-	  if(passId)quality |= 1<<1;// quality =  0000 0000 0000 0001 | 0000 0000 0000 0010 = 3
-	  if(passIso)quality |= 1<<2;// quality = 0000 0000 0000 0011 | 0000 0000 0000 0100 = 7
-	  newMuon.quality = quality;
-	  //if(passKin && passId && passIso) selMuons.push_back(newMuon);
 	  if(passKin) selMuons.push_back(newMuon);
 	  }
     }
-    //----------------------------------------
   }catch(std::exception &e){
     std::cout << "[Muon Selection] : check selection " << e.what() << std::endl;
   }

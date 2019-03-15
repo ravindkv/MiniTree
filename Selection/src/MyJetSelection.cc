@@ -63,9 +63,6 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         //make selections
         bool passKin = true;
         if(jIt.pt() < minPt || fabs(jIt.eta()) > maxEta)passKin = false;
-        int quality = 0;
-        if(passKin)quality  = 1;
-        newJet.quality = quality;
         if(passKin) selJets.push_back(newJet);
       } // for loop
       delete jecUnc;

@@ -103,9 +103,7 @@ process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Summer16_25nsV1_M
 
 #------------------------------------------------------
 # Events to be stored in the ntuple after which cut
-# 1 = after trigger
-# 2 = one lepton selection
-# 3 = met selection etc
+# 1 = after trigger selection
 #------------------------------------------------------
 process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 

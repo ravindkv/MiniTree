@@ -35,9 +35,7 @@ MyMuon::MyMuon():
   NeuHadIso(-9.),   
   pfRelIso(-9.), 
   PhotonIso(-9.),   
-  PileupIso(-9.), 
-  trigger_mu_pt(0),
-  quality(0)
+  PileupIso(-9.) 
 {
 }
 
@@ -82,6 +80,4 @@ void MyMuon::Reset()
   pfRelIso = -9.;  
   PhotonIso = -9.;    
   PileupIso = -9.;  
-  trigger_mu_pt = 0;
-  quality = 0;
 }
