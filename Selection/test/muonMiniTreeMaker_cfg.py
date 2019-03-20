@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 # The process object
 #------------------------------------------------------
 process = cms.Process('MiniTree')
-process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 

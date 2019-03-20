@@ -21,7 +21,7 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
     const float rho_ = hRho.isValid() ? *hRho : 0;
-   
+
     //Get the conversion collection
     edm::Handle<reco::ConversionCollection> conversions;
     iEvent.getByToken(conversionsMiniAODToken_, conversions);
@@ -30,6 +30,11 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<reco::BeamSpot> theBeamSpot;
     iEvent.getByToken(beamSpotToken_,theBeamSpot);
     
+    //Get PV collection
+    edm::Handle<reco::VertexCollection> vtxh;
+    iEvent.getByToken(vtxSource, vtxh);    
+    const reco::Vertex vtx  = vtxh->at(0);
+
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
@@ -42,6 +47,8 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
 	    const pat::Electron eIt = ((*ieles)[iEle]);
 	    MyElectron newElectron = MyElectronConverter(eIt, rawtag);
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
+        newElectron.D0 = eIt.gsfTrack()->dxy(vtx.position());
+        newElectron.Dz = eIt.gsfTrack()->dz(vtx.position());
         //Make selections
         bool passKin = true;
 	    if(newElectron.p4.Et() < minEt || 
@@ -108,8 +115,6 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PhotonIso = pfiso[1];  
   newElectron.NeuHadIso = pfiso[2];  
   newElectron.PileupIso = pfiso[3];
-  newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
-  newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
   return newElectron;
 }
 

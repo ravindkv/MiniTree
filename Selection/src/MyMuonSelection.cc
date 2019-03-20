@@ -19,11 +19,23 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
     TString tag(rawtag);
     edm::Handle<pat::MuonCollection>imuons;
     iEvent.getByToken( Muonsources, imuons);
+
+    //Get PV collection
+    edm::Handle<reco::VertexCollection> vtxh;
+    iEvent.getByToken(vtxSource, vtxh);    
+    const reco::Vertex vtx  = vtxh->at(0);
+
     if(imuons.isValid()){
       for(size_t iMuon = 0; iMuon < imuons->size(); iMuon++){
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
+      //best track
+      const reco::TrackRef bmTrack = mIt.muonBestTrack();
+      if(!bmTrack.isNull()){
+        newMuon.D0 = bmTrack->dxy(vtx.position()); 
+        newMuon.Dz = bmTrack->dz(vtx.position());
+      }
 	  //make selections
 	  bool passKin = true;
 	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
@@ -73,14 +85,6 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
       myhistos_["normChi2_"+dirtag]->Fill(gmTrack->normalizedChi2());
       myhistos_["nHits_"+dirtag]->Fill(gmTrack->numberOfValidHits());
       myhistos_["nMuonHits_"+dirtag]->Fill(newMuon.nMuonHits);
-      }
-    //best track
-    const reco::TrackRef bmTrack = iMuon.muonBestTrack();
-    if(!bmTrack.isNull()){
-      newMuon.D0 = fabs(bmTrack->dxy(refVertex_.position())); 
-      newMuon.Dz = fabs(bmTrack->dz(refVertex_.position()));
-      myhistos_["D0_"+dirtag]->Fill(newMuon.D0);
-      myhistos_["Dz_"+dirtag]->Fill(newMuon.Dz);
       }
     //inner track
     const reco::TrackRef imTrack = iMuon.innerTrack();

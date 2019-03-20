@@ -196,7 +196,6 @@ private:
   edm::EDGetTokenT<edm::TriggerResults>  hltFilter_;
 
   const reco::Vertex *bestPrimVertex_;
-  reco::Vertex refVertex_;
   math::XYZPoint refPoint_;
   edm::ESHandle<TransientTrackBuilder> trackBuilder;
 
