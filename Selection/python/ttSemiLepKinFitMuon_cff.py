@@ -19,15 +19,13 @@ def addSemiLepKinFitMuon(process, isData=False) :
                                                     " && combinedQuality.trkKink < 20"+
                                                     " && innerTrack.validFraction >0.8"+
                                                     " && (pfIsolationR04.sumChargedHadronPt+ max(0.,pfIsolationR04.sumNeutralHadronEt+pfIsolationR04.sumPhotonEt-0.5*pfIsolationR04.sumPUPt))/pt < 0.40")
-
     #these inputs are required for cleanPatJets
     process.cleanPatElectrons.src = cms.InputTag("slimmedElectrons")
     process.cleanPatPhotons.src = cms.InputTag("slimmedPhotons")
     process.cleanPatTaus.src = cms.InputTag("slimmedTaus")
 
     #clean jets from muons
-    process.cleanPatJets.src = cms.InputTag("updatedPatJetsUpdatedJEC")
-    #process.cleanPatJets.src = cms.InputTag("slimmedJets")
+    process.cleanPatJets.src = cms.InputTag("slimmedJets")
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.muons.requireNoOverlaps  = cms.bool(True)
 
@@ -132,6 +130,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatPhotons*
                 process.cleanPatTaus*
                 process.cleanPatJets*
+                process.scaledJetEnergyNominal *
                 process.kinFitTtSemiLepEvent)
     if not isData:
         process.kinFitSequence = cms.Sequence(process.cleanPatMuons*

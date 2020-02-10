@@ -28,16 +28,14 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     edm::Handle<double> rho;
     iEvent.getByToken(m_rho_token, rho);
     JME::JetResolution resolution;
-    JME::JetResolutionScaleFactor res_sf;
-    //cout<<"m_resolutions_file = "<<m_resolutions_file<<endl;
     resolution = JME::JetResolution(m_resolutions_file);
-    res_sf = JME::JetResolutionScaleFactor(m_scale_factors_file);
+    ///std::cout<<"m_resolutions_file = "<<m_resolutions_file<<std::endl;
     
     if(ijets.isValid()){
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
-      std::string uncType("PF");
-      iSetup.get<JetCorrectionsRecord>().get("AK4"+uncType,JetCorParColl);
+      std::string uncType("AK4PFchs");
+      iSetup.get<JetCorrectionsRecord>().get(uncType,JetCorParColl);
       // get the uncertainty parameters from the collection
       JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
       // instantiate the jec uncertainty object
@@ -48,11 +46,10 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
         //Jet resolution and scale factors
         JME::JetParameters parameters_5 = {{JME::Binning::JetPt, jIt.pt()}, {JME::Binning::JetEta, jIt.eta()}, {JME::Binning::Rho, *rho}};
         float reso = resolution.getResolution(parameters_5);
-        float sf = res_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
-        
+        //std::cout<<"resolutions = "<<reso<<std::endl;
         MyJet newJet = MyJetConverter(jIt, rawtag, reso);
         newJet.jetName = tag;
-        newJet.scaleFactor = sf;
+        newJet.scaleFactor = 1.0;
         newJet.resolution = reso; 
         
         //JEC uncertainty
@@ -187,7 +184,8 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
   newJet.bDiscriminator = discr;
 
   //JECs
-  std::map<std::string, double>jetCorrections; jetCorrections.clear();
+  std::map<std::string, double>jetCorrections; 
+  jetCorrections.clear();
   const std::vector<std::string> jeclevels = iJet.availableJECLevels();
   for(size_t j = 0; j < jeclevels.size(); j++){
     std::string levelName = jeclevels[j];
@@ -196,6 +194,7 @@ MyJet MyEventSelection::MyJetConverter(const pat::Jet& iJet, TString& dirtag, do
       jetCorrections[levelName] = iJet.jecFactor(levelName, "bottom");
     }
     else{ jetCorrections[levelName] = iJet.jecFactor(levelName); }
+    //std::cout<<levelName<<": "<<iJet.jecFactor(levelName)<<std::endl;
   }
   newJet.JECs = jetCorrections;
 

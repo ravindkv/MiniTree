@@ -24,7 +24,8 @@ def addSemiLepKinFitElectron(process, isData=False) :
     process.cleanPatTaus.checkOverlaps.electrons.src = cms.InputTag("cleanPatElectronsUser")
 
     #clean jets from leptons
-    process.cleanPatJets.src = cms.InputTag("updatedPatJetsUpdatedJEC")
+    process.cleanPatJets.src = cms.InputTag("slimmedJets")
+    #process.cleanPatJets.src = cms.InputTag("updatedPatJetsUpdatedJEC")
     process.cleanPatJets.preselection = cms.string("pt>20 && abs(eta)<2.5")
     process.cleanPatJets.checkOverlaps.electrons.src  = cms.InputTag("cleanPatElectronsUser")
     process.cleanPatJets.checkOverlaps.tkIsoElectrons.src  = cms.InputTag("cleanPatElectronsUser")

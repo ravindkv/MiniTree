@@ -17,6 +17,7 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   configParamsKFPs_ = iConfig.getParameter<edm::ParameterSet>("KineFit");
   runKineFitter_ = configParamsKFPs_.getParameter<bool>("runKineFitter");
 
+
   //KFP
   //std::vector<edm::InputTag> sources = configParamsKFPs_.getParameter<std::vector<edm::InputTag> >("sources");
   edm::InputTag chi2OfFit = configParamsKFPs_.getParameter<edm::InputTag>("chi2OfFit");
@@ -82,10 +83,12 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   m_rho_token  = cc.consumes<double>(configParamsJets_.getParameter<edm::InputTag>("jet_rho"));
   //local .txt file
   m_resolutions_file = configParamsJets_.getParameter<std::string>("resolutionsFile");
-  m_scale_factors_file = configParamsJets_.getParameter<std::string>("scaleFactorsFile");
 
   // Mets
   Metsources = cc.consumes<pat::METCollection>(configParamsMETs_.getParameter<edm::InputTag>("sources"));
+  //get MET filters from the event
+  BadChCandFilterToken_ = cc.consumes<bool>(configParamsMETs_.getParameter<edm::InputTag>("filter1"));
+  BadPFMuonFilterToken_ =cc.consumes<bool>(configParamsMETs_.getParameter<edm::InputTag>("filter2"));
 
   // Trigger
   hlt_ = cc.consumes<edm::TriggerResults>(configParamshlt_.getParameter<edm::InputTag>("source"));

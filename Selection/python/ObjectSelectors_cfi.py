@@ -31,18 +31,19 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
                         )
 
 #my base values for jet selection -----------------------------------------------
-BaseJetsSet = cms.PSet(sources = cms.InputTag("updatedPatJetsUpdatedJEC"),
-                       #sources = cms.InputTag("slimmedJets"),
+BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        minPt = cms.double(17),
                        maxEta = cms.double(4.0),
                        jet_rho = cms.InputTag('fixedGridRhoFastjetAll'),
-                       resolutionsFile = cms.string("Summer16_25nsV1_MC_PtResolution_AK4PF.txt"),
-                       scaleFactorsFile= cms.string("Summer16_25nsV1_MC_SF_AK4PF.txt")
+                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
+                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK4PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------
 BaseMetsSet = cms.PSet(sources = cms.InputTag("slimmedMETs"),
-                       minMET = cms.double(10)
+                       minMET = cms.double(10),
+                       filter1 = cms.InputTag('BadChargedCandidateFilter'),
+                       filter2 = cms.InputTag('BadPFMuonFilter')
                        )
 
 #my MC truth matching sets -------------------------------------------------------

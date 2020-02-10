@@ -33,8 +33,8 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
       //best track
       const reco::TrackRef bmTrack = mIt.muonBestTrack();
       if(!bmTrack.isNull()){
-        newMuon.D0 = bmTrack->dxy(vtx.position()); 
-        newMuon.Dz = bmTrack->dz(vtx.position());
+        newMuon.D0 = fabs(bmTrack->dxy(vtx.position())); 
+        newMuon.Dz = fabs(bmTrack->dz(vtx.position()));
       }
 	  //make selections
 	  bool passKin = true;

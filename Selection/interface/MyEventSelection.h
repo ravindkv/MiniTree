@@ -158,6 +158,10 @@ private:
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<double> rhoSource; // new 76x
 
+  //MET filter
+  edm::EDGetTokenT<bool> BadChCandFilterToken_;
+  edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
+
   //KFP
   //edm::EDGetTokenT <pat::ParticleCollection>ikfpSource;
   edm::EDGetTokenT <vector<double>> chi2OfFitSource;
@@ -181,7 +185,7 @@ private:
   edm::EDGetTokenT <vector<double>> probOfFitJERDownSource;
   edm::EDGetTokenT <int> njetsOfFitJERDownSource;
  
-
+ 
   // Muon, Electrons, Jets, MET, Trigger
   edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
@@ -208,7 +212,6 @@ private:
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
   //for pt resolution
   std::string m_resolutions_file;
-  std::string m_scale_factors_file;
   edm::EDGetTokenT<double> m_rho_token;
   edm::Service<TFileService> fs_;
   std::vector<TFileDirectory> dirs_;

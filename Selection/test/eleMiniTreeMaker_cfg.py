@@ -31,7 +31,7 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
     #fileNames = cms.untracked.vstring('file:0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 
 #------------------------------------------------------
@@ -97,8 +97,8 @@ addCorrJetL1L2L3(process, isData)
 addSemiLepKinFitElectron(process, isData)
 configureElectronCutIdIso(process)
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Summer16_25nsV1_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Summer16_25nsV1_MC_SF_AK4PF.txt')
+process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
+process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
 
 
 #------------------------------------------------------
@@ -113,7 +113,7 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 #------------------------------------------------------
 process.p  = cms.Path(process.allEventsFilter*
         process.metFilterSequence*
-        process.corrJetsProducerSequence*
+        #process.corrJetsProducerSequence*
         process.EleEmbedSequence*
         process.kinFitSequence*
         process.myMiniTreeProducer)

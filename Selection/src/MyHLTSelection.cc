@@ -11,6 +11,7 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   // MET filters
   //--------------------------------------
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#2016_data
+  //Part-1
   edm::Handle<edm::TriggerResults> hltResFilter;
   iEvent.getByToken(hltFilter_, hltResFilter); 
   const edm::TriggerNames& allFilterNames = iEvent.triggerNames(*hltResFilter);
@@ -18,13 +19,25 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   for(unsigned int i = 0; i<metFilterBits.size(); i++){
     if(allFilterNames.triggerIndex(metFilterBits[i]) < hltResFilter->size()){
     int foundFilter = hltResFilter->accept(allFilterNames.triggerIndex(metFilterBits[i]));
+    //if(foundFilter==0)std::cout<<metFilterBits[i]<<" = "<<foundFilter<<std::endl;
     filterMET.push_back(foundFilter);
     }
   }
-  bool isFilterMET = true;
+  bool isFilterMET1 = true;
   for(unsigned int f = 0; f <filterMET.size(); f++){
-    if (filterMET[f]==0) isFilterMET=false;
+    if (filterMET[f]==0) isFilterMET1=false;
   }
+  //Part-2
+  edm::Handle<bool> ifilterbadChCand;
+  iEvent.getByToken(BadChCandFilterToken_, ifilterbadChCand);
+  bool  filterbadChCandidate = *ifilterbadChCand;
+  //if(filterbadChCandidate==0)std::cout<<"filterbadChCandidate = "<<filterbadChCandidate<<std::endl;
+  edm::Handle<bool> ifilterbadPFMuon;
+  iEvent.getByToken(BadPFMuonFilterToken_, ifilterbadPFMuon);
+  bool filterbadPFMuon = *ifilterbadPFMuon;
+  //if(filterbadPFMuon==0)std::cout<<"filterbadPFMuon = "<<filterbadPFMuon<<std::endl;
+  bool isFilterMET2 = false;
+  if(filterbadChCandidate && filterbadPFMuon) isFilterMET2 = true;
 
   //--------------------------------------
   // HLT selection
@@ -42,7 +55,7 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
     for(unsigned int i = 0; i<myTrigBits.size(); i++){
       if(trigName.find(myTrigBits[i]) != string::npos) passTrig = true;
     }
-    if(passTrig && isFilterMET) hltPaths.push_back(trigName);
+    if(passTrig && isFilterMET1 && isFilterMET2) hltPaths.push_back(trigName);
   }
   return hltPaths;
 }

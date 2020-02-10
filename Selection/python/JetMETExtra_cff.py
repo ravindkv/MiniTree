@@ -35,10 +35,11 @@ def addMETFilters(process):
             )
 
 #----------------------------------------------------------
-# Jet corrections: L1, L2, L3
+# Jet corrections: L1, L2, L3: Already applied at the MiniAOD level
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECDataMC#2016_Data
 # https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_20_patchX/PhysicsTools/PatAlgos/python/tools/jetTools.py
 #----------------------------------------------------------
+'''
 from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
 def addCorrJetL1L2L3(process, isData):
     levels = ['L1FastJet','L2Relative','L3Absolute']
@@ -48,10 +49,12 @@ def addCorrJetL1L2L3(process, isData):
             process,
             jetSource = cms.InputTag('slimmedJets'),
             postfix = 'UpdatedJEC',
-            jetCorrections = ('AK4PFchs', myLevels, 'None'),
+            #jetCorrections = ('AK4PFchs', myLevels, 'None'),
+            jetCorrections = ('AK8PF', myLevels, 'None'),
             )
     process.corrJetsProducerSequence = cms.Sequence(process.patJetCorrFactorsUpdatedJEC *process.updatedPatJetsUpdatedJEC)
     toPrint("Jet Energy Corrections:", levels)
 # Note: Once this producer is run, the jet collection will be accessed by
 # "updatedPatJetsUpdatedJEC" string, instead of "slimmedJets".
+'''
 

@@ -72,9 +72,9 @@ class JetEnergyScale : public edm::EDProducer {
   /// rescale jet energy and recalculated MET
   virtual void produce(edm::Event&, const edm::EventSetup&);
   /// rescale the resolution of the jet
-  double resolutionFactor(const pat::Jet&, double rel_sig_pt);
+  double resolutionFactor(const pat::Jet&, const double & rel_sig_pt);
   /// scale all energies of the jet
-  void scaleJetEnergy(pat::Jet&, double);
+  void scaleJetEnergy(pat::Jet&, const double & factor);
 
  private:
   /// jet input collection 
@@ -89,29 +89,18 @@ class JetEnergyScale : public edm::EDProducer {
   std::string payload_;
   /// absolute scaling or relative in eta
   std::string scaleType_;
-  /// scale factor for the rescaling of JES
-  double scaleFactor_;
-  /// scale factor bJES/JES
-  double scaleFactorB_;
   /// scale factors for the energy resolution of jets
   std::vector<double> resolutionFactor_;
   /// valid |eta| ranges for the energy resolution scale factors
   std::vector<double> resolutionRanges_;
-  /// threshold on (raw!) jet pt for Type1 MET corrections 
-  double jetPTThresholdForMET_;
-  /// limit on the emf of the jet for Type1 MET corrections 
-  double jetEMLimitForMET_;
   /// allowed scaleTypes
   std::vector<std::string> allowedTypes_;
 
   edm::EDGetTokenT <pat::JetCollection>jetToken;
   edm::EDGetTokenT <pat::METCollection>metToken;
   
-  /// JECUncertaintySource File
-  edm::FileInPath JECUncSrcFile_;
   //for jet-pt resolution
   edm::FileInPath m_resolutions_file;
-  edm::FileInPath m_scale_factors_file;
   edm::EDGetTokenT<double> m_rho_token;
 };
 
