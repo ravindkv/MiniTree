@@ -14,7 +14,7 @@ scaledJetEnergy = cms.EDProducer("JetEnergyScale",
 #####################################
 # JER values used in KinFit
 #New SF with stat + sys unc
-#https://github.com/cms-jet/JRDatabase/blob/master/textFiles/Spring16_25nsV6a_MC/Spring16_25nsV6a_MC_SF_AK4PF.txt
+#https://github.com/cms-jet/JRDatabase/blob/master/textFiles/Spring16_25nsV10a_MC/Spring16_25nsV10a_MC_SF_AK4PFchs.txt
 #####################################
 etaValues = []
 etaRanges = []
@@ -65,16 +65,16 @@ etaRanges.append(3.2)
 etaRanges.append(3.2)
 etaRanges.append(-1)
 #SF values
-jerSF.append(1.122); jerSFDown.append(1.053); jerSFUp.append(1.191);
-jerSF.append(1.167); jerSFDown.append(1.087); jerSFUp.append(1.247);
-jerSF.append(1.168); jerSFDown.append(1.090); jerSFUp.append(1.246);
-jerSF.append(1.029); jerSFDown.append(0.911); jerSFUp.append(1.147);
-jerSF.append(1.115); jerSFDown.append(1.013); jerSFUp.append(1.217);
-jerSF.append(1.041); jerSFDown.append(0.921); jerSFUp.append(1.161);
-jerSF.append(1.167); jerSFDown.append(1.027); jerSFUp.append(1.307);
-jerSF.append(1.094); jerSFDown.append(0.957); jerSFUp.append(1.231);
-jerSF.append(1.168); jerSFDown.append(0.929); jerSFUp.append(1.407);
-jerSF.append(1.266); jerSFDown.append(1.062); jerSFUp.append(1.470);
-jerSF.append(1.595); jerSFDown.append(1.337); jerSFUp.append(1.853);
-jerSF.append(0.998); jerSFDown.append(0.859); jerSFUp.append(1.137);
-jerSF.append(1.226); jerSFDown.append(1.022); jerSFUp.append(1.430);
+jerSF.append(1.109); jerSFDown.append(1.044); jerSFUp.append(1.174);
+jerSF.append(1.138); jerSFDown.append(1.072); jerSFUp.append(1.204);
+jerSF.append(1.114); jerSFDown.append(1.050); jerSFUp.append(1.178);
+jerSF.append(1.123); jerSFDown.append(1.022); jerSFUp.append(1.224);
+jerSF.append(1.084); jerSFDown.append(0.985); jerSFUp.append(1.183);
+jerSF.append(1.082); jerSFDown.append(0.973); jerSFUp.append(1.191);
+jerSF.append(1.140); jerSFDown.append(1.020); jerSFUp.append(1.260);
+jerSF.append(1.067); jerSFDown.append(0.953); jerSFUp.append(1.181);
+jerSF.append(1.177); jerSFDown.append(0.967); jerSFUp.append(1.387);
+jerSF.append(1.364); jerSFDown.append(1.203); jerSFUp.append(1.525);
+jerSF.append(1.857); jerSFDown.append(1.654); jerSFUp.append(2.060);
+jerSF.append(1.328); jerSFDown.append(1.203); jerSFUp.append(1.453);
+jerSF.append(1.160); jerSFDown.append(1.013); jerSFUp.append(1.307);

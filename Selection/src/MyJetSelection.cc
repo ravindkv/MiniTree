@@ -26,7 +26,11 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     edm::Handle<double> rho;
     iEvent.getByToken(m_rho_token, rho);
     //The jet pT resolution will be retrived from the GT
-    // For 80X_mcRun2_asymptotic_2016_TrancheIV_v8, pt file is: Spring16_25nsV6a_MC_PtResolution_AK4PF.txt
+    // For 80X_mcRun2_asymptotic_2016_TrancheIV_v6 or 8, the resolution file is: Spring16_25nsV6a_MC_PtResolution_AK4PF.txt
+    // However, the 25nsV6a file is identical to Spring16_25nsV10a_MC_PtResolution_AK4PF.txt 
+    // Also, note that the scale factor file with GT is Spring16_25nsV6a_MC_SF_AK4PF.txt
+    // However, the recomendation is to use Spring16_25nsV10a_MC_SF_AK4PF.txt
+    // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#2016_data
     //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyResolution#Accessing_factors_from_Global_Ta 
     JME::JetResolution resolution = JME::JetResolution::get(iSetup, "AK4PF_pt");
     JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PF");

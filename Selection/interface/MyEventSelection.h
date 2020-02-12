@@ -102,16 +102,16 @@ class MyEventSelection
 public:
   MyEventSelection(const edm::ParameterSet&, edm::ConsumesCollector&& );
   ~MyEventSelection();
-  
+
   //void Print(std::ostream &os = std::cout) const;
   void Set(const edm::Event& e, const edm::EventSetup& es);
   void Reset() {event_.Reset();}
   MyEvent * getData() {return &event_;}
-  
+
   //user functions
   std::vector<std::string> getHLT(const edm::Event&, const edm::EventSetup&);
   std::vector<MyVertex> getVertices(const edm::Event&, const edm::EventSetup&);
- 
+
   MyVertex MyVertexConverter(const reco::Vertex& iVertex, double rhoAll, int totVtx);
   std::vector<MyJet> getJets(const edm::Event&, const edm::EventSetup&);
   MyJet MyJetConverter(const pat::Jet&, TString&, double JER);
@@ -123,12 +123,12 @@ public:
   MyMuon MyMuonConverter(const pat::Muon&, TString&);
   std::vector<MyKineFitParticle> getKineFitParticles (const edm::Event&, const edm::EventSetup&);
   MyKineFitParticle MyKineFitPartConverter(const pat::Particle&, TString&);
- 
+
   std::vector<MyMCParticle> getMCParticles(const edm::Event&);
   int findMother(std::vector<MyMCParticle>,const reco::Candidate*);
   MyMET mcMET;
   MySampleInfo getSampleInfo(const edm::Event&, const edm::EventSetup&);
-  
+
   static bool sumPtOrder(const reco::Vertex *, const reco::Vertex *);
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
@@ -143,7 +143,7 @@ public:
 private:
   bool fillHLT_;
   MyEvent event_;
-  
+
   //configuration parameters
   edm::ParameterSet configParamsVertex_;
   edm::ParameterSet configParamsElectrons_;
@@ -184,10 +184,10 @@ private:
   edm::EDGetTokenT <vector<int>> statusOfFitJERDownSource;
   edm::EDGetTokenT <vector<double>> probOfFitJERDownSource;
   edm::EDGetTokenT <int> njetsOfFitJERDownSource;
- 
- 
+
+
   // Muon, Electrons, Jets, MET, Trigger
-  edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
+  edm::EDGetTokenT<pat::MuonCollection> Muonsources;
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
   edm::EDGetTokenT<double> eventrhoToken_;
   //https://github.com/ikrav/EgammaWork/blob/ntupler_and_VID_demos_8.0.3/ElectronNtupler/plugins/ElectronNtuplerVIDDemo.cc
@@ -222,7 +222,7 @@ private:
   bool isData_;
   int mcEvtType_;
   int inputDataSampleCode_;
-  bool runKineFitter_; 
+  bool runKineFitter_;
   std::string inputch;
 
   //pu re-weighting

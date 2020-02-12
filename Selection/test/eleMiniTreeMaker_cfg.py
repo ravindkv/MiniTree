@@ -107,7 +107,6 @@ process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 #------------------------------------------------------
 process.p  = cms.Path(process.allEventsFilter*
         process.metFilterSequence*
-        #process.corrJetsProducerSequence*
         process.EleEmbedSequence*
         process.kinFitSequence*
         process.myMiniTreeProducer)
