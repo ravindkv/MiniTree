@@ -23,33 +23,31 @@ std::vector<MyJet> MyEventSelection::getJets(const edm::Event& iEvent, const edm
     edm::Handle<pat::JetCollection>ijets;
     iEvent.getByToken( Jetsources, ijets);  
     //Jet resolution and scale factors
-    //https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Spring16_25nsV10_MC
-    //https://insight.io/github.com/cms-sw/cmssw/blob/master/JetMETCorrections/Modules/plugins/JetResolutionDemo.cc
     edm::Handle<double> rho;
     iEvent.getByToken(m_rho_token, rho);
-    JME::JetResolution resolution;
-    resolution = JME::JetResolution(m_resolutions_file);
-    ///std::cout<<"m_resolutions_file = "<<m_resolutions_file<<std::endl;
-    
+    //The jet pT resolution will be retrived from the GT
+    // For 80X_mcRun2_asymptotic_2016_TrancheIV_v8, pt file is: Spring16_25nsV6a_MC_PtResolution_AK4PF.txt
+    //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyResolution#Accessing_factors_from_Global_Ta 
+    JME::JetResolution resolution = JME::JetResolution::get(iSetup, "AK4PF_pt");
+    JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PF");
     if(ijets.isValid()){
       edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
       //get the jet corrector parameters collection from the globaltag
-      std::string uncType("AK4PFchs");
+      std::string uncType("AK4PF");
       iSetup.get<JetCorrectionsRecord>().get(uncType,JetCorParColl);
       // get the uncertainty parameters from the collection
       JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"]; 
       // instantiate the jec uncertainty object
       JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar); 
-      
       for(size_t iJet = 0; iJet < ijets->size(); iJet++){
         const pat::Jet jIt = ((*ijets)[iJet]);
         //Jet resolution and scale factors
         JME::JetParameters parameters_5 = {{JME::Binning::JetPt, jIt.pt()}, {JME::Binning::JetEta, jIt.eta()}, {JME::Binning::Rho, *rho}};
         float reso = resolution.getResolution(parameters_5);
-        //std::cout<<"resolutions = "<<reso<<std::endl;
+        float sf = resolution_sf.getScaleFactor({{JME::Binning::JetEta, jIt.eta()}});
         MyJet newJet = MyJetConverter(jIt, rawtag, reso);
         newJet.jetName = tag;
-        newJet.scaleFactor = 1.0;
+        newJet.scaleFactor = sf;
         newJet.resolution = reso; 
         
         //JEC uncertainty

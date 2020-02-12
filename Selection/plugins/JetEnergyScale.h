@@ -100,8 +100,8 @@ class JetEnergyScale : public edm::EDProducer {
   edm::EDGetTokenT <pat::METCollection>metToken;
   
   //for jet-pt resolution
-  edm::FileInPath m_resolutions_file;
   edm::EDGetTokenT<double> m_rho_token;
+  JME::JetResolution resolution;
 };
 
 #endif

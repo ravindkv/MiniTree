@@ -35,8 +35,6 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJets"),
                        minPt = cms.double(17),
                        maxEta = cms.double(4.0),
                        jet_rho = cms.InputTag('fixedGridRhoFastjetAll'),
-                       resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK4PF.txt"),
-                       scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK4PF.txt")
                        )
 
 #my base values for met selection ------------------------------------------------

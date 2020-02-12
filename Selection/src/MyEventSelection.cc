@@ -81,8 +81,6 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
   // Jets
   Jetsources = cc.consumes<pat::JetCollection>(configParamsJets_.getParameter<edm::InputTag>("sources"));
   m_rho_token  = cc.consumes<double>(configParamsJets_.getParameter<edm::InputTag>("jet_rho"));
-  //local .txt file
-  m_resolutions_file = configParamsJets_.getParameter<std::string>("resolutionsFile");
 
   // Mets
   Metsources = cc.consumes<pat::METCollection>(configParamsMETs_.getParameter<edm::InputTag>("sources"));

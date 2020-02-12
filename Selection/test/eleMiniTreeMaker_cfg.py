@@ -87,18 +87,12 @@ process.myMiniTreeProducer.Trigger.metFilterBits = cms.vstring("Flag_goodVertice
 if(isData):
     process.myMiniTreeProducer.Trigger.metFilterBits.extend(["Flag_eeBadScFilter"])
 
-# Apply L1L2L3 corrections on jet
-addCorrJetL1L2L3(process, isData)
-
-
 #------------------------------------------------------
 # KinFit and jet energy/pT reso
 #------------------------------------------------------
 addSemiLepKinFitElectron(process, isData)
 configureElectronCutIdIso(process)
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
 
 
 #------------------------------------------------------

@@ -12,7 +12,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
 
     #apply selections on muon(medium muon ID)
     process.cleanPatMuons.src = cms.InputTag("slimmedMuons")
-    process.cleanPatMuons.preselection = cms.string("pt>26 && abs(eta)<2.4"+
+    process.cleanPatMuons.preselection = cms.string("pt>24 && abs(eta)<2.5"+
                                                     " && isGlobalMuon && isPFMuon" +
                                                     " && globalTrack.normalizedChi2 < 3"+
                                                     " && combinedQuality.chi2LocalPosition < 12"+
@@ -65,9 +65,7 @@ def addSemiLepKinFitMuon(process, isData=False) :
     #set b-tagging in KineFit
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
     process.kinFitTtSemiLepEvent.bTagAlgo = cms.string("pfCombinedInclusiveSecondaryVertexV2BJetTags")
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.5426)
     process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.8484)
-    #process.kinFitTtSemiLepEvent.minBDiscBJets= cms.double(0.9535)
     process.kinFitTtSemiLepEvent.maxBDiscLightJets = cms.double(3.0)
     process.kinFitTtSemiLepEvent.useBTagging  = cms.bool(True)
 
@@ -130,7 +128,6 @@ def addSemiLepKinFitMuon(process, isData=False) :
                 process.cleanPatPhotons*
                 process.cleanPatTaus*
                 process.cleanPatJets*
-                process.scaledJetEnergyNominal *
                 process.kinFitTtSemiLepEvent)
     if not isData:
         process.kinFitSequence = cms.Sequence(process.cleanPatMuons*

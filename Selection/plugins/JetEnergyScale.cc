@@ -18,10 +18,7 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
   payload_             (cfg.getParameter<std::string>  ("payload"             )),  
   scaleType_           (cfg.getParameter<std::string>  ("scaleType"           )),  
   resolutionFactor_    (cfg.getParameter<std::vector<double> > ("resolutionFactors"   )),
-  resolutionRanges_    (cfg.getParameter<std::vector<double> > ("resolutionEtaRanges" )),
-  //local .txt file
-  m_resolutions_file   (cfg.getParameter<edm::FileInPath>("resolutionsFile"))
-//
+  resolutionRanges_    (cfg.getParameter<std::vector<double> > ("resolutionEtaRanges" ))
 {
   //Jets
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string(inputJets_.label())));
@@ -46,7 +43,6 @@ JetEnergyScale::JetEnergyScale(const edm::ParameterSet& cfg):
   produces<std::vector<pat::Jet> >(outputJets_);
   produces<std::vector<pat::MET> >(outputMETs_); 
 }
-
 //----------------------------------
 //beginJob()
 //----------------------------------
@@ -62,7 +58,6 @@ void JetEnergyScale::beginJob(){
     throw cms::Exception("Configuration Error");
   }		
 }
-
 //----------------------------------
 //Run the EDAnalyser on every event
 //----------------------------------
@@ -72,18 +67,21 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
   event.getByToken(jetToken, jets);
   edm::Handle<pat::METCollection>mets;
   event.getByToken( metToken, mets);
-  
   //Get relative pt resolution of jets
   //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyResolution
   edm::Handle<double> rho;
   event.getByToken(m_rho_token, rho);
-  JME::JetResolution resolution;
-  resolution = JME::JetResolution(m_resolutions_file.fullPath());
-  
   //create two new collections for jets and MET
   std::auto_ptr<pat::JetCollection > pJets(new pat::JetCollection);
   std::auto_ptr<pat::METCollection> pMETs(new pat::METCollection);
-
+  JME::JetResolution resolution = JME::JetResolution::get(setup, "AK4PF_pt");
+  // handle to the jet corrector parameters collection
+  edm::ESHandle<JetCorrectorParametersCollection> jetCorrParameters;
+  // get the jet corrector parameters collection from the global tag
+  setup.get<JetCorrectionsRecord>().get(payload_, jetCorrParameters);
+  // get the uncertainty parameters from the collection
+  JetCorrectorParameters const & param = (*jetCorrParameters)["Uncertainty"];
+  JetCorrectionUncertainty* deltaJEC = new JetCorrectionUncertainty(param);
   //loop and rescale jets
   double dPx = 0., dPy = 0.;
   for(std::vector<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
@@ -91,6 +89,7 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
     //Jet resolution and scale factors
     JME::JetParameters parameters_5 = {{JME::Binning::JetPt, scaledJet.pt()}, {JME::Binning::JetEta, scaledJet.eta()}, {JME::Binning::Rho, *rho}};
     float rel_sig_pt = resolution.getResolution(parameters_5);
+    //std::cout<<"rel_sig_pt = "<<rel_sig_pt<<std::endl;
     //JER scaled for all possible methods
     double jerScaleFactor = resolutionFactor(scaledJet, rel_sig_pt);
     scaleJetEnergy( scaledJet, jerScaleFactor );
@@ -99,31 +98,24 @@ void JetEnergyScale::produce(edm::Event& event, const edm::EventSetup& setup){
     //additional JES unc from Top group
     //----------------------------------
     if(scaleType_.substr(0, scaleType_.find(':'))=="jes"){
-      // handle to the jet corrector parameters collection
-      edm::ESHandle<JetCorrectorParametersCollection> jetCorrParameters;
-      // get the jet corrector parameters collection from the global tag
-      setup.get<JetCorrectionsRecord>().get(payload_, jetCorrParameters);
-      // get the uncertainty parameters from the collection
-      JetCorrectorParameters const & param = (*jetCorrParameters)["Uncertainty"];
       // instantiate the jec uncertainty object
-      JetCorrectionUncertainty* deltaJEC = new JetCorrectionUncertainty(param);
       deltaJEC->setJetEta(jet->eta()); deltaJEC->setJetPt(jet->pt()); 
       // scale jet energy
       float jetMet = 0.0;
-      jetMet = deltaJEC->getUncertainty(true); //true = UP
+      jetMet = deltaJEC->getUncertainty(true); 
       if(scaleType_.substr(scaleType_.find(':')+1)=="up"){
         scaleJetEnergy( scaledJet, 1+jetMet);
       }
       else if(scaleType_.substr(scaleType_.find(':')+1)=="down"){
         scaleJetEnergy( scaledJet, 1-jetMet);
       }
-      delete deltaJEC;
     }
     pJets->push_back( scaledJet );
     //for MET correction
     dPx    += scaledJet.px() - jet->px();
     dPy    += scaledJet.py() - jet->py();
   }
+  delete deltaJEC;
   //----------------------------------
   // scale MET accordingly
   //----------------------------------

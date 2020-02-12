@@ -20,17 +20,17 @@ from MiniTree.Selection.ttSemiLepKinFitMuon_cff import *
 #------------------------------------------------------
 # User flags
 #------------------------------------------------------
-isData=True
+isData=False
 
 #------------------------------------------------------
 # Input root files and number of events
 #------------------------------------------------------
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('/store/data/Run2016B/SingleMuon/MINIAOD/03Feb2017_ver2-v2/110000/202F4074-FDF2-E611-BE63-0025905A606A.root')
-    #fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
-    fileNames = cms.untracked.vstring('file:202F4074-FDF2-E611-BE63-0025905A606A.root')
+    fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
+    #fileNames = cms.untracked.vstring('file:202F4074-FDF2-E611-BE63-0025905A606A.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
 
 #------------------------------------------------------
 # Output file
@@ -69,7 +69,6 @@ else:
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::'+trigMenu)
 process.myMiniTreeProducer.Trigger.trigBits = cms.vstring("HLT_IsoMu24","HLT_IsoTkMu24")
 
-
 #------------------------------------------------------
 # apply partial MET filters via trigger selection.
 # BadPFMuonFilter and BadChargedCandidateFilter are
@@ -86,15 +85,11 @@ process.myMiniTreeProducer.Trigger.metFilterBits = cms.vstring("Flag_goodVertice
 if(isData):
     process.myMiniTreeProducer.Trigger.metFilterBits.extend(["Flag_eeBadScFilter"])
 
-
 #------------------------------------------------------
 # KinFit and jet energy/pT reso
 #------------------------------------------------------
 addSemiLepKinFitMuon(process, isData)
 process.myMiniTreeProducer.KineFit.runKineFitter = cms.bool(True)
-process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK4PF.txt')
-process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK4PF.txt')
-
 
 #------------------------------------------------------
 # Events to be stored in the ntuple after which cut

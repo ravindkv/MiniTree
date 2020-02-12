@@ -211,7 +211,6 @@ private:
   //JET id functors
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
   //for pt resolution
-  std::string m_resolutions_file;
   edm::EDGetTokenT<double> m_rho_token;
   edm::Service<TFileService> fs_;
   std::vector<TFileDirectory> dirs_;
