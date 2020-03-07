@@ -112,8 +112,13 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
 {
 
   ///es.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
-  event_.eventNb = e.id().event();
-  event_.lumiblock = e.luminosityBlock();
+  event_.eventNb = e.id().event();                                    
+  event_.runNb   = e.id().run();                                      
+  //https://github.com/cms-sw/cmssw/blob/master/DataFormats/Provenance/interface/    Timestamp.h#L38-L43
+  event_.eventTimeLow  = e.time().unixTime();                         
+  event_.eventTimeHigh = e.time().microsecondOffset();                
+  event_.lumiblock = e.luminosityBlock();                             
+
   event_.isData = isData_;
   
   //get trigger, vertex, muon, electron, jet, met

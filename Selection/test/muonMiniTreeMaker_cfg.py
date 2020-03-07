@@ -27,8 +27,8 @@ isData=False
 #------------------------------------------------------
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('/store/data/Run2016H/SingleMuon/MINIAOD/03Feb2017_ver2-v1/80000/D45EEDF3-AEEA-E611-831E-0025901D08B0.root')
-    fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
-    #fileNames = cms.untracked.vstring('file:/afs/cern.ch/work/r/rverma/private/minitree/CMSSW_8_0_28/src/MultiCrab/ntuple/B6B2F225-D6FB-E611-B0CF-0090FAA57D04.root')
+    #fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0693E0E7-97BE-E611-B32F-0CC47A78A3D8.root")
+    fileNames = cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv2/ChargedHiggsToCS_M080_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/00000/8C02B4DA-0BFD-E611-AF62-90E2BAD83578.root")
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 

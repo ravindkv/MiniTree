@@ -40,14 +40,16 @@ class MyEvent
  public:
   MyEvent();
   ~MyEvent();
-  
+
   void Reset();
-  
+
   // ---- General event information.
   unsigned int               runNb;
   unsigned int               eventNb;
+  unsigned int               eventTimeLow;
+  unsigned int               eventTimeHigh;
   int                        lumiblock;
-  
+
   std::vector<MyElectron> Electrons;
   std::vector<MyMuon> Muons;
   std::vector<MyJet> Jets;
@@ -56,7 +58,7 @@ class MyEvent
   std::vector<MyMCParticle> mcParticles;
   std::vector<MyKineFitParticle> KineFitParticles;
   MySampleInfo sampleInfo;
-  
+
   // ---- Monte Carlo information
   bool isData;
   // ---- Trigger info
@@ -65,6 +67,6 @@ class MyEvent
   int eventQuality;
 
  private :
-  
+
 };
 #endif
