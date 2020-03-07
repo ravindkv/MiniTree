@@ -15,13 +15,10 @@ class MyMCParticle
   ~MyMCParticle();
   
   void Reset();
-  
   MyLorentzVector p4Gen;
-  
   int         pid;
-  std::vector<int> mother;  
   int     status;
-  int     motherLine;
+  int     isLastCopy;
 
  private :
 

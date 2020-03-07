@@ -45,8 +45,7 @@ BaseMetsSet = cms.PSet(sources = cms.InputTag("slimmedMETs"),
                        )
 
 #my MC truth matching sets -------------------------------------------------------
-BaseMCTruthSet = cms.PSet(sampleCode = cms.string("ttbar"),
-                       sampleChannel = cms.string("electron")
+BaseMCTruthSet = cms.PSet(sampleCode = cms.string("ttbar")
                        )
 
 # set of collections from KinFit -------------------------------------------------------

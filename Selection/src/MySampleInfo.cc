@@ -9,7 +9,6 @@ MySampleInfo::MySampleInfo()
   ///puWeights.clear();
   ///truepuWeights.clear();
   hepNUP = -99;
-  topPtWeights.clear();
   hepIDUP.clear();
   hepISTUP.clear();
 }

@@ -126,7 +126,6 @@ public:
 
   std::vector<MyMCParticle> getMCParticles(const edm::Event&);
   int findMother(std::vector<MyMCParticle>,const reco::Candidate*);
-  MyMET mcMET;
   MySampleInfo getSampleInfo(const edm::Event&, const edm::EventSetup&);
 
   static bool sumPtOrder(const reco::Vertex *, const reco::Vertex *);
@@ -134,10 +133,6 @@ public:
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
   std::vector<double> defaultPFElectronIsolation(const pat::Electron&);
   float relCombPFIsoWithEAcorr(const pat::Electron& iEle, const float rho_, TString& dirtag);
-
-  int assignDYchannel(const edm::Event&, const edm::EventSetup&);
-  int assignWJets(const edm::Event&, const edm::EventSetup&);
-  int assignTTEvent(const edm::Event&, const edm::EventSetup&);
   void BookHistos();
 
 private:
@@ -221,9 +216,7 @@ private:
   //is data flag
   bool isData_;
   int mcEvtType_;
-  int inputDataSampleCode_;
   bool runKineFitter_;
-  std::string inputch;
 
   //pu re-weighting
   edm::LumiReWeighting LumiWeights_, LumiWeightsDefault_;

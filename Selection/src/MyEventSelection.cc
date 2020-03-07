@@ -99,42 +99,8 @@ MyEventSelection::MyEventSelection(const edm::ParameterSet& iConfig, edm::Consum
  
   std::string code = configParamsMC_.getParameter<std::string>("sampleCode");
   cout<<"code = "<<code<<endl;
-  inputch = configParamsMC_.getParameter<std::string>("sampleChannel");
   if(code!=std::string("DATA")) { isData_=false; }
-  else{ isData_=true; inputDataSampleCode_ = MyEvent::DATA; }
-  if(code==std::string("DY1JetsToLL")) { inputDataSampleCode_   = MyEvent::DY1JetsToLL;}
-  if(code==std::string("DY2JetsToLL")) { inputDataSampleCode_   = MyEvent::DY2JetsToLL;}
-  if(code==std::string("DY3JetsToLL")) { inputDataSampleCode_   = MyEvent::DY3JetsToLL;}
-  if(code==std::string("DY4JetsToLL")) { inputDataSampleCode_   = MyEvent::DY4JetsToLL;}
-  if(code==std::string("DYJetsToLL")) { inputDataSampleCode_    = MyEvent::DYJetsToLL;}
-  if(code==std::string("HplusM100")) { inputDataSampleCode_     = MyEvent::HplusM100;}
-  if(code==std::string("HplusM120")) { inputDataSampleCode_     = MyEvent::HplusM120;}
-  if(code==std::string("HplusM140")) { inputDataSampleCode_     = MyEvent::HplusM140;}
-  if(code==std::string("HplusM150")) { inputDataSampleCode_     = MyEvent::HplusM150;}
-  if(code==std::string("HplusM160")) { inputDataSampleCode_     = MyEvent::HplusM160;}
-  if(code==std::string("HplusM80")) { inputDataSampleCode_      = MyEvent::HplusM80;}
-  if(code==std::string("HplusM90")) { inputDataSampleCode_      = MyEvent::HplusM90;}
-  if(code==std::string("QCD_Pt_15to20")) {inputDataSampleCode_  = MyEvent::QCD_Pt_15to20;} 
-  if(code==std::string("QCD_Pt_20to30")) {inputDataSampleCode_  = MyEvent::QCD_Pt_20to30;}
-  if(code==std::string("QCD_Pt_30to50")) {inputDataSampleCode_  = MyEvent::QCD_Pt_30to50;}
-  if(code==std::string("QCD_Pt_50to80")) {inputDataSampleCode_  = MyEvent::QCD_Pt_50to80;}
-  if(code==std::string("QCD_Pt_80to120")) {inputDataSampleCode_ = MyEvent::QCD_Pt_80to120;}
-  if(code==std::string("QCD_Pt_120to170")) {inputDataSampleCode_= MyEvent::QCD_Pt_120to170;}
-  if(code==std::string("QCD_Pt_170to300")) {inputDataSampleCode_= MyEvent::QCD_Pt_170to300;}
-  if(code==std::string("QCD_Pt_300to470")) {inputDataSampleCode_= MyEvent::QCD_Pt_300to470;}
-  if(code==std::string("ST_s")) { inputDataSampleCode_          = MyEvent::ST_s;}
-  if(code==std::string("ST_t")) { inputDataSampleCode_          = MyEvent::ST_t;}
-  if(code==std::string("ST_tW")) { inputDataSampleCode_         = MyEvent::ST_tW;}
-  if(code==std::string("TTJets")){ inputDataSampleCode_         = MyEvent::TTJets;}
-  if(code==std::string("W1JetsToLNu")) { inputDataSampleCode_   = MyEvent::W1JetsToLNu;}
-  if(code==std::string("W2JetsToLNu")) { inputDataSampleCode_   = MyEvent::W2JetsToLNu;}
-  if(code==std::string("W3JetsToLNu")) { inputDataSampleCode_   = MyEvent::W3JetsToLNu;}
-  if(code==std::string("W4JetsToLNu")) { inputDataSampleCode_   = MyEvent::W4JetsToLNu;}
-  if(code==std::string("WJetsToLNu")) { inputDataSampleCode_    = MyEvent::WJetsToLNu;}
-  if(code==std::string("WW"))   { inputDataSampleCode_          = MyEvent::WW;}
-  if(code==std::string("WZ"))   { inputDataSampleCode_          = MyEvent::WZ;}
-  if(code==std::string("ZZ"))   { inputDataSampleCode_          = MyEvent::ZZ;}
-  if(code==std::string("")) { inputDataSampleCode_              = MyEvent::OTHER;}
+  else{ isData_=true;}
 }
 
 MyEventSelection::~MyEventSelection()
@@ -160,7 +126,6 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   
   if(!isData_){
     event_.mcParticles = getMCParticles(e);
-    event_.mcMET = mcMET;
     event_.sampleInfo = getSampleInfo(e, es);
   }
   //store kinefit information

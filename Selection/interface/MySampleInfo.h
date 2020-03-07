@@ -23,8 +23,6 @@ class MySampleInfo
   std::vector<int>hepIDUP;
   //particle status
   std::vector<int>hepISTUP;
-  std::vector<double>topPtWeights;
-  
  private :
 
 };
