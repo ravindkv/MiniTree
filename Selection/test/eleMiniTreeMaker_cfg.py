@@ -7,7 +7,7 @@ process = cms.Process('MiniTree')
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
-
+process.MessageLogger.cerr.noTimeStamps = True
 
 #------------------------------------------------------
 # Import other attributes and functions
@@ -47,6 +47,7 @@ process.TFileService.fileName = cms.string("outFile_.root")
 # Global tags
 #------------------------------------------------------
 trigMenu = 'HLT'
+process.load('Configuration.StandardSequences.Services_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_v10')
 if isData:
