@@ -13,9 +13,8 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
     double maxZ = configParamsVertex_.getParameter<double>("maxZ");
     double maxRho = configParamsVertex_.getParameter<double>("maxRho");
     int minNDOF = configParamsVertex_.getParameter<int>("minNDOF");
-
     edm::Handle<reco::VertexCollection>vtx_;
-    iEvent.getByToken(vtxSource, vtx_); 
+    iEvent.getByToken(vtxSource, vtx_);
     std::vector<const reco::Vertex *> selVtx; selVtx.clear();
     for(size_t ivtx = 0; ivtx < vtx_->size(); ivtx++){
       const reco::Vertex *vIt = &((*vtx_)[ivtx]);
@@ -28,19 +27,22 @@ std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, co
       if( isReal && z < maxZ && rho < maxRho && ndof >= minNDOF )
       selVtx.push_back(vIt);
     }
-
+    //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
+    if(selVtx.size()!=0){
+      bestPrimVertex_ = selVtx[0];
+      refPoint_ = bestPrimVertex_->position();
+      refVertex_ = *bestPrimVertex_;
+    }
     //fixedGridRhoAll: 
     //https://github.com/cms-analysis/flashgg/blob/e2fac35487f23fe05b20160d7b51f34bd06b0660/Taggers/python/globalVariables_cff.py
     edm::Handle<double>rhoAll;
     iEvent.getByToken(rhoSource, rhoAll);
-    
-    //std::sort(selVtx.begin(), selVtx.end(), &sumPtOrder);
-	const reco::Vertex *vIt;
+    const reco::Vertex *vIt; 
     if(selVtx.size()!=0){
       vIt = selVtx[0];
       int totVtx = selVtx.size();
-	  MyVertex newVertex = MyVertexConverter(*vIt, *rhoAll, totVtx);
-	  selVertices.push_back(newVertex);
+      MyVertex newVertex = MyVertexConverter(*vIt, *rhoAll, totVtx);
+      selVertices.push_back(newVertex);
     }
   }catch(std::exception &e){
     std::cout << "[Vertex Selection] : check selection " << e.what() << std::endl;

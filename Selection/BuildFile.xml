@@ -4,6 +4,7 @@
 <use name="CommonTools/UtilAlgos"/>
 <use name="RecoEcal/EgammaCoreTools"/>
 <use name="RecoEgamma/EgammaTools"/>
+<use name="RecoTauTag/TauTagTools"/>
 <use name="TrackingTools/TransientTrack"/>
 <use name="TrackingTools/Records"/>
 <use name="TrackingTools/IPTools"/>
@@ -17,8 +18,8 @@
 <use name="boost"/>
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="PhysicsTools/PatUtils"/>
-<use name="PhysicsTools/Utilities"/>
 <use name="PhysicsTools/PatAlgos"/>
+<use name="PhysicsTools/Utilities"/>
 <use name="FWCore/ServiceRegistry"/>
 <use name="CondFormats/JetMETObjects"/>
 <use name="JetMETCorrections/Objects"/>

@@ -11,17 +11,15 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
   using namespace std; 
   std::vector<MyElectron> selElectrons; 
   selElectrons.clear();
-  
   try{
-    //std::string id = configParamsElectrons_.getParameter<std::string>("id");
     double minEt = configParamsElectrons_.getParameter<double>("minEt");
     double maxEta = configParamsElectrons_.getParameter<double>("maxEta");
     
     //Compute the rho, for relCombPFIsoEAcorr
     edm::Handle<double> hRho;
     iEvent.getByToken(eventrhoToken_, hRho);
-    const float rho_ = hRho.isValid() ? *hRho : 0;
-
+    double rho_ = hRho.isValid() ? *hRho : 0;
+   
     //Get the conversion collection
     edm::Handle<reco::ConversionCollection> conversions;
     iEvent.getByToken(conversionsMiniAODToken_, conversions);
@@ -30,11 +28,6 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     edm::Handle<reco::BeamSpot> theBeamSpot;
     iEvent.getByToken(beamSpotToken_,theBeamSpot);
     
-    //Get PV collection
-    edm::Handle<reco::VertexCollection> vtxh;
-    iEvent.getByToken(vtxSource, vtxh);    
-    const reco::Vertex vtx  = vtxh->at(0);
-
     //get electrons
     TString rawtag="Electrons";
     TString tag(rawtag);//std::string tag(rawtag);
@@ -44,21 +37,19 @@ std::vector<MyElectron> MyEventSelection::getElectrons(const edm::Event& iEvent,
     
     if(ieles.isValid()){
       for(size_t iEle = 0; iEle < ieles->size(); iEle++){
-	    const pat::Electron eIt = ((*ieles)[iEle]);
-	    MyElectron newElectron = MyElectronConverter(eIt, rawtag);
+	const pat::Electron eIt = ((*ieles)[iEle]);
+	MyElectron newElectron = MyElectronConverter(eIt, rawtag);
         newElectron.eleName = tag; ///Memory leak with std::string tag(rawtag)
-        newElectron.D0 = eIt.gsfTrack()->dxy(vtx.position());
-        newElectron.Dz = eIt.gsfTrack()->dz(vtx.position());
-        //Make selections
-        bool passKin = true;
-	    if(newElectron.p4.Et() < minEt || 
-	       fabs(newElectron.p4.Eta()) > maxEta) passKin = false;
         //isPassConversion tool
+	/*
         bool passConvVeto = !ConversionTools::hasMatchedConversion(eIt, conversions, theBeamSpot->position());
         newElectron.passConversionVeto = passConvVeto ;
+	*/
         //Rel comb PF iso with EA
-	    newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
-	    if(passKin)selElectrons.push_back(newElectron);
+	newElectron.eleRho = rho_;
+	newElectron.relCombPFIsoEA = relCombPFIsoWithEAcorr(eIt, rho_, rawtag); 
+	if(newElectron.p4.Et() > minEt && fabs(newElectron.p4.Eta()) < maxEta)
+	  selElectrons.push_back(newElectron);
       }//for loop
     }
   }catch(std::exception &e){
@@ -83,15 +74,16 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   reco::SuperClusterRef sc = iEle.superCluster();
   double electronSCEta = sc->eta();
   newElectron.p4.SetCoordinates(iEle.px(), iEle.py(), iEle.pz(), iEle.energy());
+  //std::cout << "iEle.energy() =" << iEle.energy()<< endl;
   newElectron.eleSCEta = electronSCEta;
   newElectron.vertex.SetCoordinates(iEle.vx(), iEle.vy(), iEle.vz());
-  
-  myhistos_["pt_"+dirtag]->Fill(iEle.pt());
-  myhistos_["eta_"+dirtag]->Fill(iEle.eta());
-  myhistos_["phi_"+dirtag]->Fill(iEle.phi());
-  
   ///sel 
   newElectron.sigmaIetaIeta = iEle.full5x5_sigmaIetaIeta();
+  newElectron.energy5x5 = iEle.e5x5();
+  newElectron.energy2x5 = iEle.e2x5Max();
+  newElectron.energy1x5 = iEle.e1x5();
+  newElectron.isEcalDriven = iEle.ecalDrivenSeed();
+  newElectron.GsfEleEmHadD1IsoRhoCut = iEle.dr03EcalRecHitSumEt() + iEle.dr03HcalDepth1TowerSumEt();
   //abs(dEtaInSeed)
   newElectron.dEtaInSeed = iEle.superCluster().isNonnull() && iEle.superCluster()->seed().isNonnull() ?iEle.deltaEtaSuperClusterTrackAtVtx() - iEle.superCluster()->eta() + iEle.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
   //abs(dPhiIn)
@@ -99,14 +91,16 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.hadOverEm = iEle.hadronicOverEm();
   //abs(1/E-1/p) 
   const float ecal_energy_inverse = 1.0/iEle.ecalEnergy();
+  //std::cout << "iEle.ecalEnergy()=" << iEle.ecalEnergy() << endl;
   const float eSCoverP = iEle.eSuperClusterOverP();
   newElectron.iEminusiP = std::abs(1.0 - eSCoverP)*ecal_energy_inverse;
   //expected missing inner hits
   constexpr reco::HitPattern::HitCategory missingHitType = reco::HitPattern::MISSING_INNER_HITS;
-  newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfHits(missingHitType); 
+  //newElectron.nInnerHits = iEle.gsfTrack()->hitPattern().numberOfAllHits(missingHitType); 
+  newElectron.nInnerLostHits = iEle.gsfTrack()->hitPattern().numberOfLostTrackerHits(missingHitType); 
   //pass conversion veto
   newElectron.isPassConVeto = iEle.passConversionVeto();
-  /// other
+  ///ids
   newElectron.isEE = iEle.isEB();
   newElectron.isEB = iEle.isEE();
   ///iso
@@ -115,6 +109,9 @@ MyElectron MyEventSelection::MyElectronConverter(const pat::Electron& iEle, TStr
   newElectron.PhotonIso = pfiso[1];  
   newElectron.NeuHadIso = pfiso[2];  
   newElectron.PileupIso = pfiso[3];
+  newElectron.D0 = iEle.gsfTrack()->dxy(refVertex_.position());
+  newElectron.Dz = iEle.gsfTrack()->dz(refVertex_.position());
+  newElectron.eleTrkPt = iEle.dr03TkSumPt();
   return newElectron;
 }
 
@@ -132,24 +129,13 @@ std::vector<double> MyEventSelection::defaultPFElectronIsolation (const pat::Ele
 }
 
 //Rel. comb. PF iso with EA corr
-float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, const float rho_, TString& dirtag)
+float MyEventSelection::relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag)
 {
-  //double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, iEle.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
-  //https://github.com/ikrav/cmssw/blob/egm_id_80X_v1/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt
-  const float SCEta = iEle.superCluster()->eta(); 
-  float EffectiveArea = 0.0;
-  if (fabs(SCEta) >= 0.0 && fabs(SCEta) < 1.0 ) EffectiveArea = 0.1703;
-  if (fabs(SCEta) >= 1.0 && fabs(SCEta) < 1.479)EffectiveArea = 0.1715;
-  if (fabs(SCEta) >= 1.479 && fabs(SCEta) < 2.0)EffectiveArea = 0.1213;
-  if (fabs(SCEta) >= 2.0 && fabs(SCEta) < 2.2 ) EffectiveArea = 0.1230;
-  if (fabs(SCEta) >= 2.2 && fabs(SCEta) < 2.3 ) EffectiveArea = 0.1635;
-  if (fabs(SCEta) >= 2.3 && fabs(SCEta) < 2.4 ) EffectiveArea = 0.1937;
-  if (fabs(SCEta) >= 2.4 ) EffectiveArea = 0.2393;
+  double EffArea_ = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04, iEle.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2012);
   const reco::GsfElectron::PflowIsolationVariables& pfIso = iEle.pfIsolationVariables();
   const float chad = pfIso.sumChargedHadronPt;
   const float nhad = pfIso.sumNeutralHadronEt;
   const float pho = pfIso.sumPhotonEt;
-  const float relCombPFIsoEAcorr = (chad + std::max(0.0f, nhad + pho - rho_* EffectiveArea))/iEle.pt();
-  myhistos_["relCombPFIsoEA_"+dirtag]->Fill(relCombPFIsoEAcorr); 
+  const float relCombPFIsoEAcorr = (chad + std::max(0.0, nhad + pho - rho_* EffArea_))/iEle.pt();
   return relCombPFIsoEAcorr;
 }

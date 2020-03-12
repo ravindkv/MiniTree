@@ -1,18 +1,17 @@
-#ifndef __MYSAMPLEINFO_H__
-#define __MYSAMPLEINFO_H__
+#ifndef __SAMPLEINFO_H__
+#define __SAMPLEINFO_H__
 
 #include "TROOT.h"
 #include <string>
 #include <vector>
 
-class MySampleInfo
+class SampleInfo
 {
  public:
-  MySampleInfo();
-  ~MySampleInfo();
+  SampleInfo();
+  ~SampleInfo();
   
   std::string sampleName;
-  int mcEvtType;
   std::vector<double>pileup;
   std::vector<double>truepileup;
   ///std::vector<double>puWeights;
@@ -23,6 +22,8 @@ class MySampleInfo
   std::vector<int>hepIDUP;
   //particle status
   std::vector<int>hepISTUP;
+  std::vector<double>topPtWeights;
+  double gen_weight;
  private :
 
 };

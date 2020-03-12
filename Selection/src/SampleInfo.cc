@@ -1,9 +1,8 @@
-#include "MiniTree/Selection/interface/MySampleInfo.h"
+#include "MiniTree/Selection/interface/SampleInfo.h"
 
-MySampleInfo::MySampleInfo()
+SampleInfo::SampleInfo()
 {
   sampleName="";
-  mcEvtType = 0;
   pileup.clear();
   truepileup.clear();
   ///puWeights.clear();
@@ -11,8 +10,10 @@ MySampleInfo::MySampleInfo()
   hepNUP = -99;
   hepIDUP.clear();
   hepISTUP.clear();
+  topPtWeights.clear();
+  gen_weight = 1.0;
 }
 
-MySampleInfo::~MySampleInfo()
+SampleInfo::~SampleInfo()
 {
 }

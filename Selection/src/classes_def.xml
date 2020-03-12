@@ -9,17 +9,13 @@
 <class name="MyMET"/>
 <class name="MyElectron"/>
 <class name="MyMuon"/>
-<class name="MyMCParticle"/>
-<class name="MySampleInfo"/>
-<class name="MyKineFitParticle"/>
+<class name="SampleInfo"/>
 
 <class name="std::vector<MyVertex>"/>
 <class name="std::vector<MyJet>"/>
 <class name="std::vector<MyMET>"/>
 <class name="std::vector<MyElectron>"/>
 <class name="std::vector<MyMuon>"/>
-<class name="std::vector<MyMCParticle>"/>
-<class name="std::vector<MyKineFitParticle>"/>
 <class name="std::vector<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > >"/>
 
 

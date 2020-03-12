@@ -27,15 +27,23 @@ MyMuon::MyMuon():
   Dz(-9.),
   nMatchedStations(-9),
   nMuonHits(-9),
+  nMuonHitsTuneP(-9),
   nPixelHits(-9),
   nTrackerLayers(-9),
-  
-  ///iso
+ 
+  //High Pt
+  bestMuPtErr(-9),
+  bestMuPtTrack(-9),
+  //iso
   ChHadIso(-9.),  
   NeuHadIso(-9.),   
-  pfRelIso(-9.), 
   PhotonIso(-9.),   
-  PileupIso(-9.) 
+  PileupIso(-9.), 
+  pfRelIso(-9.), 
+  trkRelIso(-9.), 
+  expectedMatchedStations(-9.),
+  nStationMask(-9.),
+  nRPCLayers(-9.)
 {
 }
 
@@ -52,6 +60,7 @@ void MyMuon::Reset()
   gen_mother_id = 0;
   muName = "";
   p4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
+  Genp4.SetCoordinates(0.0, 0.0, 0.0, 0.0);
   type = 0;
   vertex.SetCoordinates(0.0, 0.0, 0.0);
   
@@ -71,13 +80,21 @@ void MyMuon::Reset()
   Dz = -9.;
   nMatchedStations = -9;
   nMuonHits = -9;
+  nMuonHitsTuneP = -9;
   nPixelHits = -9;
   nTrackerLayers = -9;
   
+  //High Pt
+  bestMuPtErr = -9;
+  bestMuPtTrack = -9;
   ///iso
   ChHadIso = -9.;   
   NeuHadIso = -9.;    
-  pfRelIso = -9.;  
   PhotonIso = -9.;    
   PileupIso = -9.;  
+  pfRelIso = -9.;  
+  trkRelIso = -9.;  
+  expectedMatchedStations = -9.;
+  nStationMask = -9.;
+  nRPCLayers = -9.;
 }

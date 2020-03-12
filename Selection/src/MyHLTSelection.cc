@@ -19,7 +19,6 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   for(unsigned int i = 0; i<metFilterBits.size(); i++){
     if(allFilterNames.triggerIndex(metFilterBits[i]) < hltResFilter->size()){
     int foundFilter = hltResFilter->accept(allFilterNames.triggerIndex(metFilterBits[i]));
-    //if(foundFilter==0)std::cout<<metFilterBits[i]<<" = "<<foundFilter<<std::endl;
     filterMET.push_back(foundFilter);
     }
   }
@@ -31,11 +30,9 @@ std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, cons
   edm::Handle<bool> ifilterbadChCand;
   iEvent.getByToken(BadChCandFilterToken_, ifilterbadChCand);
   bool  filterbadChCandidate = *ifilterbadChCand;
-  //if(filterbadChCandidate==0)std::cout<<"filterbadChCandidate = "<<filterbadChCandidate<<std::endl;
   edm::Handle<bool> ifilterbadPFMuon;
   iEvent.getByToken(BadPFMuonFilterToken_, ifilterbadPFMuon);
   bool filterbadPFMuon = *ifilterbadPFMuon;
-  //if(filterbadPFMuon==0)std::cout<<"filterbadPFMuon = "<<filterbadPFMuon<<std::endl;
   bool isFilterMET2 = false;
   if(filterbadChCandidate && filterbadPFMuon) isFilterMET2 = true;
 

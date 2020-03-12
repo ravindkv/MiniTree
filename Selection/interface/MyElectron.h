@@ -37,11 +37,20 @@ class MyElectron
   double hadOverEm;  //H/E 
   double iEminusiP;     //abs(1/E-1/p)
   double nInnerHits;  //expected missing inner hits 
+  double nInnerLostHits;  //expected missing inner hits 
   bool isPassConVeto; //pass conversion veto
-  
+  bool isEcalDriven;
+  double energy5x5;
+  double energy2x5;
+  double energy1x5;
+  double eleRho;
+  double eleTrkPt;
+  double GsfEleEmHadD1IsoRhoCut;
+
   ///ids
   int    isEE;
   int    isEB;
+  std::map<std::string, float>eidWPs;
   
   ///iso
   double ChHadIso; 
@@ -51,7 +60,6 @@ class MyElectron
   double relCombPFIsoEA;//Rel. comb. PF iso with EA corr
   double D0;
   double Dz;
-  double trigger_ele_pt;
 
   //conversion and IDs
   bool passEleID;

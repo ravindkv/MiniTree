@@ -1,4 +1,4 @@
-#include "MiniTree/Selection/plugins/AllEventsFilter.h"
+#include "MiniTree/Selection/interface/AllEventsFilter.h"
 
 AllEventsFilter::AllEventsFilter (const edm::ParameterSet& pset){
 

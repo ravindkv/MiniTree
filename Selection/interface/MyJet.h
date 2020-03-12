@@ -46,6 +46,11 @@ class MyJet
   //Jet resolution and scale factors
   double scaleFactor;
   double resolution;
+  //Jet subjetiness and pruned mass
+  double ak8Tau1;
+  double ak8Tau2;
+  double ak8Tau3;
+  double ak8Pmass;
 
  private :
 
