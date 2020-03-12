@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-#include "MiniTree/Selection/plugins/MiniTreeProducer.h"
+#include "ExLep2016Tree/Selection/plugins/MiniTreeProducer.h"
 
 //---------------
 // C++ Headers --

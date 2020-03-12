@@ -1,4 +1,4 @@
-#include "MiniTree/Selection/interface/MyEventSelection.h"
+#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
 
 std::vector<MyMET> MyEventSelection::getMETs(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
@@ -32,19 +32,7 @@ MyMET MyEventSelection::MyMETConverter(const pat::MET& iMET, TString& dirtag)
 {
   MyMET newMET;
   newMET.Reset();
-  
-  //pfMET
-  if(iMET.isPFMET()){
-    newMET.emEtFraction = iMET.NeutralEMFraction()+ iMET.ChargedEMEtFraction();
-    newMET.hadEtFraction = iMET.NeutralHadEtFraction()+ iMET.ChargedHadEtFraction();
-    newMET.isPFMET = true;
-    newMET.muonEtFraction = iMET.MuonEtFraction();
-  }
-  newMET.metSignificance = iMET.significance();
   newMET.sumEt = iMET.sumEt();
   newMET.p4.SetCoordinates(iMET.px(), iMET.py(), 0, iMET.et());
-  myhistos_["pt_"+dirtag]->Fill(iMET.pt());
-  myhistos_["sumet_"+dirtag]->Fill(iMET.sumEt());
-  myhistos_["phi_"+dirtag]->Fill(iMET.phi());
   return newMET;
 }

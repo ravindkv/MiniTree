@@ -1,4 +1,4 @@
-#include "MiniTree/Selection/interface/MyEventSelection.h"
+#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
@@ -11,6 +11,7 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
   
   std::vector<MyMuon> selMuons; 
   selMuons.clear();
+  
   try{
     double maxEta = configParamsMuons_.getParameter<double>("maxEta");
     double minPt = configParamsMuons_.getParameter<double>("minPt");
@@ -18,29 +19,15 @@ std::vector<MyMuon> MyEventSelection::getMuons(const edm::Event& iEvent, const e
     //std::string tag(rawtag);
     TString tag(rawtag);
     edm::Handle<pat::MuonCollection>imuons;
-    iEvent.getByToken( Muonsources, imuons);
-
-    //Get PV collection
-    edm::Handle<reco::VertexCollection> vtxh;
-    iEvent.getByToken(vtxSource, vtxh);    
-    const reco::Vertex vtx  = vtxh->at(0);
-
+    iEvent.getByToken( Muonsources, imuons); // 76x
     if(imuons.isValid()){
       for(size_t iMuon = 0; iMuon < imuons->size(); iMuon++){
 	  const pat::Muon mIt = ((*imuons)[iMuon]);
 	  MyMuon newMuon = MyMuonConverter(mIt, rawtag);
 	  newMuon.muName = tag;
-      //best track
-      const reco::TrackRef bmTrack = mIt.muonBestTrack();
-      if(!bmTrack.isNull()){
-        newMuon.D0 = fabs(bmTrack->dxy(vtx.position())); 
-        newMuon.Dz = fabs(bmTrack->dz(vtx.position()));
+	  if(mIt.pt() > minPt && fabs(mIt.eta()) < maxEta) 
+	  selMuons.push_back(newMuon);
       }
-	  //make selections
-	  bool passKin = true;
-	  if(mIt.pt() < minPt || fabs(mIt.eta()) > maxEta) passKin = false;
-	  if(passKin) selMuons.push_back(newMuon);
-	  }
     }
   }catch(std::exception &e){
     std::cout << "[Muon Selection] : check selection " << e.what() << std::endl;
@@ -63,12 +50,9 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
       newMuon.gen_mother_id = gen->mother()->pdgId();
   }
   newMuon.p4.SetCoordinates(iMuon.px(), iMuon.py(), iMuon.pz(), iMuon.p());
+  //newMuon.Genp4.SetCoordinates(gen->px(), gen->py(), gen->pz(), gen->p());
   newMuon.type = iMuon.type();
   newMuon.vertex.SetCoordinates(iMuon.vx(), iMuon.vy(), iMuon.vz()); 
-  myhistos_["pt_"+dirtag]->Fill(iMuon.pt());
-  myhistos_["eta_"+dirtag]->Fill(iMuon.eta());
-  myhistos_["phi_"+dirtag]->Fill(iMuon.phi());
-  
   ///id
   //Loose
   newMuon.isGlobalMuon = iMuon.isGlobalMuon();
@@ -82,9 +66,12 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
     if(!gmTrack.isNull()){
       newMuon.normChi2 = gmTrack->normalizedChi2();
       newMuon.nMuonHits = gmTrack->hitPattern().numberOfValidMuonHits();
-      myhistos_["normChi2_"+dirtag]->Fill(gmTrack->normalizedChi2());
-      myhistos_["nHits_"+dirtag]->Fill(gmTrack->numberOfValidHits());
-      myhistos_["nMuonHits_"+dirtag]->Fill(newMuon.nMuonHits);
+      }
+    //best track
+    const reco::TrackRef bmTrack = iMuon.muonBestTrack();
+    if(!bmTrack.isNull()){
+      newMuon.D0 = fabs(bmTrack->dxy(refVertex_.position())); 
+      newMuon.Dz = fabs(bmTrack->dz(refVertex_.position()));
       }
     //inner track
     const reco::TrackRef imTrack = iMuon.innerTrack();
@@ -94,12 +81,19 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
       newMuon.nTrackerLayers = imTrack->hitPattern().trackerLayersWithMeasurement(); 
       }
   }
-  
   newMuon.segmentCompatibility = muon::segmentCompatibility(iMuon);
   newMuon.trkKink = iMuon.combinedQuality().trkKink;
   //Tight
   newMuon.nMatchedStations = iMuon.numberOfMatchedStations();
-  
+  //High Pt
+  //newMuon.bestMuPtErr = iMuon.muonBestTrack()->ptError();
+  //newMuon.bestMuPtTrack = iMuon.muonBestTrack()->pt();
+  newMuon.bestMuPtErr = iMuon.tunePMuonBestTrack()->ptError();
+  newMuon.bestMuPtTrack = iMuon.tunePMuonBestTrack()->pt();
+  newMuon.expectedMatchedStations = iMuon.expectedNnumberOfMatchedStations();
+  newMuon.nStationMask = iMuon.stationMask();
+  newMuon.nRPCLayers = iMuon.numberOfMatchedRPCLayers(); 
+  newMuon.nMuonHitsTuneP = iMuon.tunePMuonBestTrack()->hitPattern().numberOfValidMuonHits();
   ///iso
   std::vector<double> pfiso = defaultPFMuonIsolation(iMuon); 
   newMuon.ChHadIso = pfiso[0]; 
@@ -107,7 +101,8 @@ MyMuon MyEventSelection::MyMuonConverter(const pat::Muon& iMuon, TString& dirtag
   newMuon.NeuHadIso = pfiso[2]; 
   newMuon.PileupIso = pfiso[3];
   newMuon.pfRelIso = pfiso[4]; 
-  myhistos_["pfRelIso_"+dirtag]->Fill(pfiso[4]); 
+  //tracker iso
+  newMuon.trkRelIso = iMuon.isolationR03().sumPt/iMuon.pt();
   return newMuon;
 }
 

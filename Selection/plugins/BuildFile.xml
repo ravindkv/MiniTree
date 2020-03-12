@@ -18,7 +18,7 @@
 <use   name="JetMETCorrections/Objects"/>
 <use   name="CondFormats/JetMETObjects"/>
 <use   name="RecoEgamma/EgammaTools"/>
-<use   name="MiniTree/Selection"/>
+<use   name="ExLep2016Tree/Selection"/>
 <use   name="lhapdf"/>
 <use   name="boost"/>
 <use   name="rootcore"/>

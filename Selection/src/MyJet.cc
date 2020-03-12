@@ -1,4 +1,4 @@
-#include "MiniTree/Selection/interface/MyJet.h"
+#include "ExLep2016Tree/Selection/interface/MyJet.h"
 
 MyJet::MyJet():
   
@@ -23,7 +23,12 @@ MyJet::MyJet():
   ///JEC
   JECUncertainty(-9.),
   scaleFactor(0.0),
-  resolution(0.0)
+  resolution(0.0),
+  //subjetiness, pruned mass
+  ak8Tau1(-1),
+  ak8Tau2(-1),
+  ak8Tau3(-1),
+  ak8Pmass(-1)
 {
 }
 
@@ -54,11 +59,17 @@ void MyJet::Reset()
   chargedEmEnergyFraction = -9.;
   neutralMultiplicity = 0.;
   
-  ///btag, JEC 
+  ///btag, JEC, SV
   bDiscriminator.clear();
   JECs.clear();
   JECUncertainty = -9.;
 
   scaleFactor = 0.0;
   resolution = 0.0;
+
+  //subjetiness, pruned mass
+  ak8Tau1 = -1;
+  ak8Tau2 = -1;
+  ak8Tau3 = -1;
+  ak8Pmass = -1;
 }

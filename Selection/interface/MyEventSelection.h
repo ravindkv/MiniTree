@@ -42,6 +42,7 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+//#include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/Particle.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
@@ -102,16 +103,16 @@ class MyEventSelection
 public:
   MyEventSelection(const edm::ParameterSet&, edm::ConsumesCollector&& );
   ~MyEventSelection();
-
+  
   //void Print(std::ostream &os = std::cout) const;
   void Set(const edm::Event& e, const edm::EventSetup& es);
   void Reset() {event_.Reset();}
   MyEvent * getData() {return &event_;}
-
+  
   //user functions
   std::vector<std::string> getHLT(const edm::Event&, const edm::EventSetup&);
   std::vector<MyVertex> getVertices(const edm::Event&, const edm::EventSetup&);
-
+ 
   MyVertex MyVertexConverter(const reco::Vertex& iVertex, double rhoAll, int totVtx);
   std::vector<MyJet> getJets(const edm::Event&, const edm::EventSetup&);
   MyJet MyJetConverter(const pat::Jet&, TString&, double JER);
@@ -121,24 +122,23 @@ public:
   MyElectron MyElectronConverter(const pat::Electron&, TString&);
   std::vector<MyMuon> getMuons(const edm::Event&, const edm::EventSetup&);
   MyMuon MyMuonConverter(const pat::Muon&, TString&);
-  std::vector<MyKineFitParticle> getKineFitParticles (const edm::Event&, const edm::EventSetup&);
-  MyKineFitParticle MyKineFitPartConverter(const pat::Particle&, TString&);
-
-  std::vector<MyMCParticle> getMCParticles(const edm::Event&);
-  int findMother(std::vector<MyMCParticle>,const reco::Candidate*);
-  MySampleInfo getSampleInfo(const edm::Event&, const edm::EventSetup&);
-
+ 
+  SampleInfo getSampleInfo(const edm::Event&, const edm::EventSetup&);
   static bool sumPtOrder(const reco::Vertex *, const reco::Vertex *);
   std::vector<double> defaultMuonIsolation(const pat::Muon&, bool isPF=false);
   std::vector<double> defaultPFMuonIsolation(const pat::Muon&);
   std::vector<double> defaultPFElectronIsolation(const pat::Electron&);
-  float relCombPFIsoWithEAcorr(const pat::Electron& iEle, const float rho_, TString& dirtag);
+  float relCombPFIsoWithEAcorr(const pat::Electron& iEle, double rho_, TString& dirtag);
+
+  int assignDYchannel(const edm::Event&, const edm::EventSetup&);
+  int assignWJets(const edm::Event&, const edm::EventSetup&);
+  int assignTTEvent(const edm::Event&, const edm::EventSetup&);
   void BookHistos();
 
 private:
   bool fillHLT_;
   MyEvent event_;
-
+  
   //configuration parameters
   edm::ParameterSet configParamsVertex_;
   edm::ParameterSet configParamsElectrons_;
@@ -151,61 +151,47 @@ private:
   //PVx
   //  edm::Handle<reco::VertexCollection> vtxSource;
   edm::EDGetTokenT<reco::VertexCollection> vtxSource;
+  edm::EDGetTokenT<reco::BeamSpot> bsSource; // new 76x
   edm::EDGetTokenT<double> rhoSource; // new 76x
 
-  //MET filter
-  edm::EDGetTokenT<bool> BadChCandFilterToken_;
-  edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
-
-  //KFP
-  //edm::EDGetTokenT <pat::ParticleCollection>ikfpSource;
-  edm::EDGetTokenT <vector<double>> chi2OfFitSource;
-  edm::EDGetTokenT <vector<int>> statusOfFitSource;
-  edm::EDGetTokenT <vector<double>> probOfFitSource;
-  edm::EDGetTokenT <int> njetsOfFitSource;
-  edm::EDGetTokenT <vector<double>> chi2OfFitUpSource;
-  edm::EDGetTokenT <vector<int>> statusOfFitUpSource;
-  edm::EDGetTokenT <vector<double>> probOfFitUpSource;
-  edm::EDGetTokenT <int> njetsOfFitUpSource;
-  edm::EDGetTokenT <vector<double>> chi2OfFitDownSource;
-  edm::EDGetTokenT <vector<int>> statusOfFitDownSource;
-  edm::EDGetTokenT <vector<double>> probOfFitDownSource;
-  edm::EDGetTokenT <int> njetsOfFitDownSource;
-  edm::EDGetTokenT <vector<double>> chi2OfFitJERUpSource;
-  edm::EDGetTokenT <vector<int>> statusOfFitJERUpSource;
-  edm::EDGetTokenT <vector<double>> probOfFitJERUpSource;
-  edm::EDGetTokenT <int> njetsOfFitJERUpSource;
-  edm::EDGetTokenT <vector<double>> chi2OfFitJERDownSource;
-  edm::EDGetTokenT <vector<int>> statusOfFitJERDownSource;
-  edm::EDGetTokenT <vector<double>> probOfFitJERDownSource;
-  edm::EDGetTokenT <int> njetsOfFitJERDownSource;
-
+  //MET filter                                                        
+  edm::EDGetTokenT<bool> BadChCandFilterToken_;                       
+  edm::EDGetTokenT<bool> BadPFMuonFilterToken_;    
 
   // Muon, Electrons, Jets, MET, Trigger
-  edm::EDGetTokenT<pat::MuonCollection> Muonsources;
+  edm::EDGetTokenT<pat::MuonCollection> Muonsources; 
   edm::EDGetTokenT<pat::ElectronCollection> Elesources;
   edm::EDGetTokenT<double> eventrhoToken_;
-  //https://github.com/ikrav/EgammaWork/blob/ntupler_and_VID_demos_8.0.3/ElectronNtupler/plugins/ElectronNtuplerVIDDemo.cc
   edm::EDGetTokenT<reco::ConversionCollection> conversionsMiniAODToken_;
   edm::EDGetTokenT<reco::BeamSpot> beamSpotToken_;
 
   edm::EDGetTokenT<pat::JetCollection> Jetsources;
+  edm::EDGetTokenT<pat::TriggerEvent> TrigEvent_;
+  edm::EDGetTokenT<reco::JetIDValueMap> jetIDMapToken_;
   edm::EDGetTokenT<pat::METCollection> Metsources;
   edm::EDGetTokenT<edm::TriggerResults>  hlt_;
   edm::EDGetTokenT<edm::TriggerResults>  hltFilter_;
 
   const reco::Vertex *bestPrimVertex_;
+  reco::Vertex refVertex_;
   math::XYZPoint refPoint_;
   edm::ESHandle<TransientTrackBuilder> trackBuilder;
 
   // MC and PU
   edm::EDGetTokenT<vector<PileupSummaryInfo>> PUInfoTag_;
   edm::EDGetTokenT<reco::GenParticleCollection> GenParticle_;
+  ////////////////////
+  edm::EDGetTokenT<GenEventInfoProduct> genEventInfo_;
+  ////////////////
   edm::EDGetTokenT<LHEEventProduct> externalLHEProducer_;
 
   //JET id functors
+  JetIDSelectionFunctor jetIDFunctor_;
+  PFJetIDSelectionFunctor pfjetIDFunctor_;
   edm::Handle<reco::JetIDValueMap> hJetIDMap;
   //for pt resolution
+  std::string m_resolutions_file;
+  std::string m_scale_factors_file;
   edm::EDGetTokenT<double> m_rho_token;
   edm::Service<TFileService> fs_;
   std::vector<TFileDirectory> dirs_;
@@ -216,7 +202,8 @@ private:
   //is data flag
   bool isData_;
   int mcEvtType_;
-  bool runKineFitter_;
+  int inputDataSampleCode_;
+  bool runKineFitter_; 
 
   //pu re-weighting
   edm::LumiReWeighting LumiWeights_, LumiWeightsDefault_;

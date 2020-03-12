@@ -1,13 +1,12 @@
-#include "MiniTree/Selection/interface/MyEvent.h"
-#include "MiniTree/Selection/interface/MyJet.h"
-#include "MiniTree/Selection/interface/MyMET.h"
-#include "MiniTree/Selection/interface/MyVertex.h"
-#include "MiniTree/Selection/interface/MyElectron.h"
-#include "MiniTree/Selection/interface/MyMuon.h"
-#include "MiniTree/Selection/interface/MyMCParticle.h"
-#include "MiniTree/Selection/interface/MySampleInfo.h"
-#include "MiniTree/Selection/interface/MomentumVec.h"
-#include "MiniTree/Selection/interface/MyKineFitParticle.h"
+#include "ExLep2016Tree/Selection/interface/MyEvent.h"
+#include "ExLep2016Tree/Selection/interface/MyJet.h"
+#include "ExLep2016Tree/Selection/interface/MyMET.h"
+#include "ExLep2016Tree/Selection/interface/MyVertex.h"
+#include "ExLep2016Tree/Selection/interface/MyElectron.h"
+#include "ExLep2016Tree/Selection/interface/MyMuon.h"
+//#include "ExLep2016Tree/Selection/interface/MyTau.h"
+#include "ExLep2016Tree/Selection/interface/SampleInfo.h"
+#include "ExLep2016Tree/Selection/interface/MomentumVec.h"
 
 #include<vector>
 #include "TROOT.h"
@@ -23,16 +22,12 @@ namespace{
     MyMET            Mymet; 
     MyElectron       Myele; 
     MyMuon           Mymuon; 
-    MyMCParticle     Mymcparticle; 
-    MySampleInfo     MySampleinfo;
-    MyKineFitParticle Mykinefitparticle;
+    SampleInfo       sampleinfo;
     std::vector<MyVertex>         Myvertices; 
     std::vector<MyJet>            Myjets; 
     std::vector<MyMET>            Mymets; 
     std::vector<MyElectron>       Myeles; 
     std::vector<MyMuon>           Mymuons; 
-    std::vector<MyMCParticle>     Mymcparticles; 
-    std::vector<MyKineFitParticle> Mykinefitparticles;
     std::vector<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > lvec;
     MyLorentzVector         vec;
     Point3D               point;  
