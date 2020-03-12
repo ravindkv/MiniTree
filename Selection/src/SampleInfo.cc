@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/SampleInfo.h"
+#include "MiniTree/Selection/interface/SampleInfo.h"
 
 SampleInfo::SampleInfo()
 {

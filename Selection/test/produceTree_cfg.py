@@ -36,7 +36,7 @@ process.GlobalTag.globaltag  = cms.string('80X_mcRun2_asymptotic_2016_TrancheIV_
 #-----------------------------
 # ADD THE ANALYSIS MODULE
 #-----------------------------
-process.load('ExLep2016Tree.Selection.EventSelectors_cfi')
+process.load('MiniTree.Selection.EventSelectors_cfi')
 process.myMiniTreeProducer.MCTruth.isData = cms.bool(isData)
 if isData:
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("DATA")
@@ -60,7 +60,7 @@ process.myMiniTreeProducer.Trigger.trigBits = cms.vstring("HLT_IsoMu24",
 # BadPFMuonFilter and BadChargedCandidateFilter are
 # run on fly through addMETFilters (process)
 #------------------------------------------------------
-from ExLep2016Tree.Selection.EventSelectors_cfi import *
+from MiniTree.Selection.EventSelectors_cfi import *
 addMETFilters(process)
 process.myMiniTreeProducer.Trigger.sourceFilter = cms.InputTag('TriggerResults::HLT')
 process.myMiniTreeProducer.Trigger.metFilterBits = cms.vstring("Flag_goodVertices",

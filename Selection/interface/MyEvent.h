@@ -26,13 +26,13 @@
 
 // user include files
 #include "TString.h"
-#include "ExLep2016Tree/Selection/interface/MyJet.h"
-#include "ExLep2016Tree/Selection/interface/MyMET.h"
-#include "ExLep2016Tree/Selection/interface/MyVertex.h"
-#include "ExLep2016Tree/Selection/interface/MyElectron.h"
-#include "ExLep2016Tree/Selection/interface/MyMuon.h"
-//#include "ExLep2016Tree/Selection/interface/MyTau.h"
-#include "ExLep2016Tree/Selection/interface/SampleInfo.h"
+#include "MiniTree/Selection/interface/MyJet.h"
+#include "MiniTree/Selection/interface/MyMET.h"
+#include "MiniTree/Selection/interface/MyVertex.h"
+#include "MiniTree/Selection/interface/MyElectron.h"
+#include "MiniTree/Selection/interface/MyMuon.h"
+//#include "MiniTree/Selection/interface/MyTau.h"
+#include "MiniTree/Selection/interface/SampleInfo.h"
 
 class MyEvent
 {

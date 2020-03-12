@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
+#include "MiniTree/Selection/interface/MyEventSelection.h"
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"

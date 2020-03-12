@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from ExLep2016Tree.Selection.ObjectSelectors_cfi import *
+from MiniTree.Selection.ObjectSelectors_cfi import *
 allEventsFilter = cms.EDFilter("AllEventsFilter")
 
 #----------------------------------------------------------

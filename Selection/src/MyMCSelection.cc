@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
+#include "MiniTree/Selection/interface/MyEventSelection.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
 SampleInfo MyEventSelection::getSampleInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup){

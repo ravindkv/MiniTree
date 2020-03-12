@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
+#include "MiniTree/Selection/interface/MyEventSelection.h"
 
 std::vector<std::string> MyEventSelection::getHLT(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {

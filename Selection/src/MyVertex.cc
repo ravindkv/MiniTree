@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/MyVertex.h"
+#include "MiniTree/Selection/interface/MyVertex.h"
 
 MyVertex::MyVertex():
  chi2(-9.0),

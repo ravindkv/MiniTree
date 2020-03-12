@@ -1,4 +1,4 @@
-#include "ExLep2016Tree/Selection/interface/MyEventSelection.h"
+#include "MiniTree/Selection/interface/MyEventSelection.h"
 #include <typeinfo>
 std::vector<MyVertex> MyEventSelection::getVertices(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
