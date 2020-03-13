@@ -24,14 +24,14 @@ BaseVertexSet = cms.PSet( vertexSource = cms.InputTag("offlineSlimmedPrimaryVert
 
 #my base values for muon selection ---------------------------------------
 BaseMuonsSet =  cms.PSet( sources = cms.InputTag("slimmedMuons"),
-                          minPt = cms.double(0),
-                          maxEta = cms.double(5)
+                          minPt = cms.double(10),
+                          maxEta = cms.double(2.5)
                           )
 
 # base values for electron selection ----------------------------------------------
 BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
-                        minEt = cms.double(0),
-                        maxEta = cms.double(5),
+                        minEt = cms.double(10),
+                        maxEta = cms.double(2.5),
                         rhoIso = cms.InputTag("fixedGridRhoFastjetAll"),
                         conversionsMiniAOD  = cms.InputTag('reducedEgamma:reducedConversions'),
                         beamSpot = cms.InputTag('offlineBeamSpot')
@@ -40,8 +40,8 @@ BaseElectronsSet =  cms.PSet(sources = cms.InputTag("slimmedElectrons"),
 #my base values for jet selection -----------------------------------------------
 BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJetsAK8"), #slimmedJetsAK8PFPuppiSoftDropPacked
                        dedxSource = cms.InputTag("dedxHarmonic2"),
-                       minPt = cms.double(0),
-                       maxEta = cms.double(5),
+                       minPt = cms.double(17),
+                       maxEta = cms.double(2.5),
                        jet_rho = cms.InputTag('fixedGridRhoAll'),
                        resolutionsFile = cms.string("Spring16_25nsV10_MC_PtResolution_AK8PF.txt"),
                        scaleFactorsFile= cms.string("Spring16_25nsV10_MC_SF_AK8PF.txt")
@@ -49,7 +49,7 @@ BaseJetsSet = cms.PSet(sources = cms.InputTag("slimmedJetsAK8"), #slimmedJetsAK8
 
 #my base values for met selection ------------------------------------------------
 BaseMetsSet = cms.PSet(sources = cms.InputTag("slimmedMETs"),
-                       minMET = cms.double(0),
+                       minMET = cms.double(10),
 		       filter1 = cms.InputTag('BadChargedCandidateFilter'),
 		       filter2 = cms.InputTag('BadPFMuonFilter')
                        )
