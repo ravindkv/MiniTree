@@ -87,8 +87,7 @@ void MyEventSelection::Set(const edm::Event& e, const edm::EventSetup& es)
   bool passTrig = false;
   std::vector<std::string> trigs = event_.hlt;
   for(size_t itrig = 0; itrig < trigs.size(); itrig++){
-    if(trigs[itrig].find("Ele") != std::string::npos || 
-	trigs[itrig].find("Mu") != std::string::npos) passTrig = true;
+    if(trigs[itrig].find("Double") != std::string::npos) passTrig = true;
   }
   int EventQuality = 0;
   if(passTrig)EventQuality++;

@@ -5,9 +5,9 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process('MiniTree')
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 300
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
-isData=True
+isData=False
 #------------------------------------------------------
 # Input root files and number of events
 #------------------------------------------------------
@@ -43,17 +43,12 @@ if isData:
 else:
     #for multi CRAB
     process.myMiniTreeProducer.MCTruth.sampleCode = cms.string("sampCode_")
-process.myMiniTreeProducer.minEventQualityToStore = cms.int32(0)
+process.myMiniTreeProducer.minEventQualityToStore = cms.int32(1)
 #https://github.com/cms-jet/JRDatabase/tree/master/textFiles/Spring16_25nsV10_MC
 process.myMiniTreeProducer.Jets.resolutionsFile = cms.string('Spring16_25nsV10_MC_PtResolution_AK8PF.txt')
 process.myMiniTreeProducer.Jets.scaleFactorsFile = cms.string('Spring16_25nsV10_MC_SF_AK8PF.txt')
 process.myMiniTreeProducer.Trigger.source = cms.InputTag('TriggerResults::HLT')
-process.myMiniTreeProducer.Trigger.trigBits = cms.vstring("HLT_IsoMu24",
-"HLT_IsoTkMu24",
-"HLT_Mu50",
-"HLT_TkMu50",
-"HLT_DoubleEle33",
-"HLT_Ele27_WPTight_Gsf")
+process.myMiniTreeProducer.Trigger.trigBits = cms.vstring("HLT_DoubleMu","HLT_DoubleEle")
 
 #------------------------------------------------------
 # apply partial MET filters via trigger selection.
